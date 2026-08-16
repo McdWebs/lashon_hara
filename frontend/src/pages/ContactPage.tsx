@@ -1,5 +1,6 @@
 import { Alert, Button, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import { NewsletterSignup } from "../components/NewsletterSignup";
 import { PageHeader, Section } from "../components/Section";
 import { SITE, waLink } from "../lib/site";
 
@@ -54,6 +55,9 @@ export function ContactPage() {
             </Button>
           </Stack>
         )}
+      </Section>
+      <Section muted>
+        <NewsletterSignup />
       </Section>
     </>
   );

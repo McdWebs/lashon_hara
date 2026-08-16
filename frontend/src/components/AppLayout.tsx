@@ -3,7 +3,7 @@ import { useEffect, useMemo } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
-import { WhatsAppFab } from "./WhatsAppFab";
+import { StickyJoin } from "./StickyJoin";
 import { LocaleContext, buildLocale } from "../i18n/useLocale";
 import { langFromPath } from "../i18n/locale";
 
@@ -20,16 +20,13 @@ export function AppLayout() {
 
   return (
     <LocaleContext.Provider value={locale}>
-      <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column", pb: { xs: 8, md: 0 } }}>
         <Header />
         <Box component="main" sx={{ flex: 1 }}>
-          {locale.t("enNotice") ? (
-            <Box sx={{ bgcolor: "#fff3f3", px: 2, py: 1, textAlign: "center", fontSize: 14 }}>{locale.t("enNotice")}</Box>
-          ) : null}
           <Outlet />
         </Box>
         <Footer />
-        <WhatsAppFab />
+        <StickyJoin />
       </Box>
     </LocaleContext.Provider>
   );

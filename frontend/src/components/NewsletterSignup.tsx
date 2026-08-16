@@ -10,7 +10,7 @@ export function NewsletterSignup() {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     setStatus("loading");
-    const result = await submitForm("newsletter", "/", Object.fromEntries(form.entries()));
+    const result = await submitForm("newsletter", "/contact", Object.fromEntries(form.entries()));
     setSaved(result.saved);
     setStatus("ok");
   }

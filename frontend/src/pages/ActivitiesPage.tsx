@@ -1,4 +1,4 @@
-import { Card, CardContent, Grid, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { PageHeader, Section } from "../components/Section";
 
 const items = [
@@ -13,21 +13,15 @@ export function ActivitiesPage() {
     <>
       <PageHeader title="הפעילות" />
       <Section>
-        <Typography sx={{ mb: 2 }}>
+        <Typography sx={{ mb: 4 }}>
           יחד מחזקים מודעות לשיח מכבד בין אחד לשני, מזכירים שמילים יכולות לפגוע, ומובילים שינוי חברתי דרך חינוך, חלוקת מוצרים עם המסר, וניקיון הרשת החברתית מלשון הרע.
         </Typography>
-        <Grid container spacing={2}>
-          {items.map((item) => (
-            <Grid key={item.title} size={{ xs: 12, md: 6 }}>
-              <Card variant="outlined">
-                <CardContent>
-                  <Typography variant="h3">{item.title}</Typography>
-                  <Typography sx={{ mt: 1 }}>{item.body}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+        {items.map((item) => (
+          <Box key={item.title} sx={{ borderTop: "1px solid", borderColor: "divider", py: 2.5 }}>
+            <Typography variant="h3">{item.title}</Typography>
+            <Typography sx={{ mt: 0.5 }}>{item.body}</Typography>
+          </Box>
+        ))}
       </Section>
     </>
   );

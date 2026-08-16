@@ -1,4 +1,4 @@
-import { Alert, Button, Card, CardActionArea, CardContent, Grid, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Button, Link, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { PageHeader, Section } from "../components/Section";
 import { track } from "../lib/analytics";
@@ -43,15 +43,13 @@ export function SchoolsPage() {
         <Typography color="text.secondary" sx={{ mb: 3 }}>
           אין כאן מחירון או עדויות שלא פורסמו. בחרו מי אתם — ונחזור אליכם עם הפרטים האמיתיים של התוכנית.
         </Typography>
-        <Grid container spacing={1} sx={{ mb: 3 }}>
+        <Stack direction="row" spacing={1} sx={{ mb: 3, flexWrap: "wrap" }}>
           {audiences.map((a) => (
-            <Grid key={a.id}>
-              <Button variant={audience === a.id ? "contained" : "outlined"} onClick={() => setAudience(a.id)}>
-                {a.label}
-              </Button>
-            </Grid>
+            <Button key={a.id} variant={audience === a.id ? "contained" : "outlined"} onClick={() => setAudience(a.id)}>
+              {a.label}
+            </Button>
           ))}
-        </Grid>
+        </Stack>
         {status === "ok" ? (
           <Alert severity={saved ? "success" : "warning"}>
             {saved ? "הפנייה נקלטה." : "השמירה לשרת נכשלה — פנו ב-WhatsApp 054-3644512."}
@@ -72,14 +70,11 @@ export function SchoolsPage() {
             </Button>
           </Stack>
         )}
-        <Card variant="outlined" sx={{ mt: 4, maxWidth: 480 }}>
-          <CardActionArea href={`${SITE.wcOrigin}/wholesale/`}>
-            <CardContent>
-              <Typography sx={{ fontWeight: 700 }}>צריכים כמות גדולה?</Typography>
-              <Typography color="text.secondary">סיטונאות והזמנות לקבוצה — בלי לעבור בקופה הרגילה אם התהליך אצלכם אחר.</Typography>
-            </CardContent>
-          </CardActionArea>
-        </Card>
+        <Typography sx={{ mt: 4, fontWeight: 700 }}>צריכים כמות גדולה?</Typography>
+        <Typography color="text.secondary" sx={{ mb: 1 }}>
+          סיטונאות והזמנות לקבוצה — בלי לעבור בקופה הרגילה אם התהליך אצלכם אחר.
+        </Typography>
+        <Link href={`${SITE.wcOrigin}/wholesale/`}>לסיטונאות בחנות הקיימת</Link>
       </Section>
     </>
   );

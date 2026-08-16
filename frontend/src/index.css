@@ -1,9 +1,9 @@
 :root {
   font-family: Heebo, Arial, sans-serif;
-  line-height: 1.6;
+  line-height: 1.7;
   font-weight: 400;
   color: #111;
-  background: #fafafa;
+  background: #f4f1ea;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -22,4 +22,13 @@ body,
 
 a {
   color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }

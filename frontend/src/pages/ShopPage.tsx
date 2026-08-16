@@ -1,4 +1,4 @@
-import { Button, Card, CardActionArea, CardContent, Grid, Pagination, Stack, Typography } from "@mui/material";
+import { Button, Grid, Pagination, Stack, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams, Link as RouterLink } from "react-router-dom";
 import { ProductCard } from "../components/ProductCard";
@@ -7,6 +7,7 @@ import { PageHeader, Section } from "../components/Section";
 import { BUNDLE_PRODUCT_IDS } from "../lib/bundles";
 import { fetchProducts } from "../lib/catalog";
 import { SITE } from "../lib/site";
+import { useLocale } from "../i18n/useLocale";
 
 const useCases = [
   { label: "לבית הספר", category: "26" },
@@ -18,6 +19,7 @@ const useCases = [
 ];
 
 export function ShopPage() {
+  const { loc } = useLocale();
   const [params, setParams] = useSearchParams();
   const page = Number(params.get("page") ?? "1");
   const category = params.get("category") ?? "";
@@ -43,7 +45,7 @@ export function ShopPage() {
           ברוכים הבאים לאתר המכירות של מוצרי &quot;לשון הרע לא מדבר אלי&quot;. המכירות מאפשרות להמשיך ולחלק מוצרים בחינם לבתי ספר ומוסדות חינוך.
         </Typography>
       </PageHeader>
-      <Section>
+      <Section wide>
         <Typography variant="h3" gutterBottom>
           למה אתם צריכים את זה?
         </Typography>
@@ -66,7 +68,7 @@ export function ShopPage() {
         </Grid>
 
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ mb: 3 }}>
-          <Button component={RouterLink} to="/organizations" variant="outlined">
+          <Button component={RouterLink} to={loc("/organizations")} variant="outlined">
             הזמנה לקבוצה / סיטונאות
           </Button>
           <Button href={`${SITE.wcOrigin}/cart/`} variant="outlined">
@@ -122,14 +124,9 @@ export function ShopPage() {
           </>
         )}
 
-        <Card variant="outlined" sx={{ mt: 4 }}>
-          <CardActionArea href={`${SITE.wcOrigin}/shop/`}>
-            <CardContent>
-              <Typography sx={{ fontWeight: 700 }}>מעבר לחנות המלאה באתר הקיים</Typography>
-              <Typography color="text.secondary">כולל קופה, חשבון ומשלוחים כפי שהם עובדים היום.</Typography>
-            </CardContent>
-          </CardActionArea>
-        </Card>
+        <Button href={`${SITE.wcOrigin}/shop/`} sx={{ mt: 4, px: 0 }}>
+          לחנות המלאה באתר הקיים (קופה ומשלוחים)
+        </Button>
       </Section>
     </>
   );

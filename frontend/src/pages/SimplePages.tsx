@@ -1,4 +1,4 @@
-import { Button, Card, CardActionArea, CardContent, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { PageHeader, Section } from "../components/Section";
 import { track } from "../lib/analytics";
@@ -23,14 +23,9 @@ export function DonatePage() {
         >
           לתרומה בדף הקיים
         </Button>
-        <Card variant="outlined" sx={{ mt: 4, maxWidth: 520 }}>
-          <CardActionArea component={RouterLink} to="/schools">
-            <CardContent>
-              <Typography sx={{ fontWeight: 700 }}>רוצים שהכסף יגיע לבית ספר?</Typography>
-              <Typography color="text.secondary">אפשר גם להזמין פעילות או חלוקה למוסד חינוכי.</Typography>
-            </CardContent>
-          </CardActionArea>
-        </Card>
+        <Button component={RouterLink} to="/schools" variant="text" sx={{ mt: 2, display: "inline-block", px: 0 }}>
+          הזמנת פעילות לבית ספר
+        </Button>
       </Section>
     </>
   );
