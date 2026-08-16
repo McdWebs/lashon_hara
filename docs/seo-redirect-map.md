@@ -21,4 +21,5 @@ New app uses cleaner paths. Until the domain cutover, these are in-app `Navigate
 
 Yoast sitemap currently lists `http://` locs. Fix scheme to `https` on WordPress when you have admin access.
 
-Homepage canonical remains `https://lashonhara.co.il/`.
+| `/en/` … | English UI prefix | New; Hebrew remains canonical home |
+| `/map` | Public map shell | No pins until consent |

@@ -1,6 +1,7 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { Link as RouterLink } from "react-router-dom";
+import { useLocale } from "../i18n/useLocale";
 
 type StatsResponse = {
   foundedYear: number;
@@ -14,6 +15,7 @@ type StatsResponse = {
 };
 
 export function MovementStats() {
+  const { loc } = useLocale();
   const query = useQuery({
     queryKey: ["stats"],
     queryFn: async () => {
@@ -55,7 +57,7 @@ export function MovementStats() {
           אין כאן מונים מומצאים. כשמסד הנתונים מחובר, יוצגו רק ספירות אמיתיות של טפסים שנשלחו באתר החדש.
         </Typography>
       )}
-      <Button component={RouterLink} to="/join/commitment" variant="contained" sx={{ alignSelf: "flex-start" }}>
+        <Button component={RouterLink} to={loc("/join/commitment")} variant="contained" sx={{ alignSelf: "flex-start" }}>
         גם אני מצטרף/ת
       </Button>
     </Stack>
