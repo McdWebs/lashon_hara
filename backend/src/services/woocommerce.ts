@@ -28,6 +28,20 @@ export async function getProduct(id: string) {
   return res.json();
 }
 
+export async function listProductsByIds(ids: string[]) {
+  const results = await Promise.all(
+    ids.map(async (id) => {
+      try {
+        return await getProduct(id.trim());
+      } catch {
+        return null;
+      }
+    }),
+  );
+  const items = results.filter(Boolean);
+  return { items, total: items.length, totalPages: 1 };
+}
+
 export async function listCategories() {
   const res = await wcFetch("/products/categories", "?per_page=100");
   return res.json();

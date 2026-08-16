@@ -14,17 +14,18 @@ import { ContactPage } from "./pages/ContactPage";
 import { HomePage } from "./pages/HomePage";
 import { JoinPage } from "./pages/JoinPage";
 import { MessagePage } from "./pages/MessagePage";
+import { OrganizationsPage } from "./pages/OrganizationsPage";
 import { ProductPage } from "./pages/ProductPage";
 import { SchoolsPage } from "./pages/SchoolsPage";
 import { ShopPage } from "./pages/ShopPage";
+import { StoriesPage } from "./pages/StoriesPage";
+import { StoryDetailPage } from "./pages/StoryDetailPage";
 import {
   DonatePage,
   FaqPage,
   MagazinePage,
   NotFoundPage,
-  OrganizationsPage,
   ResourcesPage,
-  StoriesPage,
 } from "./pages/SimplePages";
 import { theme } from "./theme";
 
@@ -58,6 +59,7 @@ export default function App() {
                 <Route path="/join/ambassadors" element={<AmbassadorsPage />} />
                 <Route path="/schools" element={<SchoolsPage />} />
                 <Route path="/stories" element={<StoriesPage />} />
+                <Route path="/stories/:slug" element={<StoryDetailPage />} />
                 <Route path="/resources" element={<ResourcesPage />} />
                 <Route path="/magazine" element={<MagazinePage />} />
                 <Route path="/shop" element={<ShopPage />} />

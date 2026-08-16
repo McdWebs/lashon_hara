@@ -1,7 +1,9 @@
 import { Alert, Button, Checkbox, FormControlLabel, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import { ShareCard } from "../components/ShareCard";
 import { PageHeader, Section } from "../components/Section";
 import { track } from "../lib/analytics";
+import { submitForm } from "../lib/forms";
 
 const oath = [
   "אני מתחייב/ת בזאת להימנע מהפצת לשון הרע ודברי רכילות.",
@@ -11,34 +13,26 @@ const oath = [
 ];
 
 export function CommitmentPage() {
-  const [status, setStatus] = useState<"idle" | "loading" | "ok" | "error">("idle");
+  const [status, setStatus] = useState<"form" | "loading" | "done">("form");
+  const [saved, setSaved] = useState(true);
+  const [firstName, setFirstName] = useState("");
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     track("commitment_started");
     const form = new FormData(e.currentTarget);
+    const name = String(form.get("firstName") ?? "");
+    setFirstName(name);
     setStatus("loading");
-    try {
-      const res = await fetch("/api/forms", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          kind: "commitment",
-          sourcePath: "/join/commitment",
-          payload: {
-            firstName: form.get("firstName"),
-            phone: form.get("phone"),
-            email: form.get("email"),
-            consent: form.get("consent") === "on",
-          },
-        }),
-      });
-      if (!res.ok) throw new Error("fail");
-      track("commitment_completed");
-      setStatus("ok");
-    } catch {
-      setStatus("error");
-    }
+    const result = await submitForm("commitment", "/join/commitment", {
+      firstName: name,
+      phone: form.get("phone"),
+      email: form.get("email"),
+      consent: form.get("consent") === "on",
+    });
+    setSaved(result.saved);
+    track("commitment_completed", { saved: result.saved });
+    setStatus("done");
   }
 
   return (
@@ -50,8 +44,15 @@ export function CommitmentPage() {
             {line}
           </Typography>
         ))}
-        {status === "ok" ? (
-          <Alert severity="success">ההתחייבות נקלטה. כרטיס שיתוף מעוצב יגיע בשלב הבא של המוצר.</Alert>
+        {status === "done" ? (
+          <Stack spacing={2}>
+            {!saved && (
+              <Alert severity="warning">
+                הכרטיס מוכן לשיתוף, אבל השמירה לתיבת העמותה נכשלה (חסר Mongo/SMTP). שלחו גם ב-WhatsApp כדי שלא נפספס.
+              </Alert>
+            )}
+            <ShareCard firstName={firstName} />
+          </Stack>
         ) : (
           <Stack component="form" spacing={2} sx={{ maxWidth: 480 }} onSubmit={onSubmit}>
             <TextField required name="firstName" label="שם פרטי" autoComplete="given-name" />
@@ -61,9 +62,6 @@ export function CommitmentPage() {
               control={<Checkbox name="consent" />}
               label="אני מאשר/ת קבלת מידע ודיוורים מהעמותה. מטרת ההרשמה היא שמירה על קשר, תזכורת ההתחייבות והפצת פעילות העמותה, ללא תשלום."
             />
-            {status === "error" && (
-              <Alert severity="error">לא הצלחנו לשמור כרגע. אפשר גם לפנות ב-WhatsApp. ודאו שהשרת ומסד הנתונים מוגדרים.</Alert>
-            )}
             <Button type="submit" variant="contained" disabled={status === "loading"}>
               קבלו את התחייבותי
             </Button>

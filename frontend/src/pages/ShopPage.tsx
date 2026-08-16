@@ -4,6 +4,7 @@ import { useSearchParams, Link as RouterLink } from "react-router-dom";
 import { ProductCard } from "../components/ProductCard";
 import { EmptyState, ErrorState, LoadingState } from "../components/States";
 import { PageHeader, Section } from "../components/Section";
+import { BUNDLE_PRODUCT_IDS } from "../lib/bundles";
 import { fetchProducts } from "../lib/catalog";
 import { SITE } from "../lib/site";
 
@@ -28,6 +29,11 @@ export function ShopPage() {
       if (category) s.set("category", category);
       return fetchProducts(s.toString());
     },
+  });
+
+  const bundles = useQuery({
+    queryKey: ["bundles"],
+    queryFn: () => fetchProducts(`include=${BUNDLE_PRODUCT_IDS.join(",")}&per_page=20`),
   });
 
   return (
@@ -67,6 +73,24 @@ export function ShopPage() {
             לסל הקיים
           </Button>
         </Stack>
+
+        {bundles.data && bundles.data.items.length > 0 && (
+          <>
+            <Typography variant="h3" sx={{ mb: 2 }}>
+              סטים מהקטלוג הקיים
+            </Typography>
+            <Typography color="text.secondary" sx={{ mb: 2 }}>
+              אלה מוצרים שכבר נמכרים כסט ב-WooCommerce. לא הורכבו חבילות חדשות עם מחירים מומצאים.
+            </Typography>
+            <Grid container spacing={2} sx={{ mb: 4 }}>
+              {bundles.data.items.map((p) => (
+                <Grid key={p.id} size={{ xs: 12, sm: 6, md: 4 }}>
+                  <ProductCard product={p} />
+                </Grid>
+              ))}
+            </Grid>
+          </>
+        )}
 
         {query.isLoading && <LoadingState />}
         {query.isError && <ErrorState message="לא ניתן לטעון את הקטלוג כרגע." onRetry={() => void query.refetch()} />}

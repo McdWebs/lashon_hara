@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getProduct, listCategories, listProducts } from "../services/woocommerce.js";
+import { getProduct, listCategories, listProducts, listProductsByIds } from "../services/woocommerce.js";
 
 export const catalogRouter = Router();
 
@@ -8,6 +8,11 @@ catalogRouter.get("/products", async (req, res) => {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(req.query)) {
       if (typeof value === "string") params.set(key, value);
+    }
+    const include = params.get("include");
+    if (include) {
+      res.json(await listProductsByIds(include.split(",")));
+      return;
     }
     const data = await listProducts(params);
     res.json(data);

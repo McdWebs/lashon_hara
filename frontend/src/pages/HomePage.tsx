@@ -141,6 +141,18 @@ export function HomePage() {
 
       <Section>
         <Typography variant="h2" gutterBottom>
+          הסיפורים שלנו
+        </Typography>
+        <Typography sx={{ mb: 2 }} color="text.secondary">
+          סיפורי הארגון כפי שפורסמו באתר — בלי עדויות מומצאות.
+        </Typography>
+        <Button component={RouterLink} to="/stories">
+          לקרוא
+        </Button>
+      </Section>
+
+      <Section muted>
+        <Typography variant="h2" gutterBottom>
           השינוי מתחיל בי
         </Typography>
         <Typography sx={{ mb: 2 }}>אני מתחייב/ת בזאת להימנע מהפצת לשון הרע ודברי רכילות.</Typography>

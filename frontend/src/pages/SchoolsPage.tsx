@@ -1,31 +1,36 @@
-import { Alert, Button, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Button, Card, CardActionArea, CardContent, Grid, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { PageHeader, Section } from "../components/Section";
 import { track } from "../lib/analytics";
+import { submitForm } from "../lib/forms";
+import { SITE } from "../lib/site";
+
+const audiences = [
+  { id: "elementary", label: "יסודי" },
+  { id: "middle", label: "חטיבה" },
+  { id: "high", label: "תיכון" },
+  { id: "teachers", label: "מורים/ות" },
+  { id: "parents", label: "הורים" },
+  { id: "admin", label: "הנהלה / רשות" },
+];
 
 export function SchoolsPage() {
-  const [status, setStatus] = useState<"idle" | "loading" | "ok" | "error">("idle");
+  const [audience, setAudience] = useState("admin");
+  const [status, setStatus] = useState<"idle" | "loading" | "ok">("idle");
+  const [saved, setSaved] = useState(true);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    track("school_contact_started");
+    track("school_contact_started", { audience });
     const form = new FormData(e.currentTarget);
     setStatus("loading");
-    try {
-      const res = await fetch("/api/forms", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          kind: "school",
-          sourcePath: "/schools",
-          payload: Object.fromEntries(form.entries()),
-        }),
-      });
-      if (!res.ok) throw new Error("fail");
-      setStatus("ok");
-    } catch {
-      setStatus("error");
-    }
+    const result = await submitForm("school", "/schools", {
+      ...Object.fromEntries(form.entries()),
+      audience,
+    });
+    setSaved(result.saved);
+    track("school_contact_completed", { saved: result.saved });
+    setStatus("ok");
   }
 
   return (
@@ -33,27 +38,48 @@ export function SchoolsPage() {
       <PageHeader title="הופכים את בית הספר למרחב בטוח יותר" />
       <Section>
         <Typography sx={{ mb: 2 }}>
-          אני נציג של בית הספר ורוצה לאמץ תוכנית חינוכית לתלמידים שלי. באתר הקיים מופיעות סדנאות חינוכיות בבתי ספר וחלוקת מוצרים.
+          באתר הקיים מופיעות סדנאות חינוכיות בבתי ספר וחלוקת מוצרים. המכירות בחנות מאפשרות להמשיך לחלק מוצרים בחינם למוסדות חינוך.
         </Typography>
-        <Typography color="text.secondary" sx={{ mb: 2 }}>
-          פירוט מחירון, מבנה סדנה ועדויות בתי ספר יופיעו רק כשיסופקו מהעמותה. לא הומצא מודל תמחור.
+        <Typography color="text.secondary" sx={{ mb: 3 }}>
+          אין כאן מחירון או עדויות שלא פורסמו. בחרו מי אתם — ונחזור אליכם עם הפרטים האמיתיים של התוכנית.
         </Typography>
+        <Grid container spacing={1} sx={{ mb: 3 }}>
+          {audiences.map((a) => (
+            <Grid key={a.id}>
+              <Button variant={audience === a.id ? "contained" : "outlined"} onClick={() => setAudience(a.id)}>
+                {a.label}
+              </Button>
+            </Grid>
+          ))}
+        </Grid>
         {status === "ok" ? (
-          <Alert severity="success">הפנייה נקלטה. נחזור אליכם לתיבת הדואר המשותפת.</Alert>
+          <Alert severity={saved ? "success" : "warning"}>
+            {saved ? "הפנייה נקלטה." : "השמירה לשרת נכשלה — פנו ב-WhatsApp 054-3644512."}
+          </Alert>
         ) : (
           <Stack component="form" spacing={2} sx={{ maxWidth: 480 }} onSubmit={onSubmit}>
             <TextField required name="name" label="שם" />
-            <TextField required name="role" label="תפקיד" />
+            <TextField required name="role" label="תפקיד" key={audience} defaultValue={audiences.find((a) => a.id === audience)?.label} />
             <TextField required name="school" label="בית ספר / רשות" />
             <TextField required name="phone" label="טלפון" />
             <TextField required name="email" type="email" label="אימייל" />
             <TextField name="message" label="פרטים נוספים" multiline minRows={3} />
-            {status === "error" && <Alert severity="error">השליחה נכשלה.</Alert>}
             <Button type="submit" variant="contained" disabled={status === "loading"}>
               הזמינו פעילות לבית הספר
             </Button>
+            <Button href={`${SITE.wcOrigin}/product/schools/`} variant="text">
+              חלוקת צמידים לבתי ספר (בחנות הקיימת)
+            </Button>
           </Stack>
         )}
+        <Card variant="outlined" sx={{ mt: 4, maxWidth: 480 }}>
+          <CardActionArea href={`${SITE.wcOrigin}/wholesale/`}>
+            <CardContent>
+              <Typography sx={{ fontWeight: 700 }}>צריכים כמות גדולה?</Typography>
+              <Typography color="text.secondary">סיטונאות והזמנות לקבוצה — בלי לעבור בקופה הרגילה אם התהליך אצלכם אחר.</Typography>
+            </CardContent>
+          </CardActionArea>
+        </Card>
       </Section>
     </>
   );
