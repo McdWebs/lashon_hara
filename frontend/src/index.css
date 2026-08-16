@@ -1,0 +1,25 @@
+:root {
+  font-family: Heebo, Arial, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  color: #111;
+  background: #fafafa;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
