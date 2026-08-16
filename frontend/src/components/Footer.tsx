@@ -18,6 +18,12 @@ export function Footer() {
             <Link component={RouterLink} to="/faq" color="inherit">
               שאלות נפוצות
             </Link>
+            <Link component={RouterLink} to="/message/quiz" color="inherit">
+              האם זה לשון הרע?
+            </Link>
+            <Link component={RouterLink} to="/resources" color="inherit">
+              משאבים
+            </Link>
             <Link component={RouterLink} to="/contact" color="inherit">
               צור קשר
             </Link>

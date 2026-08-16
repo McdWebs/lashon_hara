@@ -7,6 +7,7 @@ import { catalogRouter } from "./routes/catalog.js";
 import { formsRouter } from "./routes/forms.js";
 import { healthRouter } from "./routes/health.js";
 import { paymentsRouter } from "./routes/payments.js";
+import { statsRouter } from "./routes/stats.js";
 
 const app = express();
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
@@ -17,6 +18,7 @@ app.use("/health", healthRouter);
 app.use("/api/catalog", catalogRouter);
 app.use("/api/forms", formsRouter);
 app.use("/api/payments", paymentsRouter);
+app.use("/api/stats", statsRouter);
 
 await connectDb();
 

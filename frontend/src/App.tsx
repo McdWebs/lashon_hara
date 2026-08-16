@@ -16,6 +16,8 @@ import { JoinPage } from "./pages/JoinPage";
 import { MessagePage } from "./pages/MessagePage";
 import { OrganizationsPage } from "./pages/OrganizationsPage";
 import { ProductPage } from "./pages/ProductPage";
+import { QuizPage } from "./pages/QuizPage";
+import { ResourcesPage } from "./pages/ResourcesPage";
 import { SchoolsPage } from "./pages/SchoolsPage";
 import { ShopPage } from "./pages/ShopPage";
 import { StoriesPage } from "./pages/StoriesPage";
@@ -25,7 +27,6 @@ import {
   FaqPage,
   MagazinePage,
   NotFoundPage,
-  ResourcesPage,
 } from "./pages/SimplePages";
 import { theme } from "./theme";
 
@@ -49,6 +50,7 @@ export default function App() {
               <Route element={<AppLayout />}>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/message" element={<MessagePage />} />
+                <Route path="/message/quiz" element={<QuizPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/about-us" element={<Navigate to="/about" replace />} />
                 <Route path="/activities" element={<ActivitiesPage />} />

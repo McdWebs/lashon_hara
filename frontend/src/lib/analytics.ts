@@ -12,7 +12,9 @@ export type AnalyticsEvent =
   | "commitment_share_clicked"
   | "ambassador_application_completed"
   | "school_contact_completed"
-  | "donation_started";
+  | "donation_started"
+  | "quiz_started"
+  | "quiz_completed";
 
 declare global {
   interface Window {

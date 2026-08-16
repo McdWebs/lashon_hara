@@ -1,4 +1,5 @@
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 import { PageHeader, Section } from "../components/Section";
 
 export function MessagePage() {
@@ -16,9 +17,12 @@ export function MessagePage() {
         <Typography sx={{ mb: 2 }}>
           המבחן: אם לא הייתם אומרים את זה בפני האדם — אל תגידו מאחורי גבו. נכללים בהגדרה השמצות, לעג, רכילות (גם אם הסיפור קרה באמת), הכללה, ביוש, הסתה והלבנת פנים.
         </Typography>
-        <Typography color="text.secondary">
+        <Typography color="text.secondary" sx={{ mb: 2 }}>
           זהו תוכן חינוכי מהאתר הקיים ואינו מחליף ייעוץ הלכתי או משפטי.
         </Typography>
+        <Button component={RouterLink} to="/message/quiz" variant="contained">
+          תרגול: האם זה לשון הרע?
+        </Button>
       </Section>
     </>
   );

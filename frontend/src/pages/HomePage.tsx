@@ -1,5 +1,7 @@
 import { Box, Button, Card, CardActionArea, CardContent, Grid, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
+import { MovementStats } from "../components/MovementStats";
+import { NewsletterSignup } from "../components/NewsletterSignup";
 import { Section } from "../components/Section";
 import { track } from "../lib/analytics";
 
@@ -111,8 +113,11 @@ export function HomePage() {
         <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
           זהו תוכן חינוכי מהאתר הקיים. הוא אינו ייעוץ הלכתי או משפטי.
         </Typography>
-        <Button component={RouterLink} to="/message" sx={{ mt: 2 }}>
+        <Button component={RouterLink} to="/message" sx={{ mt: 2, mr: 1 }}>
           אני רוצה לקרוא עוד
+        </Button>
+        <Button component={RouterLink} to="/message/quiz" variant="contained" sx={{ mt: 2 }}>
+          האם זה לשון הרע?
         </Button>
       </Section>
 
@@ -149,6 +154,14 @@ export function HomePage() {
         <Button component={RouterLink} to="/stories">
           לקרוא
         </Button>
+      </Section>
+
+      <Section muted>
+        <MovementStats />
+      </Section>
+
+      <Section>
+        <NewsletterSignup />
       </Section>
 
       <Section muted>

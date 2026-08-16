@@ -4,7 +4,7 @@ const submissionSchema = new mongoose.Schema(
   {
     kind: {
       type: String,
-      enum: ["commitment", "school", "ambassador", "contact", "quote", "donate"],
+      enum: ["commitment", "school", "ambassador", "contact", "quote", "donate", "newsletter"],
       required: true,
     },
     payload: { type: mongoose.Schema.Types.Mixed, required: true },

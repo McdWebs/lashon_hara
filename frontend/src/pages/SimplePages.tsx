@@ -36,17 +36,6 @@ export function DonatePage() {
   );
 }
 
-export function ResourcesPage() {
-  return (
-    <>
-      <PageHeader title="חומרי הוראה" />
-      <Section>
-        <Typography>[ממתין לתוכן מאושר] מרכז המשאבים ייבנה כשיהיו קבצים להורדה מהעמותה.</Typography>
-      </Section>
-    </>
-  );
-}
-
 export function MagazinePage() {
   return (
     <>
@@ -88,8 +77,4 @@ export function NotFoundPage() {
       </Section>
     </>
   );
-}
-
-export function OrganizationsPagePlaceholder() {
-  return null;
 }
