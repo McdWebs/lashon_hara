@@ -1651,11 +1651,674 @@ When implementing:
 
 ---
 
+# 46. Technical Stack — Locked Baseline
 
+The following technology stack is the default architecture for the new platform.
 
-# 44. First Task for Cursor
+Cursor must use this stack unless the technical audit proves that a change is necessary.
 
-Before implementing the redesign, produce a technical audit containing:
+## Frontend
+
+- React
+- Vite
+- TypeScript
+- MUI (Material UI)
+- React Router
+- TanStack Query
+- Zustand — only when global client-side state is actually required
+- React Hook Form
+- Zod
+
+### Frontend principles
+
+- Component-driven architecture
+- Reusable design system
+- Mobile-first development
+- RTL support from the beginning
+- Accessibility built into components
+- TanStack Query for server/API state
+- Zustand only for genuine client-side global state
+- Avoid unnecessary dependencies
+- Keep business logic separate from presentation
+
+---
+
+## Backend
+
+- Node.js
+- Express
+- TypeScript
+- MongoDB
+- Mongoose
+- Zod
+
+### Backend principles
+
+- Clear separation between routes, controllers, services, models, and utilities
+- Validate external input with Zod
+- Keep business logic out of controllers where practical
+- Keep database access separated from presentation logic
+- Use environment variables for secrets and configuration
+- Never expose sensitive credentials to the frontend
+
+---
+
+## Hosting
+
+### Frontend
+
+Vercel
+
+### Backend
+
+Render initially.
+
+The backend infrastructure can be reconsidered later if real production requirements justify it.
+
+### Database
+
+MongoDB Atlas
+
+### File / Image Storage
+
+Prefer existing infrastructure where possible.
+
+If new storage is required, evaluate:
+
+- Cloudinary
+- S3-compatible storage
+
+Do not introduce additional infrastructure without a concrete requirement.
+
+---
+
+# 47. Ecommerce Architecture
+
+## IMPORTANT
+
+Do not automatically rebuild the existing ecommerce system.
+
+The existing website may already contain:
+
+- Products
+- Orders
+- Customers
+- Payment processing
+- Shipping
+- Inventory
+- Discounts
+- Business logic
+- Integrations
+
+These are business-critical.
+
+First determine what the current system uses.
+
+If the current ecommerce infrastructure is WooCommerce and is stable, the preferred initial approach is to preserve it.
+
+Potential architecture:
+
+```text
+React + Vite + TypeScript
+            │
+            ▼
+       Node / Express
+            │
+      ┌─────┴─────┐
+      ▼           ▼
+   MongoDB    Existing WooCommerce
+                  │
+          Products / Orders /
+       Payments / Shipping /
+          Customer data
+```
+
+The exact architecture must be determined after the technical audit.
+
+### Preferred strategy
+
+**Integrate first. Migrate only when justified.**
+
+Do not rebuild ecommerce merely because a new backend is being created.
+
+---
+
+# 48. Architecture Decision Rule
+
+Cursor must not silently change the approved stack.
+
+The baseline is:
+
+```text
+React
+Vite
+TypeScript
+MUI
+React Router
+TanStack Query
+Zustand
+React Hook Form
+Zod
+        ↓
+Node.js
+Express
+TypeScript
+        ↓
+MongoDB
+Mongoose
+        ↓
+Vercel
+Render
+MongoDB Atlas
+        ↓
+GitHub
+```
+
+Cursor should NOT independently replace the stack with technologies such as:
+
+- Next.js
+- Tailwind
+- Supabase
+- Firebase
+- Prisma
+- GraphQL
+- Another backend framework
+- Another state-management library
+
+unless there is a documented technical reason.
+
+If Cursor believes a technology should be changed, it must explain:
+
+1. What should change
+2. Why it should change
+3. What problem it solves
+4. What additional complexity it introduces
+5. Why the current stack is insufficient
+6. What migration cost it creates
+
+No architectural drift without approval.
+
+---
+
+# 49. GitHub Is Part of the Development Process
+
+Everything meaningful built for this project must be committed to GitHub.
+
+GitHub is not just a backup.
+
+It is the source of truth for the codebase.
+
+## Recommended repository structure
+
+```text
+lashon-hara/
+├── frontend/
+├── backend/
+├── docs/
+├── .github/
+│   └── workflows/
+├── README.md
+├── .gitignore
+└── ...
+```
+
+The exact structure may be adjusted after the technical audit.
+
+---
+
+# 50. Git Workflow
+
+For normal development:
+
+```text
+Implement logical feature
+        ↓
+Test
+        ↓
+Review changes
+        ↓
+Commit
+        ↓
+Push to GitHub
+```
+
+For larger features:
+
+```text
+feature branch
+      ↓
+implementation
+      ↓
+commit
+      ↓
+push
+      ↓
+pull request
+      ↓
+review
+      ↓
+merge
+```
+
+If working alone, a simpler workflow is acceptable:
+
+```text
+feature → commit → push → main
+```
+
+The important requirement is that meaningful work is committed regularly.
+
+Do not build the entire redesign and create one massive commit at the end.
+
+---
+
+# 51. Git Commit Standards
+
+Use meaningful commit messages.
+
+Examples:
+
+```text
+feat: redesign homepage hero
+feat: add homepage action paths
+feat: implement commitment flow
+feat: add school landing page
+feat: add ambassador application
+feat: redesign ecommerce navigation
+feat: add product bundles
+
+fix: mobile navigation overflow
+fix: commitment form validation
+fix: product filtering
+
+refactor: extract reusable CTA component
+refactor: reorganize API services
+
+perf: optimize homepage images
+perf: reduce unnecessary API requests
+
+seo: preserve legacy URLs
+seo: add canonical metadata
+```
+
+Commits should represent logical changes.
+
+Avoid commits such as:
+
+```text
+stuff
+changes
+update
+final
+final2
+fix
+test
+```
+
+---
+
+# 52. Git Safety Rules
+
+Never commit:
+
+- API keys
+- Passwords
+- Database credentials
+- JWT secrets
+- Payment credentials
+- OAuth secrets
+- Private tokens
+- `.env` files
+- Customer private data
+- Temporary files
+- Build artifacts
+
+Use environment variables.
+
+Create an appropriate `.env.example` containing variable names but never real secrets.
+
+---
+
+# 53. Cursor Development Rules
+
+Cursor should work incrementally.
+
+### Before coding:
+
+1. Inspect the existing project.
+2. Understand the current architecture.
+3. Identify dependencies.
+4. Identify existing APIs.
+5. Identify existing routes.
+6. Identify existing database usage.
+7. Identify ecommerce infrastructure.
+8. Identify authentication.
+9. Identify payments.
+10. Identify shipping.
+11. Identify analytics.
+12. Identify SEO.
+13. Identify existing content.
+14. Identify business-critical functionality.
+15. Identify reusable assets.
+
+Only then should implementation begin.
+
+---
+
+# 54. Do Not Rewrite Everything
+
+The default assumption is:
+
+> Preserve existing functionality unless there is a reason to replace it.
+
+Do not blindly:
+
+- Delete the existing backend
+- Delete the database
+- Replace WooCommerce
+- Replace existing APIs
+- Delete existing pages
+- Delete existing content
+- Change every URL
+- Replace existing integrations
+
+The new frontend should be built around an understanding of the existing system.
+
+---
+
+# 55. Preserve Business-Critical Data
+
+Before any migration or destructive change, identify and protect:
+
+- Products
+- Product IDs
+- Orders
+- Customers
+- Inventory
+- Discounts
+- Payment configuration
+- Shipping configuration
+- Existing content
+- Images
+- SEO URLs
+- Analytics history
+
+Never perform destructive migrations without a backup and rollback strategy.
+
+---
+
+# 56. Cursor Task Execution Pattern
+
+Every major task should follow this pattern:
+
+```text
+1. Understand
+      ↓
+2. Plan
+      ↓
+3. Implement
+      ↓
+4. Test
+      ↓
+5. Review
+      ↓
+6. Commit
+      ↓
+7. Push
+```
+
+Do not mix multiple unrelated features into one change.
+
+For example, do not implement:
+
+```text
+Homepage
++
+Ecommerce
++
+Authentication
++
+SEO migration
++
+Database migration
+```
+
+in one uncontrolled change.
+
+Break them into logical tasks.
+
+---
+
+# 57. Reusable Component Rule
+
+Build reusable components instead of repeatedly creating slightly different versions.
+
+Examples:
+
+```text
+Button
+CTA
+Section
+Container
+Card
+Hero
+StoryCard
+ProductCard
+SchoolCard
+AmbassadorCard
+Statistic
+FormField
+Modal
+Toast
+LoadingState
+EmptyState
+ErrorState
+```
+
+If the same UI pattern appears multiple times, consider extracting it into a reusable component.
+
+Do not over-engineer components that are only used once.
+
+---
+
+# 58. State Management Rule
+
+Use the right tool for the right type of state.
+
+### TanStack Query
+
+Use for:
+
+- API data
+- Server state
+- Products
+- Stories
+- Schools
+- User data retrieved from backend
+- Cached requests
+
+### Zustand
+
+Use only for genuinely client-side global state such as:
+
+- UI preferences
+- Temporary client state
+- Certain cross-page interactions
+- Cart state only if the existing ecommerce architecture requires it
+
+Do not put all application state into Zustand.
+
+### React local state
+
+Use for:
+
+- Form UI
+- Toggles
+- Modals
+- Local interactions
+- Temporary component state
+
+---
+
+# 59. Forms & Validation
+
+Use:
+
+```text
+React Hook Form
+        +
+Zod
+```
+
+Client-side validation improves UX.
+
+Server-side validation is mandatory for security and correctness.
+
+Never trust frontend validation alone.
+
+Forms should have:
+
+- Loading states
+- Validation messages
+- Error states
+- Success states
+- Accessible labels
+- Keyboard support
+- Clear recovery paths
+
+---
+
+# 60. RTL Requirement
+
+The website is primarily Hebrew.
+
+RTL must be treated as a core architectural requirement.
+
+Do not build the application in LTR and attempt to fix RTL at the end.
+
+Test:
+
+- Navigation
+- Grids
+- Cards
+- Forms
+- Icons
+- Buttons
+- Tables
+- Product pages
+- Modals
+- Dropdowns
+- Carousels
+- Animations
+- Responsive layouts
+
+Support LTR as well if English is introduced later.
+
+---
+
+# 61. Analytics Rule
+
+Analytics must be implemented intentionally.
+
+Define event naming before implementation.
+
+Example:
+
+```text
+cta_hero_join_clicked
+cta_school_clicked
+commitment_started
+commitment_completed
+commitment_share_clicked
+ambassador_application_started
+ambassador_application_completed
+school_contact_started
+school_contact_completed
+product_viewed
+product_added_to_cart
+checkout_started
+purchase_completed
+donation_started
+donation_completed
+```
+
+Do not create dozens of meaningless events.
+
+Track actions that help answer business questions.
+
+---
+
+# 62. SEO Migration Rule
+
+Before changing URLs:
+
+1. Export existing URLs.
+2. Identify important pages.
+3. Identify indexed pages.
+4. Identify high-value pages.
+5. Map old URLs to new URLs.
+6. Implement 301 redirects.
+7. Verify canonical URLs.
+8. Verify sitemap.
+9. Verify robots.txt.
+10. Monitor Search Console after launch.
+
+Never launch a new URL structure without a migration plan.
+
+---
+
+# 63. Content Integrity Rule
+
+Cursor must never invent:
+
+- Testimonials
+- Organization statistics
+- Product information
+- Product prices
+- Shipping conditions
+- Program claims
+- Historical facts
+- User stories
+- Ambassador achievements
+- Organizational partnerships
+
+If content is missing, use a clear placeholder during development and flag it for the organization.
+
+Do not fabricate content simply to make a page appear finished.
+
+---
+
+# 64. Definition of Technical Done
+
+A feature is not complete because it renders correctly.
+
+A feature is complete when:
+
+- It works
+- It is responsive
+- It supports RTL
+- It has loading states
+- It has empty states where relevant
+- It has error states
+- It is accessible
+- It is typed correctly
+- It does not introduce unnecessary dependencies
+- It does not break existing functionality
+- Analytics are implemented where relevant
+- SEO is handled where relevant
+- It has been tested
+- The code is clean
+- The change is committed to GitHub
+
+---
+
+# 65. First Cursor Task
+
+**Do not start implementing the redesign immediately.**
+
+First perform a complete technical audit.
+
+The audit must include:
 
 ## Existing Stack
 
@@ -1674,8 +2337,6 @@ Before implementing the redesign, produce a technical audit containing:
 - Forms
 - External integrations
 
-
-
 ## Existing Pages
 
 List every route/page currently present.
@@ -1686,7 +2347,7 @@ List every functional feature.
 
 ## Existing Ecommerce
 
-List:
+Document:
 
 - Categories
 - Product count
@@ -1698,12 +2359,12 @@ List:
 - Customer accounts
 - Discounts
 - Bulk ordering
-
-
+- Inventory
+- Order management
 
 ## Existing Content
 
-List:
+Document:
 
 - Articles
 - Stories
@@ -1711,12 +2372,24 @@ List:
 - Campaigns
 - Ambassadors
 - Resources
+- Images
+- Videos
 
+## Existing SEO
 
+Document:
+
+- Current URLs
+- Metadata
+- Sitemap
+- robots.txt
+- Canonicals
+- Redirects
+- Important indexed pages
 
 ## Problems
 
-Rank discovered problems:
+Rank:
 
 ```text
 P0 = Critical
@@ -1725,11 +2398,9 @@ P2 = Medium
 P3 = Low
 ```
 
-
-
 ## Opportunities
 
-Rank opportunities by:
+Rank by:
 
 ```text
 Impact
@@ -1737,13 +2408,59 @@ Effort
 Confidence
 ```
 
-Then propose the implementation roadmap.
+## Preservation Plan
 
-Do not start by rewriting the entire project.
+Explicitly identify:
+
+- What should remain
+- What should be redesigned
+- What should be refactored
+- What should be migrated
+- What can be removed
+- What requires approval
+
+## Proposed Architecture
+
+After the audit, propose the implementation architecture using the approved baseline stack.
+
+If a change is recommended, explain why before implementing it.
 
 ---
 
+# 66. Final Cursor Principle
 
+When making architectural decisions, follow this order:
+
+```text
+UNDERSTAND
+    ↓
+PRESERVE
+    ↓
+IMPROVE
+    ↓
+MEASURE
+    ↓
+OPTIMIZE
+    ↓
+REPLACE ONLY WHEN JUSTIFIED
+```
+
+The existing website contains years of:
+
+- Data
+- SEO equity
+- Business logic
+- Products
+- Customers
+- Integrations
+- Content
+- Organizational knowledge
+
+The goal is not to throw that away.
+
+The goal is to build a significantly better digital product on top of what already works.
+
+**Preserve first. Understand second. Improve third. Replace last.**
 
 # 45. Definition of Done
 
