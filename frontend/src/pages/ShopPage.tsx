@@ -1,29 +1,31 @@
-import { Button, Grid, Pagination, Stack, Typography } from "@mui/material";
+import { Box, Button, Chip, Grid, Pagination, Stack, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { useSearchParams, Link as RouterLink } from "react-router-dom";
-import { ProductCard } from "../components/ProductCard";
+import { useEffect } from "react";
+import { Link as RouterLink, useSearchParams } from "react-router-dom";
+import { Band } from "../components/Band";
+import { ProductGrid } from "../components/ProductGrid";
 import { EmptyState, ErrorState, LoadingState } from "../components/States";
+import { UseCaseCard } from "../components/UseCaseCard";
 import { PageHeader, Section } from "../components/Section";
-import { BUNDLE_PRODUCT_IDS } from "../lib/bundles";
-import { fetchProducts } from "../lib/catalog";
-import { SITE } from "../lib/site";
 import { useLocale } from "../i18n/useLocale";
+import { BUNDLE_PRODUCT_IDS } from "../lib/bundles";
+import { fetchPopularProducts, fetchProducts, fetchProductsByIds } from "../lib/catalog";
+import { MEDIA } from "../lib/media";
+import { SHOP_CATEGORY_CHIPS, SHOP_COPY, SHOP_USE_CASES } from "../lib/shop";
+import { SCHOOLS_PRODUCT_ID } from "../lib/site";
 
-const useCases = [
-  { label: "לבית הספר", category: "26" },
-  { label: "למשרד", category: "24" },
-  { label: "צמידי סיליקון", category: "20" },
-  { label: "חולצות ופריטי לבוש", category: "146" },
-  { label: "מוצרים מיוחדים", category: "23" },
-  { label: "מדבקות וסטיקרים", category: "18" },
-];
-
-export function ShopPage() {
-  const { loc } = useLocale();
-  const [params, setParams] = useSearchParams();
-  const page = Number(params.get("page") ?? "1");
-  const category = params.get("category") ?? "";
-
+function CatalogSection({
+  page,
+  category,
+  params,
+  setParams,
+}: {
+  page: number;
+  category: string;
+  params: URLSearchParams;
+  setParams: (p: URLSearchParams) => void;
+}) {
+  const { lang } = useLocale();
   const query = useQuery({
     queryKey: ["products", page, category],
     queryFn: () => {
@@ -33,79 +35,46 @@ export function ShopPage() {
     },
   });
 
-  const bundles = useQuery({
-    queryKey: ["bundles"],
-    queryFn: () => fetchProducts(`include=${BUNDLE_PRODUCT_IDS.join(",")}&per_page=20`),
-  });
+  const activeUseCase = SHOP_USE_CASES.find((u) => u.kind === "category" && u.category === category);
+  const title = category
+    ? activeUseCase?.label[lang] ?? SHOP_COPY.allProducts[lang]
+    : SHOP_COPY.allProducts[lang];
 
   return (
-    <>
-      <PageHeader title="חנות">
-        <Typography sx={{ mt: 2, maxWidth: 640 }}>
-          ברוכים הבאים לאתר המכירות של מוצרי &quot;לשון הרע לא מדבר אלי&quot;. המכירות מאפשרות להמשיך ולחלק מוצרים בחינם לבתי ספר ומוסדות חינוך.
+    <Section wide muted={!category}>
+      <Stack direction={{ xs: "column", sm: "row" }} sx={{ justifyContent: "space-between", alignItems: { sm: "center" }, mb: 2, gap: 1 }}>
+        <Typography variant="h2" sx={{ fontSize: { xs: "1.4rem", md: "1.75rem" } }}>
+          {title}
         </Typography>
-      </PageHeader>
-      <Section wide>
-        <Typography variant="h3" gutterBottom>
-          למה אתם צריכים את זה?
-        </Typography>
-        <Grid container spacing={1} sx={{ mb: 3 }}>
-          {useCases.map((uc) => (
-            <Grid key={uc.category}>
-              <Button
-                variant={category === uc.category ? "contained" : "outlined"}
-                onClick={() => setParams({ category: uc.category, page: "1" })}
-              >
-                {uc.label}
-              </Button>
-            </Grid>
-          ))}
-          {category && (
-            <Grid>
-              <Button onClick={() => setParams({})}>הכול</Button>
-            </Grid>
-          )}
-        </Grid>
-
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ mb: 3 }}>
-          <Button component={RouterLink} to={loc("/organizations")} variant="outlined">
-            הזמנה לקבוצה / סיטונאות
+        {category && (
+          <Button size="small" onClick={() => setParams(new URLSearchParams())}>
+            {SHOP_COPY.clearFilter[lang]}
           </Button>
-          <Button href={`${SITE.wcOrigin}/cart/`} variant="outlined">
-            לסל הקיים
-          </Button>
-        </Stack>
-
-        {bundles.data && bundles.data.items.length > 0 && (
-          <>
-            <Typography variant="h3" sx={{ mb: 2 }}>
-              סטים מהקטלוג הקיים
-            </Typography>
-            <Typography color="text.secondary" sx={{ mb: 2 }}>
-              אלה מוצרים שכבר נמכרים כסט ב-WooCommerce. לא הורכבו חבילות חדשות עם מחירים מומצאים.
-            </Typography>
-            <Grid container spacing={2} sx={{ mb: 4 }}>
-              {bundles.data.items.map((p) => (
-                <Grid key={p.id} size={{ xs: 12, sm: 6, md: 4 }}>
-                  <ProductCard product={p} />
-                </Grid>
-              ))}
-            </Grid>
-          </>
         )}
+      </Stack>
 
-        {query.isLoading && <LoadingState />}
-        {query.isError && <ErrorState message="לא ניתן לטעון את הקטלוג כרגע." onRetry={() => void query.refetch()} />}
-        {query.data && query.data.items.length === 0 && <EmptyState>אין מוצרים בתצוגה הזו.</EmptyState>}
-        {query.data && query.data.items.length > 0 && (
-          <>
-            <Grid container spacing={2}>
-              {query.data.items.map((p) => (
-                <Grid key={p.id} size={{ xs: 12, sm: 6, md: 3 }}>
-                  <ProductCard product={p} />
-                </Grid>
-              ))}
-            </Grid>
+      <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: "wrap", gap: 1, mb: 3 }}>
+        {SHOP_CATEGORY_CHIPS.map((chip) => (
+          <Chip
+            key={chip.category}
+            label={chip.label[lang]}
+            clickable
+            color={category === chip.category ? "primary" : "default"}
+            variant={category === chip.category ? "filled" : "outlined"}
+            onClick={() => setParams(new URLSearchParams({ category: chip.category, page: "1" }))}
+          />
+        ))}
+      </Stack>
+
+      {query.isLoading && <LoadingState />}
+      {query.isError && (
+        <ErrorState message="לא ניתן לטעון את הקטלוג כרגע." onRetry={() => void query.refetch()} />
+      )}
+      {query.data && query.data.items.length === 0 && <EmptyState>אין מוצרים בתצוגה הזו.</EmptyState>}
+      {query.data && query.data.items.length > 0 && (
+        <>
+          <ProductGrid products={query.data.items} />
+          {query.data.totalPages > 1 && (
             <Stack sx={{ mt: 4, alignItems: "center" }}>
               <Pagination
                 count={query.data.totalPages}
@@ -117,17 +86,128 @@ export function ShopPage() {
                 }}
                 color="primary"
               />
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                {query.data.total} מוצרים בקטלוג WooCommerce
+            </Stack>
+          )}
+        </>
+      )}
+    </Section>
+  );
+}
+
+export function ShopPage() {
+  const [params, setParams] = useSearchParams();
+  const { loc, lang, t } = useLocale();
+  const page = Number(params.get("page") ?? "1");
+  const category = params.get("category") ?? "";
+  const isFiltered = Boolean(category);
+
+  const popularQuery = useQuery({
+    queryKey: ["products", "popular"],
+    queryFn: () => fetchPopularProducts(8),
+    enabled: !isFiltered,
+  });
+
+  const bundlesQuery = useQuery({
+    queryKey: ["products", "bundles", BUNDLE_PRODUCT_IDS],
+    queryFn: () => fetchProductsByIds([...BUNDLE_PRODUCT_IDS]),
+    enabled: !isFiltered,
+  });
+
+  useEffect(() => {
+    if (window.location.hash !== "#bundles") return;
+    const scroll = () => document.getElementById("bundles")?.scrollIntoView({ behavior: "smooth" });
+    scroll();
+    if (bundlesQuery.isLoading) {
+      const id = window.setTimeout(scroll, 400);
+      return () => window.clearTimeout(id);
+    }
+  }, [bundlesQuery.isLoading, bundlesQuery.data]);
+
+  return (
+    <>
+      <PageHeader title={t("navShop")} image={MEDIA.fabric} imageAlt="צמידי בד עם המשפט">
+        <Typography sx={{ mt: 2, maxWidth: 640 }}>
+          {lang === "en"
+            ? 'Welcome to the shop for "Lashon Hara Lo Medaber Elai" products. Sales help us keep distributing products free to schools.'
+            : 'ברוכים הבאים לאתר המכירות של מוצרי "לשון הרע לא מדבר אלי". המכירות מאפשרות להמשיך ולחלק מוצרים בחינם לבתי ספר ומוסדות חינוך.'}
+        </Typography>
+      </PageHeader>
+
+      {!isFiltered && (
+        <>
+          <Section wide>
+            <Typography variant="h2" sx={{ fontSize: { xs: "1.4rem", md: "1.75rem" }, mb: 3 }}>
+              {SHOP_COPY.whyNeed[lang]}
+            </Typography>
+            <Grid container spacing={2}>
+              {SHOP_USE_CASES.map((uc) => (
+                <Grid key={uc.kind === "category" ? uc.category : uc.kind === "link" ? uc.to : uc.anchor} size={{ xs: 12, sm: 6, md: 4 }}>
+                  <UseCaseCard item={uc} />
+                </Grid>
+              ))}
+            </Grid>
+            <Stack
+              direction="row"
+              spacing={2}
+              useFlexGap
+              sx={{ flexWrap: "wrap", gap: 1.5, mt: 3, pt: 2, borderTop: "1px solid", borderColor: "divider" }}
+            >
+              <Typography component={RouterLink} to={loc("/wholesale")} color="text.secondary" sx={{ fontWeight: 600, fontSize: 14 }}>
+                {t("navWholesale")}
+              </Typography>
+              <Typography color="text.disabled">·</Typography>
+              <Typography component={RouterLink} to={loc("/request-a-quote")} color="text.secondary" sx={{ fontWeight: 600, fontSize: 14 }}>
+                {t("navQuote")}
+              </Typography>
+              <Typography color="text.disabled">·</Typography>
+              <Typography component={RouterLink} to={loc("/custom")} color="text.secondary" sx={{ fontWeight: 600, fontSize: 14 }}>
+                {t("navCustom")}
+              </Typography>
+              <Typography color="text.disabled">·</Typography>
+              <Typography
+                component={RouterLink}
+                to={loc(`/shop/product/${SCHOOLS_PRODUCT_ID}`)}
+                color="text.secondary"
+                sx={{ fontWeight: 600, fontSize: 14 }}
+              >
+                {t("navSchoolBracelets")}
               </Typography>
             </Stack>
-          </>
-        )}
+          </Section>
 
-        <Button href={`${SITE.wcOrigin}/shop/`} sx={{ mt: 4, px: 0 }}>
-          לחנות המלאה באתר הקיים (קופה ומשלוחים)
-        </Button>
-      </Section>
+          <Band tone="dark">
+            <Typography variant="h2" sx={{ fontSize: { xs: "1.35rem", md: "1.75rem" } }}>
+              {SHOP_COPY.mission[lang]}
+            </Typography>
+          </Band>
+
+          {(popularQuery.isLoading || (popularQuery.data && popularQuery.data.items.length > 0)) && (
+            <Section wide>
+              <Typography variant="h2" sx={{ fontSize: { xs: "1.4rem", md: "1.75rem" }, mb: 3 }}>
+                {SHOP_COPY.bestSellers[lang]}
+              </Typography>
+              {popularQuery.isLoading && <LoadingState />}
+              {popularQuery.data && popularQuery.data.items.length > 0 && (
+                <ProductGrid products={popularQuery.data.items} />
+              )}
+            </Section>
+          )}
+
+          <Box id="bundles">
+            <Section wide muted>
+              <Typography variant="h2" sx={{ fontSize: { xs: "1.4rem", md: "1.75rem" }, mb: 3 }}>
+                {SHOP_COPY.bundles[lang]}
+              </Typography>
+              {bundlesQuery.isLoading && <LoadingState />}
+              {bundlesQuery.data && bundlesQuery.data.items.length > 0 && (
+                <ProductGrid products={bundlesQuery.data.items} />
+              )}
+            </Section>
+          </Box>
+        </>
+      )}
+
+      <CatalogSection page={page} category={category} params={params} setParams={setParams} />
     </>
   );
 }
