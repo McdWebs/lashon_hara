@@ -1,7 +1,26 @@
+function resolveSiteUrl(): string {
+  const raw = import.meta.env.VITE_SITE_URL;
+  const fromEnv = typeof raw === "string" ? raw.trim().replace(/\/$/, "") : "";
+  if (fromEnv && /^https?:\/\//i.test(fromEnv)) {
+    return fromEnv;
+  }
+
+  if (typeof window !== "undefined") {
+    const { origin, protocol, hostname } = window.location;
+    if (protocol.startsWith("http") && hostname) {
+      return origin.replace(/\/$/, "");
+    }
+  }
+
+  return "https://lashonhara.co.il";
+}
+
 export const SITE = {
   name: "לשון הרע לא מדבר אליי",
   logoSrc: "/lh-logo.png",
-  siteUrl: (import.meta.env.VITE_SITE_URL ?? "https://lashonhara.co.il").replace(/\/$/, ""),
+  get siteUrl() {
+    return resolveSiteUrl();
+  },
   apiUrl: import.meta.env.VITE_API_URL ?? "",
   whatsapp: import.meta.env.VITE_WHATSAPP_NUMBER ?? "972543644512",
   supportHours: "09:00–18:00, שישה ימים בשבוע",
@@ -15,7 +34,7 @@ export const FEATURES = {
 } as const;
 
 export function joinCommitmentUrl() {
-  return `${SITE.siteUrl}/join/commitment`;
+  return `${resolveSiteUrl()}/join/commitment`;
 }
 
 export const SHARE_INVITE =

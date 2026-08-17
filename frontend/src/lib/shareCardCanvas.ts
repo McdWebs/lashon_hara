@@ -12,6 +12,15 @@ type DrawOptions = {
   format: ShareCardFormat;
 };
 
+function joinUrlLabel(url: string) {
+  try {
+    const { host, pathname } = new URL(url);
+    return `${host}${pathname}`;
+  } catch {
+    return url.replace(/^https?:\/\//, "");
+  }
+}
+
 function drawBars(ctx: CanvasRenderingContext2D, w: number, h: number, barH: number) {
   ctx.fillStyle = RED;
   ctx.fillRect(0, 0, w, barH);
@@ -151,7 +160,7 @@ export async function drawShareCard(canvas: HTMLCanvasElement, options: DrawOpti
 
     ctx.fillStyle = "rgba(255,255,255,0.75)";
     ctx.font = "400 28px Heebo, Arial, sans-serif";
-    ctx.fillText("lashonhara.co.il/join", w / 2, qrY + qrSize + 48);
+    ctx.fillText(joinUrlLabel(joinUrl), w / 2, qrY + qrSize + 48);
   } else {
     ctx.fillStyle = "#ffffff";
     ctx.font = "600 36px Heebo, Arial, sans-serif";
