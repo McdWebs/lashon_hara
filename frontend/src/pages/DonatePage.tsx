@@ -165,10 +165,16 @@ function DonateForm() {
         </Typography>
       </Box>
       <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
-        <Stack
-          direction="row"
-          spacing={1}
-          sx={{ mb: 2.5, flexWrap: "wrap", gap: 1 }}
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr 1fr",
+              sm: "repeat(5, minmax(0, 1fr))",
+            },
+            gap: 1,
+            mb: 2.5,
+          }}
         >
           {PRESET_AMOUNTS.map((amount) => (
             <Button
@@ -178,7 +184,14 @@ function DonateForm() {
                 setPreset(amount);
                 setCustomAmount("");
               }}
-              sx={{ minWidth: 72, px: 2 }}
+              sx={{
+                minWidth: 0,
+                width: "100%",
+                py: { xs: 1.75, sm: 1.1 },
+                fontSize: { xs: "1.1rem", sm: "0.9375rem" },
+                fontWeight: 700,
+                borderRadius: 2,
+              }}
             >
               ₪{amount}
             </Button>
@@ -186,11 +199,17 @@ function DonateForm() {
           <Button
             variant={preset === "custom" ? "contained" : "outlined"}
             onClick={() => setPreset("custom")}
-            sx={{ px: 2 }}
+            sx={{
+              gridColumn: { xs: "1 / -1", sm: "auto" },
+              width: "100%",
+              py: { xs: 1.5, sm: 1.1 },
+              fontWeight: 600,
+              borderRadius: 2,
+            }}
           >
             סכום אחר
           </Button>
-        </Stack>
+        </Box>
 
         {preset === "custom" && (
           <TextField
@@ -388,8 +407,7 @@ export function DonatePage() {
                 severity="info"
                 sx={{ "& .MuiAlert-message": { lineHeight: 1.65 } }}
               >
-                העמותה רשומה כעמותה לפי דין. לבקשת קבלה — ציינו בטופס או
-                ב-WhatsApp.
+                העמותה רשומה כעמותה לפי דין.
               </Alert>
             </Stack>
           </Grid>
