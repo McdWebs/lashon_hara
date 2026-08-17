@@ -8,9 +8,10 @@ import { Box, Button, Card, CardActionArea, CardContent, Link, Stack, Typography
 import type { SvgIconComponent } from "@mui/icons-material";
 import { Link as RouterLink } from "react-router-dom";
 import { Band } from "../components/Band";
+import { ImageCarousel } from "../components/ImageCarousel";
 import { useLocale } from "../i18n/useLocale";
 import { track, type AnalyticsEvent } from "../lib/analytics";
-import { MEDIA } from "../lib/media";
+import { MEDIA, SHOP_SHOWCASE } from "../lib/media";
 
 type PathItem = {
   to: string;
@@ -166,6 +167,7 @@ export function HomePage() {
               component={RouterLink}
               to={loc("/join/commitment")}
               onClick={() => track("cta_hero_join_clicked")}
+              sx={{ width: { xs: "100%", sm: "auto" } }}
             >
               {t("ctaJoin")}
             </Button>
@@ -175,7 +177,11 @@ export function HomePage() {
               onClick={() => track("cta_school_clicked")}
               underline="always"
               color="inherit"
-              sx={{ fontWeight: 600 }}
+              sx={{
+                fontWeight: 600,
+                alignSelf: { xs: "center", sm: "auto" },
+                textAlign: { xs: "center", sm: "inherit" },
+              }}
             >
               {t("ctaSchool")}
             </Link>
@@ -251,45 +257,57 @@ export function HomePage() {
             <PathCard key={p.to} item={p} lang={lang} loc={loc} />
           ))}
         </Box>
-        <Typography sx={{ mt: 3, color: "text.secondary", fontSize: "0.95rem" }}>
-          {lang === "en" ? "Not sure where to start? " : "לא בטוחים מאיפה להתחיל? "}
-          <Link component={RouterLink} to={loc("/message")} sx={{ fontWeight: 600 }}>
-            {lang === "en" ? "Read the message" : "קראו את המסר"}
-          </Link>
-          {" · "}
-          <Link component={RouterLink} to={loc("/message/quiz")} sx={{ fontWeight: 600 }}>
-            {lang === "en" ? "Try the quiz" : "נסו את התרגול"}
-          </Link>
+        <Typography component="div" sx={{ mt: 3, color: "text.secondary", fontSize: "0.95rem" }}>
+          <Box component="span" sx={{ display: { xs: "block", sm: "inline" } }}>
+            {lang === "en" ? "Not sure where to start?" : "לא בטוחים מאיפה להתחיל?"}
+          </Box>
+          <Box component="span" sx={{ display: { xs: "block", sm: "inline" }, mt: { xs: 0.5, sm: 0 } }}>
+            <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+              {" "}
+            </Box>
+            <Link component={RouterLink} to={loc("/message")} sx={{ fontWeight: 600 }}>
+              {lang === "en" ? "Read the message" : "קראו את המסר"}
+            </Link>
+            {" · "}
+            <Link component={RouterLink} to={loc("/message/quiz")} sx={{ fontWeight: 600 }}>
+              {lang === "en" ? "Try the quiz" : "נסו את התרגול"}
+            </Link>
+          </Box>
         </Typography>
       </Band>
 
       <Band tone="dark">
+        <Box sx={{ display: { xs: "block", sm: "none" }, mb: 4 }}>
+          <ImageCarousel
+            slides={SHOP_SHOWCASE.map((item) => ({
+              src: item.src,
+              alt: item.alt[lang],
+            }))}
+          />
+        </Box>
         <Box
           sx={{
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+            display: { xs: "none", sm: "grid" },
+            gridTemplateColumns: "1fr 1fr",
             gap: 2,
             mb: 4,
           }}
         >
-          <Box
-            component="img"
-            src={MEDIA.fabric}
-            alt={lang === "en" ? "Fabric bracelets with the slogan" : "צמידי בד עם המשפט"}
-            sx={{ width: "100%", height: 240, objectFit: "cover" }}
-          />
-          <Box
-            component="img"
-            src={MEDIA.neckWarmer}
-            alt={lang === "en" ? "Neck warmer with the slogan" : "חם צוואר עם המשפט"}
-            sx={{ width: "100%", height: 240, objectFit: "cover" }}
-          />
+          {SHOP_SHOWCASE.map((item) => (
+            <Box
+              key={item.src}
+              component="img"
+              src={item.src}
+              alt={item.alt[lang]}
+              sx={{ width: "100%", height: 240, objectFit: "cover" }}
+            />
+          ))}
         </Box>
         <Typography variant="h2">
           {lang === "en" ? "The shop funds free distributions to schools." : "החנות מממנת חלוקה חינם לבתי ספר."}
         </Typography>
         <Button component={RouterLink} to={loc("/shop")} variant="contained" sx={{ mt: 3 }} onClick={() => track("cta_shop_clicked")}>
-          {t("navShop")}
+          {t("ctaShop")}
         </Button>
       </Band>
 
