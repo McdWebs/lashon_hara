@@ -1,10 +1,10 @@
-import { Alert, Button, Checkbox, FormControlLabel, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Checkbox, FormControlLabel, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import { LoadingButton } from "../components/States";
 import { ShareCard } from "../components/ShareCard";
 import { PageHeader, Section } from "../components/Section";
 import { track } from "../lib/analytics";
 import { submitForm } from "../lib/forms";
-import { MEDIA } from "../lib/media";
 
 const oath = [
   "אני מתחייב/ת בזאת להימנע מהפצת לשון הרע ודברי רכילות.",
@@ -38,7 +38,7 @@ export function CommitmentPage() {
 
   return (
     <>
-      <PageHeader title="השינוי מתחיל בי" image={MEDIA.hoodie} imageAlt="קפוצ׳ון עם המשפט" />
+      <PageHeader title="השינוי מתחיל בי" />
       <Section>
         {oath.map((line) => (
           <Typography key={line} sx={{ mb: 2 }}>
@@ -64,9 +64,9 @@ export function CommitmentPage() {
               label="אני מאשר/ת קבלת מידע ודיוורים מהעמותה. מטרת ההרשמה היא שמירה על קשר, תזכורת ההתחייבות והפצת פעילות העמותה, ללא תשלום."
               sx={{ alignItems: "flex-start", "& .MuiFormControlLabel-label": { fontSize: "0.8rem", lineHeight: 1.5, color: "text.secondary" } }}
             />
-            <Button type="submit" variant="contained" disabled={status === "loading"}>
+            <LoadingButton type="submit" variant="contained" loading={status === "loading"}>
               קבלו את התחייבותי
-            </Button>
+            </LoadingButton>
           </Stack>
         )}
       </Section>

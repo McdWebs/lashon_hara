@@ -2,6 +2,7 @@ import { Alert, Button, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { PageHeader, Section } from "../components/Section";
+import { LoadingButton } from "../components/States";
 import { useLocale } from "../i18n/useLocale";
 import { submitForm } from "../lib/forms";
 
@@ -11,7 +12,7 @@ const copy: Record<OrgVariant, { title: string; intro: string }> = {
   default: {
     title: "הזמנה לקבוצה / בית ספר / ארגון",
     intro:
-      "הזמנות לקבוצות, סיטונאות ומוצרים בהדפסה אישית — לא דרך הקופה הרגילה. מלאו את הטופס ונחזור עם הצעת מחיר.",
+      "הזמנות לקבוצות, סיטונאות ומוצרים בהדפסה אישית. מלאו את הטופס ונחזור עם הצעת מחיר.",
   },
   wholesale: {
     title: "סיטונאות",
@@ -97,9 +98,9 @@ export function OrganizationsPage({ variant = "default" }: { variant?: OrgVarian
             <TextField required name="email" type="email" label="אימייל" />
             <TextField name="products" label="אילו מוצרים / כמויות" multiline minRows={3} />
             <TextField name="logo" label="קישור ללוגו (אם יש התאמה אישית)" />
-            <Button type="submit" variant="contained" disabled={status === "loading"}>
+            <LoadingButton type="submit" variant="contained" loading={status === "loading"}>
               שליחת בקשה
-            </Button>
+            </LoadingButton>
           </Stack>
         )}
       </Section>

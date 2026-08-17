@@ -1,28 +1,105 @@
-import { Box, Button, Link, Stack, Typography } from "@mui/material";
+import HowToRegOutlinedIcon from "@mui/icons-material/HowToRegOutlined";
+import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
+import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
+import VolunteerActivismOutlinedIcon from "@mui/icons-material/VolunteerActivismOutlined";
+import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
+import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
+import { Box, Button, Card, CardActionArea, CardContent, Link, Stack, Typography } from "@mui/material";
+import type { SvgIconComponent } from "@mui/icons-material";
 import { Link as RouterLink } from "react-router-dom";
 import { Band } from "../components/Band";
 import { useLocale } from "../i18n/useLocale";
-import { track } from "../lib/analytics";
+import { track, type AnalyticsEvent } from "../lib/analytics";
 import { MEDIA } from "../lib/media";
+
+type PathItem = {
+  to: string;
+  icon: SvgIconComponent;
+  title: { he: string; en: string };
+  body: { he: string; en: string };
+  trackEvent?: AnalyticsEvent;
+  featured?: boolean;
+};
+
+function PathCard({ item, lang, loc }: { item: PathItem; lang: "he" | "en"; loc: (path: string) => string }) {
+  const Icon = item.icon;
+
+  return (
+    <Card
+      variant="outlined"
+      sx={{
+        height: "100%",
+        borderColor: item.featured ? "primary.main" : "divider",
+        borderWidth: item.featured ? 2 : 1,
+        bgcolor: item.featured ? "rgba(237, 27, 36, 0.04)" : "background.paper",
+        transition: "border-color 0.15s ease, transform 0.15s ease",
+        "&:hover": { transform: "translateY(-2px)" },
+      }}
+    >
+      <CardActionArea
+        component={RouterLink}
+        to={loc(item.to)}
+        onClick={() => item.trackEvent && track(item.trackEvent)}
+        sx={{ height: "100%", alignItems: "flex-start", p: 0 }}
+      >
+        <CardContent sx={{ width: "100%", p: { xs: 2.5, md: 3 } }}>
+          <Icon sx={{ fontSize: 36, color: "primary.main", mb: 1.5 }} aria-hidden />
+          <Typography variant="h3" sx={{ fontSize: { xs: "1.05rem", md: "1.1rem" }, lineHeight: 1.35 }}>
+            {item.title[lang]}
+          </Typography>
+          <Typography color="text.secondary" sx={{ mt: 0.75, fontSize: "0.92rem", lineHeight: 1.6 }}>
+            {item.body[lang]}
+          </Typography>
+          <Stack direction="row" spacing={0.5} sx={{ mt: 2, alignItems: "center", color: "primary.main" }}>
+            <Typography sx={{ fontWeight: 700, fontSize: "0.9rem" }}>
+              {lang === "en" ? "Continue" : "המשך"}
+            </Typography>
+            <ArrowBackOutlinedIcon sx={{ fontSize: 16, transform: lang === "en" ? "rotate(180deg)" : "none" }} />
+          </Stack>
+        </CardContent>
+      </CardActionArea>
+    </Card>
+  );
+}
 
 export function HomePage() {
   const { loc, t, lang } = useLocale();
 
-  const paths = [
+  const paths: PathItem[] = [
     {
       to: "/join/commitment",
-      title: lang === "en" ? "Take the commitment" : "השינוי מתחיל בי",
-      body: lang === "en" ? "A personal oath. Then share it." : "התחייבות אישית. אחר כך משתפים.",
+      icon: HowToRegOutlinedIcon,
+      title: { he: "אני רוצה להצטרף", en: "I want to join" },
+      body: { he: "התחייבות אישית — ואז משתפים את המסר.", en: "A personal oath. Then share it." },
+      trackEvent: "cta_hero_join_clicked",
+      featured: true,
     },
     {
       to: "/schools",
-      title: lang === "en" ? "Bring it to school" : "לבית הספר",
-      body: lang === "en" ? "Workshops and classroom materials." : "סדנאות וחלוקה לכיתות.",
+      icon: SchoolOutlinedIcon,
+      title: { he: "אני רוצה להביא את זה לבית הספר", en: "Bring it to school" },
+      body: { he: "סדנאות, חלוקה לכיתות וחומרים חינוכיים.", en: "Workshops, classroom distribution, and materials." },
+      trackEvent: "cta_school_clicked",
+    },
+    {
+      to: "/join/ambassadors",
+      icon: GroupsOutlinedIcon,
+      title: { he: "אני רוצה להיות שגריר/ה", en: "Become an ambassador" },
+      body: { he: "להפיץ את המסר בקהילה, בכיתה או ברשת.", en: "Spread the message in your community, class, or online." },
+    },
+    {
+      to: "/donate",
+      icon: VolunteerActivismOutlinedIcon,
+      title: { he: "אני רוצה לעזור", en: "I want to help" },
+      body: { he: "תרומה שמחזקת חינוך וחלוקה חינם לבתי ספר.", en: "Donations that fund education and free school distributions." },
+      trackEvent: "cta_donate_clicked",
     },
     {
       to: "/shop",
-      title: lang === "en" ? "Wear the sentence" : "ללבוש את המשפט",
-      body: lang === "en" ? "Bracelets and stickers from the real catalog." : "צמידים ומדבקות מהקטלוג הקיים.",
+      icon: StorefrontOutlinedIcon,
+      title: { he: "אני רוצה להפיץ את המסר", en: "Spread the message" },
+      body: { he: "צמידים, מדבקות ומוצרים מהקטלוג — והכנסות לחלוקה.", en: "Bracelets, stickers, and catalog products that fund distributions." },
+      trackEvent: "cta_shop_clicked",
     },
   ];
 
@@ -154,39 +231,36 @@ export function HomePage() {
       </Box>
 
       <Band tone="paper">
-        <Typography variant="h2" sx={{ mb: 3 }}>
-          {lang === "en" ? "If this is you" : "אם זה מדבר אליכם"}
+        <Box sx={{ width: 48, height: 3, bgcolor: "primary.main", mb: 2.5 }} />
+        <Typography variant="h2" sx={{ mb: 1, maxWidth: 720 }}>
+          {lang === "en" ? "Change starts with one word." : "שינוי מתחיל במילה אחת."}
         </Typography>
-        <Stack spacing={3} sx={{ maxWidth: 640 }}>
-          {paths.map((p, i) => (
-            <Box key={p.to} sx={{ borderTop: "1px solid", borderColor: "divider", pt: 2 }}>
-              <Typography variant="h3">{p.title}</Typography>
-              <Typography color="text.secondary" sx={{ mt: 0.5 }}>
-                {p.body}
-              </Typography>
-              <Button
-                component={RouterLink}
-                to={loc(p.to)}
-                variant={i === 0 ? "contained" : "text"}
-                sx={{ mt: 1, px: i === 0 ? 2 : 0 }}
-                onClick={() => {
-                  if (p.to === "/join/commitment") track("cta_hero_join_clicked");
-                  if (p.to === "/schools") track("cta_school_clicked");
-                  if (p.to === "/shop") track("cta_shop_clicked");
-                }}
-              >
-                {lang === "en" ? "Continue" : "המשך"}
-              </Button>
-            </Box>
+        <Typography color="text.secondary" sx={{ mb: { xs: 3, md: 4 }, maxWidth: 560, lineHeight: 1.75 }}>
+          {lang === "en"
+            ? "If this speaks to you — pick how you want to take part."
+            : "אם זה מדבר אליכם — בחרו איך להתחיל."}
+        </Typography>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", lg: "repeat(3, 1fr)" },
+            gap: 2,
+          }}
+        >
+          {paths.map((p) => (
+            <PathCard key={p.to} item={p} lang={lang} loc={loc} />
           ))}
-        </Stack>
-        <Link component={RouterLink} to={loc("/join/ambassadors")} sx={{ display: "inline-block", mt: 3 }} color="text.secondary">
-          {lang === "en" ? "Ambassador / volunteer" : "שגרירות והתנדבות"}
-        </Link>
-        {" · "}
-        <Link component={RouterLink} to={loc("/donate")} color="text.secondary" onClick={() => track("cta_donate_clicked")}>
-          {t("navDonate")}
-        </Link>
+        </Box>
+        <Typography sx={{ mt: 3, color: "text.secondary", fontSize: "0.95rem" }}>
+          {lang === "en" ? "Not sure where to start? " : "לא בטוחים מאיפה להתחיל? "}
+          <Link component={RouterLink} to={loc("/message")} sx={{ fontWeight: 600 }}>
+            {lang === "en" ? "Read the message" : "קראו את המסר"}
+          </Link>
+          {" · "}
+          <Link component={RouterLink} to={loc("/message/quiz")} sx={{ fontWeight: 600 }}>
+            {lang === "en" ? "Try the quiz" : "נסו את התרגול"}
+          </Link>
+        </Typography>
       </Band>
 
       <Band tone="dark">
