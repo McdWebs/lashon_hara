@@ -206,7 +206,7 @@ export function Header() {
 
         <Box
           sx={{
-            display: "flex",
+            display: overHero ? { xs: "none", md: "flex" } : "flex",
             flexShrink: 0,
             alignItems: "center",
             ...(overHero
@@ -214,7 +214,7 @@ export function Header() {
                   position: "absolute",
                   top: "50%",
                   transform: "translateY(-50%)",
-                  insetInlineEnd: { xs: 8, sm: 16 },
+                  insetInlineEnd: { sm: 16 },
                 }
               : {}),
           }}
