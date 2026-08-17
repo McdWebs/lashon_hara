@@ -39,77 +39,105 @@ function CartLineItem({
   onQuantityChange: (n: number) => void;
 }) {
   const { loc, lang } = useLocale();
+  const lineTotal = formatIls(lineTotalMinor(item), item.currencyMinorUnit);
 
   return (
     <Box
       sx={{
-        display: "grid",
-        gridTemplateColumns: {
-          xs: "72px 1fr",
-          sm: "96px 1fr auto",
-        },
-        gridTemplateRows: { xs: "auto auto", sm: "auto" },
-        gap: { xs: 1.5, sm: 2 },
-        alignItems: "center",
         p: { xs: 2, sm: 2.5 },
         borderBottom: "1px solid",
         borderColor: "divider",
         "&:last-child": { borderBottom: 0 },
       }}
     >
-      {item.image ? (
-        <Box
-          component={RouterLink}
-          to={loc(`/shop/product/${item.id}`)}
-          sx={{ gridRow: { xs: "1 / 3", sm: "auto" } }}
-        >
+      <Stack direction="row" spacing={{ xs: 1.5, sm: 2 }} sx={{ alignItems: "flex-start" }}>
+        {item.image ? (
           <Box
-            component="img"
-            src={item.image}
-            alt={item.name}
-            sx={{
-              width: { xs: 72, sm: 96 },
-              height: { xs: 72, sm: 96 },
-              objectFit: "cover",
-              borderRadius: 1.5,
-              display: "block",
-              bgcolor: "#eee",
-            }}
-          />
-        </Box>
-      ) : (
-        <Box sx={{ gridRow: { xs: "1 / 3", sm: "auto" } }} />
-      )}
+            component={RouterLink}
+            to={loc(`/shop/product/${item.id}`)}
+            sx={{ flexShrink: 0 }}
+          >
+            <Box
+              component="img"
+              src={item.image}
+              alt={item.name}
+              sx={{
+                width: { xs: 72, sm: 88 },
+                height: { xs: 72, sm: 88 },
+                objectFit: "cover",
+                borderRadius: 1.5,
+                display: "block",
+                bgcolor: "#eee",
+              }}
+            />
+          </Box>
+        ) : null}
 
-      <Box sx={{ minWidth: 0 }}>
-        <Typography
-          component={RouterLink}
-          to={loc(`/shop/product/${item.id}`)}
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Typography
+            component={RouterLink}
+            to={loc(`/shop/product/${item.id}`)}
+            sx={{
+              fontWeight: 700,
+              fontSize: { xs: "0.95rem", sm: "1rem" },
+              lineHeight: 1.35,
+              color: "text.primary",
+              textDecoration: "none",
+              wordBreak: "break-word",
+              "&:hover": { color: "primary.main" },
+            }}
+          >
+            {item.name}
+          </Typography>
+          <Typography color="text.secondary" sx={{ mt: 0.5, fontSize: "0.9rem" }}>
+            {formatIls(item.price, item.currencyMinorUnit)}
+            {item.quantity > 1 && lang === "en"
+              ? " each"
+              : item.quantity > 1
+                ? " ליחידה"
+                : ""}
+          </Typography>
+
+          <Stack
+            direction="row"
+            spacing={1.5}
+            sx={{
+              mt: 1.5,
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 1,
+              display: { xs: "flex", lg: "none" },
+            }}
+          >
+            <QuantityStepper
+              size="small"
+              value={item.quantity}
+              onChange={onQuantityChange}
+            />
+            <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
+              <Typography sx={{ fontWeight: 800, color: "primary.main", fontSize: "0.95rem" }}>
+                {lineTotal}
+              </Typography>
+              <IconButton
+                onClick={onRemove}
+                aria-label={lang === "en" ? "Remove item" : "הסר פריט"}
+                size="small"
+                sx={{ color: "text.secondary" }}
+              >
+                <CloseOutlinedIcon fontSize="small" />
+              </IconButton>
+            </Stack>
+          </Stack>
+        </Box>
+
+        <Stack
+          direction="row"
+          spacing={2}
           sx={{
-            fontWeight: 700,
-            fontSize: { xs: "0.95rem", sm: "1rem" },
-            lineHeight: 1.35,
-            color: "text.primary",
-            textDecoration: "none",
-            "&:hover": { color: "primary.main" },
-          }}
-        >
-          {item.name}
-        </Typography>
-        <Typography color="text.secondary" sx={{ mt: 0.5, fontSize: "0.9rem" }}>
-          {formatIls(item.price, item.currencyMinorUnit)}
-          {item.quantity > 1 && lang === "en"
-            ? " each"
-            : item.quantity > 1
-              ? " ליחידה"
-              : ""}
-        </Typography>
-        <Box
-          sx={{
-            mt: 1.5,
-            display: { xs: "flex", sm: "none" },
+            display: { xs: "none", lg: "flex" },
             alignItems: "center",
-            gap: 2,
+            flexShrink: 0,
           }}
         >
           <QuantityStepper
@@ -117,58 +145,19 @@ function CartLineItem({
             value={item.quantity}
             onChange={onQuantityChange}
           />
-          <Typography sx={{ fontWeight: 800, color: "primary.main" }}>
-            {formatIls(lineTotalMinor(item), item.currencyMinorUnit)}
+          <Typography sx={{ fontWeight: 800, minWidth: 96, textAlign: "end" }}>
+            {lineTotal}
           </Typography>
-        </Box>
-      </Box>
-
-      <Stack
-        direction="row"
-        spacing={2}
-        sx={{
-          alignItems: "center",
-          justifySelf: { sm: "end" },
-          gridColumn: { xs: "1 / -1", sm: "auto" },
-          pl: { xs: "calc(72px + 12px)", sm: 0 },
-          display: { xs: "none", sm: "flex" },
-        }}
-      >
-        <QuantityStepper
-          size="small"
-          value={item.quantity}
-          onChange={onQuantityChange}
-        />
-        <Typography sx={{ fontWeight: 800, minWidth: 88, textAlign: "end" }}>
-          {formatIls(lineTotalMinor(item), item.currencyMinorUnit)}
-        </Typography>
-        <IconButton
-          onClick={onRemove}
-          aria-label={lang === "en" ? "Remove item" : "הסר פריט"}
-          size="small"
-          sx={{ color: "text.secondary" }}
-        >
-          <CloseOutlinedIcon fontSize="small" />
-        </IconButton>
+          <IconButton
+            onClick={onRemove}
+            aria-label={lang === "en" ? "Remove item" : "הסר פריט"}
+            size="small"
+            sx={{ color: "text.secondary" }}
+          >
+            <CloseOutlinedIcon fontSize="small" />
+          </IconButton>
+        </Stack>
       </Stack>
-
-      <Box
-        sx={{
-          display: { xs: "flex", sm: "none" },
-          justifyContent: "flex-end",
-          gridColumn: "1 / -1",
-        }}
-      >
-        <Button
-          size="small"
-          color="inherit"
-          startIcon={<CloseOutlinedIcon />}
-          onClick={onRemove}
-          sx={{ color: "text.secondary", fontSize: "0.85rem" }}
-        >
-          {lang === "en" ? "Remove" : "הסר"}
-        </Button>
-      </Box>
     </Box>
   );
 }
@@ -191,8 +180,8 @@ function OrderSummary({
     <Card
       variant="outlined"
       sx={{
-        position: { md: "sticky" },
-        top: { md: 96 },
+        position: { lg: "sticky" },
+        top: { lg: 96 },
         borderRadius: 2,
         overflow: "hidden",
       }}
@@ -222,6 +211,7 @@ function OrderSummary({
                   lineHeight: 1.4,
                   flex: 1,
                   minWidth: 0,
+                  wordBreak: "break-word",
                 }}
               >
                 {item.name} × {item.quantity}
@@ -286,16 +276,17 @@ export function CartPage() {
   return (
     <>
       <Section wide>
+        <Box sx={{ pb: items.length > 0 ? { xs: 12, lg: 0 } : 0 }}>
         <Stack
           direction={{ xs: "column", sm: "row" }}
           sx={{
             justifyContent: "space-between",
-            alignItems: { sm: "flex-end" },
+            alignItems: { xs: "flex-start", sm: "flex-end" },
             mb: 3,
-            gap: 1,
+            gap: 1.5,
           }}
         >
-          <Box>
+          <Box sx={{ minWidth: 0 }}>
             <Typography
               variant="h1"
               sx={{
@@ -319,6 +310,7 @@ export function CartPage() {
               to={loc("/shop")}
               variant="text"
               size="small"
+              sx={{ alignSelf: { xs: "stretch", sm: "auto" } }}
             >
               {lang === "en" ? "Continue shopping" : "המשך קנייה"}
             </Button>
@@ -361,8 +353,8 @@ export function CartPage() {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 340px" },
-              gap: { xs: 3, md: 4 },
+              gridTemplateColumns: { xs: "1fr", lg: "1fr minmax(280px, 340px)" },
+              gap: { xs: 2.5, sm: 3, lg: 4 },
               alignItems: "start",
             }}
           >
@@ -387,6 +379,7 @@ export function CartPage() {
                 variant="contained"
                 fullWidth
                 size="large"
+                sx={{ display: { xs: "none", lg: "inline-flex" } }}
               >
                 {lang === "en" ? "Continue to checkout" : "להמשך לקופה"}
               </Button>
@@ -401,7 +394,49 @@ export function CartPage() {
             </OrderSummary>
           </Box>
         )}
+        </Box>
       </Section>
+
+      {items.length > 0 && (
+        <Box
+          sx={{
+            display: { xs: "block", lg: "none" },
+            position: "fixed",
+            insetInline: 0,
+            bottom: 0,
+            zIndex: (theme) => theme.zIndex.appBar - 1,
+            bgcolor: "background.paper",
+            borderTop: "1px solid",
+            borderColor: "divider",
+            boxShadow: "0 -4px 24px rgba(17,17,17,0.08)",
+            px: 2,
+            py: 1.5,
+            pb: "calc(12px + env(safe-area-inset-bottom, 0px))",
+          }}
+        >
+          <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Typography color="text.secondary" sx={{ fontSize: "0.85rem", lineHeight: 1.3 }}>
+                {lang === "en"
+                  ? `${itemCount} item${itemCount === 1 ? "" : "s"}`
+                  : `${itemCount} פריטים`}
+              </Typography>
+              <Typography sx={{ fontWeight: 800, fontSize: "1.15rem", color: "primary.main" }}>
+                {formatIls(totalMinor, unit)}
+              </Typography>
+            </Box>
+            <Button
+              component={RouterLink}
+              to={loc("/checkout")}
+              variant="contained"
+              size="large"
+              sx={{ flexShrink: 0, minWidth: { xs: 132, sm: 160 } }}
+            >
+              {lang === "en" ? "Checkout" : "לקופה"}
+            </Button>
+          </Stack>
+        </Box>
+      )}
     </>
   );
 }
