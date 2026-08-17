@@ -34,7 +34,22 @@ export type CatalogPage = {
   totalPages: number;
 };
 
-const base = "/api/catalog";
+const wcOrigin = (import.meta.env.VITE_WC_STORE_ORIGIN ?? "").replace(/\/$/, "");
+const useWcDirect = import.meta.env.PROD && Boolean(wcOrigin);
+const base = useWcDirect ? `${wcOrigin}/wp-json/wc/store/v1` : "/api/catalog";
+
+async function readCatalogPage(res: Response): Promise<CatalogPage> {
+  const data = await res.json();
+  if (useWcDirect) {
+    const items = data as WcProduct[];
+    return {
+      items,
+      total: Number(res.headers.get("x-wp-total") ?? items.length),
+      totalPages: Number(res.headers.get("x-wp-totalpages") ?? 1),
+    };
+  }
+  return data as CatalogPage;
+}
 
 function normalizeProduct(p: WcProduct): WcProduct {
   return {
@@ -62,7 +77,7 @@ function normalizePage(page: CatalogPage): CatalogPage {
 export async function fetchProducts(search: string): Promise<CatalogPage> {
   const res = await fetch(`${base}/products?${search}`);
   if (!res.ok) throw new Error("catalog_unavailable");
-  return normalizePage((await res.json()) as CatalogPage);
+  return normalizePage(await readCatalogPage(res));
 }
 
 export async function fetchProduct(id: string): Promise<WcProduct> {
@@ -81,7 +96,7 @@ export async function fetchProductsByIds(ids: number[]): Promise<CatalogPage> {
   if (ids.length === 0) return { items: [], total: 0, totalPages: 1 };
   const res = await fetch(`${base}/products?include=${ids.join(",")}`);
   if (!res.ok) throw new Error("catalog_unavailable");
-  return normalizePage((await res.json()) as CatalogPage);
+  return normalizePage(await readCatalogPage(res));
 }
 
 export async function fetchPopularProducts(limit = 8): Promise<CatalogPage> {
