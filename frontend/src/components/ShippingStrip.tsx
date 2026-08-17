@@ -17,27 +17,49 @@ const items = {
   ],
 } as const;
 
-export function ShippingStrip() {
+export function ShippingStrip({ compact = false }: { compact?: boolean }) {
   const { lang } = useLocale();
   const rows = items[lang];
 
   return (
     <Stack
-      direction={{ xs: "column", sm: "row" }}
-      spacing={{ xs: 1, sm: 3 }}
+      direction={compact ? "column" : { xs: "column", md: "row" }}
+      spacing={compact ? 1.25 : { xs: 1.25, md: 2 }}
+      useFlexGap
       sx={{
-        py: 2,
-        px: 2.5,
+        py: compact ? 1.5 : 2,
+        px: compact ? 1.75 : 2.5,
         borderRadius: 2,
         bgcolor: "background.default",
         border: "1px solid",
         borderColor: "divider",
+        ...(compact
+          ? {}
+          : {
+              flexWrap: "wrap",
+            }),
       }}
     >
       {rows.map(({ icon: Icon, text }) => (
-        <Stack key={text} direction="row" spacing={1} sx={{ alignItems: "center" }}>
-          <Icon sx={{ fontSize: 20, color: "primary.main" }} />
-          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+        <Stack
+          key={text}
+          direction="row"
+          spacing={1}
+          sx={{
+            alignItems: "center",
+            minWidth: compact ? "100%" : { md: 0 },
+            flex: compact ? "none" : { md: "1 1 auto" },
+          }}
+        >
+          <Icon sx={{ fontSize: compact ? 18 : 20, color: "primary.main", flexShrink: 0 }} />
+          <Typography
+            variant="body2"
+            sx={{
+              fontWeight: 600,
+              fontSize: compact ? "0.82rem" : undefined,
+              lineHeight: 1.35,
+            }}
+          >
             {text}
           </Typography>
         </Stack>

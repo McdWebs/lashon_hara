@@ -75,7 +75,7 @@ export const SHOP_COPY = {
     he: "כל רכישה תומכת בחלוקה חינם של מוצרים לבתי ספר ומוסדות חינוך.",
     en: "Every purchase helps fund free product distribution to schools.",
   },
-  whyNeed: { he: "למה אתם צריכים את זה?", en: "What do you need it for?" },
+  whyNeed: { he: "לשם מה אתם צריכים את זה?", en: "For what purpose do you need it?" },
   bestSellers: { he: "הכי נמכרים", en: "Best sellers" },
   bundles: { he: "סטים וחבילות", en: "Sets & kits" },
   allProducts: { he: "כל המוצרים", en: "All products" },

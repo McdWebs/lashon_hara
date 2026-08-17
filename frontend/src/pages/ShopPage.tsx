@@ -4,13 +4,12 @@ import { useEffect } from "react";
 import { Link as RouterLink, useSearchParams } from "react-router-dom";
 import { Band } from "../components/Band";
 import { ProductGrid } from "../components/ProductGrid";
-import { EmptyState, ErrorState, LoadingState } from "../components/States";
+import { EmptyState, ErrorState, ProductGridSkeleton } from "../components/States";
 import { UseCaseCard } from "../components/UseCaseCard";
 import { PageHeader, Section } from "../components/Section";
 import { useLocale } from "../i18n/useLocale";
 import { BUNDLE_PRODUCT_IDS } from "../lib/bundles";
 import { fetchPopularProducts, fetchProducts, fetchProductsByIds } from "../lib/catalog";
-import { MEDIA } from "../lib/media";
 import { SHOP_CATEGORY_CHIPS, SHOP_COPY, SHOP_USE_CASES } from "../lib/shop";
 import { SCHOOLS_PRODUCT_ID } from "../lib/site";
 
@@ -66,7 +65,7 @@ function CatalogSection({
         ))}
       </Stack>
 
-      {query.isLoading && <LoadingState />}
+      {query.isLoading && <ProductGridSkeleton count={category ? 8 : 12} />}
       {query.isError && (
         <ErrorState message="לא ניתן לטעון את הקטלוג כרגע." onRetry={() => void query.refetch()} />
       )}
@@ -125,13 +124,15 @@ export function ShopPage() {
 
   return (
     <>
-      <PageHeader title={t("navShop")} image={MEDIA.fabric} imageAlt="צמידי בד עם המשפט">
-        <Typography sx={{ mt: 2, maxWidth: 640 }}>
-          {lang === "en"
-            ? 'Welcome to the shop for "Lashon Hara Lo Medaber Elai" products. Sales help us keep distributing products free to schools.'
-            : 'ברוכים הבאים לאתר המכירות של מוצרי "לשון הרע לא מדבר אלי". המכירות מאפשרות להמשיך ולחלק מוצרים בחינם לבתי ספר ומוסדות חינוך.'}
-        </Typography>
-      </PageHeader>
+      {!isFiltered && (
+        <PageHeader title={t("navShop")}>
+          <Typography sx={{ mt: 2, maxWidth: 640 }}>
+            {lang === "en"
+              ? 'Welcome to the shop for "Lashon Hara Lo Medaber Elai" products. Sales help us keep distributing products free to schools.'
+              : 'ברוכים הבאים לאתר המכירות של מוצרי "לשון הרע לא מדבר אלי". המכירות מאפשרות להמשיך ולחלק מוצרים בחינם לבתי ספר ומוסדות חינוך.'}
+          </Typography>
+        </PageHeader>
+      )}
 
       {!isFiltered && (
         <>
@@ -186,7 +187,7 @@ export function ShopPage() {
               <Typography variant="h2" sx={{ fontSize: { xs: "1.4rem", md: "1.75rem" }, mb: 3 }}>
                 {SHOP_COPY.bestSellers[lang]}
               </Typography>
-              {popularQuery.isLoading && <LoadingState />}
+              {popularQuery.isLoading && <ProductGridSkeleton count={4} />}
               {popularQuery.data && popularQuery.data.items.length > 0 && (
                 <ProductGrid products={popularQuery.data.items} />
               )}
@@ -198,7 +199,7 @@ export function ShopPage() {
               <Typography variant="h2" sx={{ fontSize: { xs: "1.4rem", md: "1.75rem" }, mb: 3 }}>
                 {SHOP_COPY.bundles[lang]}
               </Typography>
-              {bundlesQuery.isLoading && <LoadingState />}
+              {bundlesQuery.isLoading && <ProductGridSkeleton count={4} />}
               {bundlesQuery.data && bundlesQuery.data.items.length > 0 && (
                 <ProductGrid products={bundlesQuery.data.items} />
               )}

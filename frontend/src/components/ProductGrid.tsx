@@ -6,7 +6,7 @@ export function ProductGrid({ products }: { products: WcProduct[] }) {
   return (
     <Grid container spacing={2}>
       {products.map((p) => (
-        <Grid key={p.id} size={{ xs: 6, sm: 6, md: 3 }}>
+        <Grid key={p.id} size={{ xs: 6, sm: 6, md: 3 }} sx={{ display: "flex" }}>
           <ProductCard product={p} />
         </Grid>
       ))}
