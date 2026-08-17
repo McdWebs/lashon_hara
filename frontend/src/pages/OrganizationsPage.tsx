@@ -1,38 +1,88 @@
 import { Alert, Button, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import { PageHeader, Section } from "../components/Section";
+import { LoadingButton } from "../components/States";
+import { useLocale } from "../i18n/useLocale";
 import { submitForm } from "../lib/forms";
-import { SITE } from "../lib/site";
 
-export function OrganizationsPage() {
+type OrgVariant = "default" | "wholesale" | "quote" | "custom";
+
+const copy: Record<OrgVariant, { title: string; intro: string }> = {
+  default: {
+    title: "הזמנה לקבוצה / בית ספר / ארגון",
+    intro:
+      "הזמנות לקבוצות, סיטונאות ומוצרים בהדפסה אישית. מלאו את הטופס ונחזור עם הצעת מחיר.",
+  },
+  wholesale: {
+    title: "סיטונאות",
+    intro: "הזמנות בכמויות לבתי ספר, ארגונים וחברות. נחזור אליכם עם מחירים ולוחות זמנים.",
+  },
+  quote: {
+    title: "בקשת הצעת מחיר",
+    intro: "פרטו את הארגון, המוצרים והכמויות — נשלח הצעת מחיר מותאמת.",
+  },
+  custom: {
+    title: "מוצרים לאירוע / הדפסה אישית",
+    intro: "צמידים, מדבקות ומוצרים עם לוגו או ניסוח מותאם לאירועים וקמפיינים.",
+  },
+};
+
+export function OrganizationsPage({ variant = "default" }: { variant?: OrgVariant }) {
+  const { loc, t } = useLocale();
   const [status, setStatus] = useState<"idle" | "loading" | "ok">("idle");
   const [saved, setSaved] = useState(true);
+  const { title, intro } = copy[variant];
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     setStatus("loading");
-    const result = await submitForm("quote", "/organizations", Object.fromEntries(form.entries()));
+    const result = await submitForm("quote", `/${variant === "default" ? "organizations" : variant}`, {
+      ...Object.fromEntries(form.entries()),
+      variant,
+    });
     setSaved(result.saved);
     setStatus("ok");
   }
 
   return (
     <>
-      <PageHeader title="הזמנה לקבוצה / בית ספר / ארגון" />
+      <PageHeader title={title} />
       <Section>
-        <Typography sx={{ mb: 2 }}>
-          באתר הקיים יש דפי סיטונאות, בקשת הצעת מחיר ומוצרים בהדפסה אישית. לא מעבירים ארגון בקופה הרגילה אם התהליך אצלכם אחר.
-        </Typography>
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ mb: 4 }}>
-          <Button href={`${SITE.wcOrigin}/wholesale/`} variant="outlined">
-            סיטונאות
+        <Typography sx={{ mb: 2 }}>{intro}</Typography>
+        <Stack direction="row" spacing={1} sx={{ mb: 4, flexWrap: "wrap" }}>
+          <Button
+            component={RouterLink}
+            to={loc("/organizations")}
+            variant={variant === "default" ? "contained" : "outlined"}
+            size="small"
+          >
+            הזמנה לקבוצה
           </Button>
-          <Button href={`${SITE.wcOrigin}/request-a-quote/`} variant="outlined">
-            בקשת הצעת מחיר באתר הקיים
+          <Button
+            component={RouterLink}
+            to={loc("/wholesale")}
+            variant={variant === "wholesale" ? "contained" : "outlined"}
+            size="small"
+          >
+            {t("navWholesale")}
           </Button>
-          <Button href={`${SITE.wcOrigin}/custom/`} variant="outlined">
-            מוצרים לאירוע
+          <Button
+            component={RouterLink}
+            to={loc("/request-a-quote")}
+            variant={variant === "quote" ? "contained" : "outlined"}
+            size="small"
+          >
+            {t("navQuote")}
+          </Button>
+          <Button
+            component={RouterLink}
+            to={loc("/custom")}
+            variant={variant === "custom" ? "contained" : "outlined"}
+            size="small"
+          >
+            {t("navCustom")}
           </Button>
         </Stack>
         {status === "ok" ? (
@@ -48,9 +98,9 @@ export function OrganizationsPage() {
             <TextField required name="email" type="email" label="אימייל" />
             <TextField name="products" label="אילו מוצרים / כמויות" multiline minRows={3} />
             <TextField name="logo" label="קישור ללוגו (אם יש התאמה אישית)" />
-            <Button type="submit" variant="contained" disabled={status === "loading"}>
+            <LoadingButton type="submit" variant="contained" loading={status === "loading"}>
               שליחת בקשה
-            </Button>
+            </LoadingButton>
           </Stack>
         )}
       </Section>

@@ -1,7 +1,6 @@
 export const SITE = {
   name: "לשון הרע לא מדבר אליי",
   logoSrc: "/lh-logo.png",
-  wcOrigin: import.meta.env.VITE_WC_STORE_ORIGIN ?? "https://lashonhara.co.il",
   apiUrl: import.meta.env.VITE_API_URL ?? "",
   whatsapp: import.meta.env.VITE_WHATSAPP_NUMBER ?? "972543644512",
   supportHours: "09:00–18:00, שישה ימים בשבוע",
@@ -9,9 +8,8 @@ export const SITE = {
   instagram: "https://www.instagram.com/lashonhara/",
 } as const;
 
-export const legacyCart = `${SITE.wcOrigin}/cart/`;
-export const legacyCheckout = `${SITE.wcOrigin}/checkout/`;
-export const legacyAccount = `${SITE.wcOrigin}/my-account/`;
+/** WooCommerce product: חלוקת צמידים לבתי ספר */
+export const SCHOOLS_PRODUCT_ID = 355;
 
 export function waLink(text?: string) {
   const q = text ? `?text=${encodeURIComponent(text)}` : "";

@@ -1,6 +1,7 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { Link as RouterLink } from "react-router-dom";
+import { StatsSkeleton } from "./States";
 import { useLocale } from "../i18n/useLocale";
 
 type StatsResponse = {
@@ -33,7 +34,9 @@ export function MovementStats() {
       <Typography>
         העמותה פעילה מאז {query.data?.foundedYear ?? 2007}, מייסודו של {query.data?.founder ?? "דוד הלפרין"} — כפי שפורסם בדף האודות.
       </Typography>
-      {live ? (
+      {query.isLoading ? (
+        <StatsSkeleton />
+      ) : live ? (
         <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
           <Box>
             <Typography variant="h3">{live.commitments}</Typography>

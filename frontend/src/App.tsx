@@ -9,6 +9,7 @@ import rtlPlugin from "stylis-plugin-rtl";
 import { AppLayout } from "./components/AppLayout";
 import { LocaleRedirect } from "./components/LocaleRedirect";
 import { langFromPath } from "./i18n/locale";
+import { SCHOOLS_PRODUCT_ID } from "./lib/site";
 import { AboutPage } from "./pages/AboutPage";
 import { ActivitiesPage } from "./pages/ActivitiesPage";
 import { AmbassadorsPage } from "./pages/AmbassadorsPage";
@@ -26,7 +27,10 @@ import { SchoolsPage } from "./pages/SchoolsPage";
 import { ShopPage } from "./pages/ShopPage";
 import { StoriesPage } from "./pages/StoriesPage";
 import { StoryDetailPage } from "./pages/StoryDetailPage";
-import { DonatePage, FaqPage, MagazinePage, NotFoundPage } from "./pages/SimplePages";
+import { DonatePage } from "./pages/DonatePage";
+import { FaqPage, MagazinePage, NotFoundPage } from "./pages/SimplePages";
+import { AccountPage, CartPage, CheckoutPage } from "./pages/CommercePages";
+import { TermsPage } from "./pages/TermsPage";
 import { createAppTheme } from "./theme";
 
 const cacheRtl = createCache({ key: "muirtl", stylisPlugins: [prefixer, rtlPlugin] });
@@ -58,6 +62,14 @@ function sitePages() {
       <Route path="shop" element={<ShopPage />} />
       <Route path="shop-m" element={<LocaleRedirect to="/shop" />} />
       <Route path="shop/product/:id" element={<ProductPage />} />
+      <Route path="cart" element={<CartPage />} />
+      <Route path="checkout" element={<CheckoutPage />} />
+      <Route path="my-account" element={<AccountPage />} />
+      <Route path="terms" element={<TermsPage />} />
+      <Route path="wholesale" element={<OrganizationsPage variant="wholesale" />} />
+      <Route path="request-a-quote" element={<OrganizationsPage variant="quote" />} />
+      <Route path="custom" element={<OrganizationsPage variant="custom" />} />
+      <Route path="product/schools" element={<LocaleRedirect to={`/shop/product/${SCHOOLS_PRODUCT_ID}`} />} />
       <Route path="organizations" element={<OrganizationsPage />} />
       <Route path="donate" element={<DonatePage />} />
       <Route path="contact" element={<ContactPage />} />

@@ -1,6 +1,7 @@
-import { Button, Card, CardActionArea, CardContent, Grid, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { PageHeader, Section } from "../components/Section";
+import { useLocale } from "../i18n/useLocale";
 
 const shopResources = [
   { to: "/shop?category=18", title: "מדבקות וסטיקרים", body: "מוצרים פיזיים מהקטלוג הקיים." },
@@ -8,41 +9,27 @@ const shopResources = [
   { to: "/shop?category=24", title: "למשרד", body: "שלטים ומוצרים לסביבת עבודה." },
 ];
 
-const pending = ["פוסטרים להורדה", "מדריכי מורה", "מדריכי הורים", "מצגות", "נכסי רשתות"];
-
 export function ResourcesPage() {
+  const { loc } = useLocale();
   return (
     <>
       <PageHeader title="מרכז משאבים" />
       <Section>
-        <Typography sx={{ mb: 2 }}>
-          קבצי PDF ומצגות מהעמותה עדיין לא הועלו. בינתיים אפשר להזמין חומרים פיזיים שכבר קיימים בחנות.
+        <Typography sx={{ mb: 3 }}>
+          קבצי PDF מהעמותה עדיין לא הועלו. בינתיים אפשר להזמין חומרים שכבר קיימים בחנות.
         </Typography>
-        <Grid container spacing={2} sx={{ mb: 4 }}>
-          {shopResources.map((item) => (
-            <Grid key={item.to} size={{ xs: 12, md: 4 }}>
-              <Card variant="outlined" sx={{ height: "100%" }}>
-                <CardActionArea component={RouterLink} to={item.to} sx={{ height: "100%" }}>
-                  <CardContent>
-                    <Typography variant="h3">{item.title}</Typography>
-                    <Typography sx={{ mt: 1 }} color="text.secondary">
-                      {item.body}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-        <Typography variant="h3" sx={{ mb: 1 }}>
-          ממתין לתוכן מאושר
-        </Typography>
-        {pending.map((label) => (
-          <Typography key={label} color="text.secondary">
-            {label} — [ממתין לקובץ מהעמותה]
-          </Typography>
+        {shopResources.map((item) => (
+          <Box
+            key={item.to}
+            component={RouterLink}
+            to={item.to}
+            sx={{ display: "block", borderTop: "1px solid", borderColor: "divider", py: 2, color: "inherit", textDecoration: "none" }}
+          >
+            <Typography variant="h3">{item.title}</Typography>
+            <Typography color="text.secondary">{item.body}</Typography>
+          </Box>
         ))}
-        <Button component={RouterLink} to="/schools" sx={{ mt: 3 }}>
+        <Button component={RouterLink} to={loc("/schools")} sx={{ mt: 3, px: 0 }}>
           פעילות לבית ספר
         </Button>
       </Section>
