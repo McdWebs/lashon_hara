@@ -1,11 +1,18 @@
-import { Alert, Box, Button, Stack, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { PageHeader, Section } from "../components/Section";
+import { LoadingButton } from "../components/States";
 import { track } from "../lib/analytics";
 import { submitForm } from "../lib/forms";
 import { useLocale } from "../i18n/useLocale";
-import { MEDIA } from "../lib/media";
 import { SCHOOLS_PRODUCT_ID } from "../lib/site";
 
 const audiences = [
@@ -39,24 +46,41 @@ export function SchoolsPage() {
 
   return (
     <>
-      <PageHeader title="הופכים את בית הספר למרחב בטוח יותר" image={MEDIA.bracelets} imageAlt="צמידים עם המשפט" />
+      <PageHeader title="הופכים את בית הספר למרחב בטוח יותר" singleLine />
       <Section>
         <Typography sx={{ mb: 2 }}>
-          סדנאות חינוכיות בבתי ספר וחלוקת מוצרים. המכירות בחנות מאפשרות להמשיך לחלק מוצרים בחינם למוסדות חינוך.
+          סדנאות חינוכיות בבתי ספר וחלוקת מוצרים. המכירות בחנות מאפשרות להמשיך
+          לחלק מוצרים בחינם למוסדות חינוך.
         </Typography>
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ mb: 3, flexWrap: "wrap" }}>
-          <Button component={RouterLink} to={loc(`/shop/product/${SCHOOLS_PRODUCT_ID}`)} variant="outlined">
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={1}
+          sx={{ mb: 3, flexWrap: "wrap" }}
+        >
+          <Button
+            component={RouterLink}
+            to={loc(`/shop/product/${SCHOOLS_PRODUCT_ID}`)}
+            variant="outlined"
+          >
             חלוקת צמידים לבתי ספר
           </Button>
-          <Button component={RouterLink} to={loc("/wholesale")} variant="outlined">
+          <Button
+            component={RouterLink}
+            to={loc("/wholesale")}
+            variant="outlined"
+          >
             סיטונאות
           </Button>
-          <Button component={RouterLink} to={loc("/request-a-quote")} variant="outlined">
+          <Button
+            component={RouterLink}
+            to={loc("/request-a-quote")}
+            variant="outlined"
+          >
             הצעת מחיר
           </Button>
         </Stack>
         <Typography color="text.secondary" sx={{ mb: 3 }}>
-          בחרו מי אתם — ונחזור אליכם עם הפרטים האמיתיים של התוכנית.
+          בחרו מי אתם — ונחזור אליכם עם הפרטים של התוכנית.
         </Typography>
         <Stack direction="row" spacing={1} sx={{ mb: 3, flexWrap: "wrap" }}>
           {audiences.map((a) => (
@@ -104,14 +128,17 @@ export function SchoolsPage() {
               minRows={3}
               sx={{ gridColumn: { sm: "1 / -1" } }}
             />
-            <Button
+            <LoadingButton
               type="submit"
               variant="contained"
-              disabled={status === "loading"}
-              sx={{ gridColumn: { sm: "1 / -1" }, justifySelf: { sm: "start" } }}
+              loading={status === "loading"}
+              sx={{
+                gridColumn: { sm: "1 / -1" },
+                justifySelf: { sm: "start" },
+              }}
             >
               הזמינו פעילות לבית הספר
-            </Button>
+            </LoadingButton>
           </Box>
         )}
         <Typography sx={{ mt: 4, fontWeight: 700 }}>
@@ -121,7 +148,11 @@ export function SchoolsPage() {
           סיטונאות והזמנות לקבוצה — בלי לעבור בקופה הרגילה אם התהליך אצלכם אחר.
         </Typography>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
-          <Button component={RouterLink} to={loc("/wholesale")} variant="outlined">
+          <Button
+            component={RouterLink}
+            to={loc("/wholesale")}
+            variant="outlined"
+          >
             סיטונאות
           </Button>
           <Button component={RouterLink} to={loc("/custom")} variant="outlined">
