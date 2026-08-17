@@ -19,7 +19,7 @@ export function CartButton({ color = "inherit", size = "medium" }: CartButtonPro
       to={loc("/cart")}
       aria-label={t("navCart")}
       size={size}
-      sx={{ color }}
+      sx={{ color, overflow: "visible" }}
     >
       <Badge badgeContent={count} color="primary" invisible={count === 0} max={99}>
         <ShoppingCartOutlinedIcon fontSize={size === "small" ? "small" : "medium"} />

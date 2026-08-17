@@ -9,7 +9,7 @@ import rtlPlugin from "stylis-plugin-rtl";
 import { AppLayout } from "./components/AppLayout";
 import { LocaleRedirect } from "./components/LocaleRedirect";
 import { langFromPath } from "./i18n/locale";
-import { SCHOOLS_PRODUCT_ID } from "./lib/site";
+import { SCHOOLS_PRODUCT_ID, FEATURES } from "./lib/site";
 import { AboutPage } from "./pages/AboutPage";
 import { ActivitiesPage } from "./pages/ActivitiesPage";
 import { AmbassadorsPage } from "./pages/AmbassadorsPage";
@@ -64,7 +64,10 @@ function sitePages() {
       <Route path="shop/product/:id" element={<ProductPage />} />
       <Route path="cart" element={<CartPage />} />
       <Route path="checkout" element={<CheckoutPage />} />
-      <Route path="my-account" element={<AccountPage />} />
+      <Route
+        path="my-account"
+        element={FEATURES.accountPage ? <AccountPage /> : <LocaleRedirect to="/" />}
+      />
       <Route path="terms" element={<TermsPage />} />
       <Route path="wholesale" element={<OrganizationsPage variant="wholesale" />} />
       <Route path="request-a-quote" element={<OrganizationsPage variant="quote" />} />

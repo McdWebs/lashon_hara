@@ -3,7 +3,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import { Box, Container, IconButton, Link, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useLocale } from "../i18n/useLocale";
-import { SITE, waLink } from "../lib/site";
+import { FEATURES, SITE, waLink } from "../lib/site";
 
 const footLink = {
   color: "inherit",
@@ -48,7 +48,7 @@ export function Footer() {
     { to: loc("/wholesale"), label: t("navWholesale") },
     { to: loc("/request-a-quote"), label: t("navQuote") },
     { to: loc("/custom"), label: t("navCustom") },
-    { to: loc("/my-account"), label: t("navAccount") },
+    ...(FEATURES.accountPage ? [{ to: loc("/my-account"), label: t("navAccount") }] : []),
   ];
 
   const more = [
