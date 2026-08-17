@@ -1,4 +1,6 @@
-import { Box, Container, Link, Stack, Typography } from "@mui/material";
+import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import { Box, Container, IconButton, Link, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useLocale } from "../i18n/useLocale";
 import { SITE, waLink } from "../lib/site";
@@ -12,6 +14,12 @@ const footLink = {
   py: 0.25,
   opacity: 0.78,
   "&:hover": { opacity: 1, color: "primary.main" },
+} as const;
+
+const socialIconButton = {
+  color: "inherit",
+  opacity: 0.78,
+  "&:hover": { opacity: 1, color: "primary.main", bgcolor: "transparent" },
 } as const;
 
 export function Footer() {
@@ -115,12 +123,28 @@ export function Footer() {
             <Link href={waLink()} underline="none" sx={{ ...footLink, py: 0, display: "none" }}>
               WhatsApp
             </Link>
-            <Link href={SITE.instagram} underline="none" target="_blank" rel="noreferrer" sx={{ ...footLink, py: 0 }}>
-              Instagram
-            </Link>
-            <Link href={SITE.facebook} underline="none" target="_blank" rel="noreferrer" sx={{ ...footLink, py: 0 }}>
-              Facebook
-            </Link>
+            <IconButton
+              component="a"
+              href={SITE.instagram}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Instagram"
+              size="small"
+              sx={socialIconButton}
+            >
+              <InstagramIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              component="a"
+              href={SITE.facebook}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Facebook"
+              size="small"
+              sx={socialIconButton}
+            >
+              <FacebookOutlinedIcon fontSize="small" />
+            </IconButton>
             <Link component={RouterLink} to={loc("/terms")} underline="none" sx={{ ...footLink, py: 0 }}>
               {he ? "תקנון" : "Terms"}
             </Link>

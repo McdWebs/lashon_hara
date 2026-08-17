@@ -1,5 +1,6 @@
-import { Alert, Button, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import { LoadingButton } from "../components/States";
 import { submitForm } from "../lib/forms";
 
 export function NewsletterSignup() {
@@ -16,21 +17,36 @@ export function NewsletterSignup() {
   }
 
   if (status === "ok") {
-    return <Alert severity={saved ? "success" : "warning"}>{saved ? "נרשמתם לעדכונים." : "השמירה נכשלה — וואטסאפ 054-3644512."}</Alert>;
+    return (
+      <Box sx={{ maxWidth: 420, mx: "auto" }}>
+        <Alert severity={saved ? "success" : "warning"}>
+          {saved ? "נרשמתם לעדכונים." : "השמירה נכשלה — וואטסאפ 054-3644512."}
+        </Alert>
+      </Box>
+    );
   }
 
   return (
-    <Stack component="form" spacing={2} sx={{ maxWidth: 420 }} onSubmit={onSubmit}>
-      <Typography variant="h2">רוצים להתעדכן?</Typography>
-      <Typography color="text.secondary">
-        באתר הקיים יש הרשמה לקבלת עדכונים. אותה מטרה: קשר עם העמותה, בלי המצאת מבצע חדש.
-      </Typography>
-      <TextField required name="name" label="שם" />
-      <TextField required name="email" type="email" label="אימייל" />
-      <TextField name="phone" label="טלפון" />
-      <Button type="submit" variant="contained" disabled={status === "loading"}>
-        הרשמה
-      </Button>
-    </Stack>
+    <Box sx={{ maxWidth: 420, mx: "auto", textAlign: "center" }}>
+      <Stack
+        component="form"
+        spacing={2}
+        sx={{ width: "100%", textAlign: "start" }}
+        onSubmit={onSubmit}
+      >
+        <Typography variant="h2" sx={{ textAlign: "center" }}>
+          רוצים להתעדכן?
+        </Typography>
+        <Typography color="text.secondary" sx={{ textAlign: "center" }}>
+          הירשמו לניוזלטר
+        </Typography>
+        <TextField required name="name" label="שם" />
+        <TextField required name="email" type="email" label="אימייל" />
+        <TextField name="phone" label="טלפון" />
+        <LoadingButton type="submit" variant="contained" loading={status === "loading"} fullWidth>
+          הרשמה
+        </LoadingButton>
+      </Stack>
+    </Box>
   );
 }
