@@ -6,7 +6,7 @@ import { Link as RouterLink, NavLink, useLocation } from "react-router-dom";
 import { AccountButton } from "./AccountButton";
 import { CartButton } from "./CartButton";
 import { useLocale } from "../i18n/useLocale";
-import { stripLocale, withLocale } from "../i18n/locale";
+import { stripLocale } from "../i18n/locale";
 import { SITE } from "../lib/site";
 import { useScrolledPastHero } from "../lib/useScrolledPastHero";
 
@@ -47,9 +47,8 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [menuMounted, setMenuMounted] = useState(false);
   const scrolled = useScrolledPastHero();
-  const { loc, t, lang } = useLocale();
+  const { loc, t } = useLocale();
   const { pathname } = useLocation();
-  const other = lang === "he" ? "en" : "he";
   const isHome = stripLocale(pathname) === "/";
   const overHero = isHome && !scrolled;
   const headerColor = overHero ? "#fff" : "inherit";
@@ -82,26 +81,10 @@ export function Header() {
 
   const utilityStack = (
     <Stack direction="row" spacing={0.25} sx={{ alignItems: "center" }}>
-      <CartButton color={headerColor} />
-      <AccountButton color={headerColor} />
-      <Button
-        component={RouterLink}
-        to={withLocale(pathname, other)}
-        variant="text"
-        size="small"
-        sx={{
-          display: "none",
-          minHeight: 36,
-          minWidth: 44,
-          px: 1.25,
-          color: overHero ? "rgba(255,255,255,0.85)" : "text.secondary",
-          fontSize: 13,
-          fontWeight: 700,
-          letterSpacing: "0.06em",
-        }}
-      >
-        {t("langSwitch")}
-      </Button>
+      <Stack direction="row" spacing={0.25} sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}>
+        <CartButton color={headerColor} />
+        <AccountButton color={headerColor} />
+      </Stack>
       <Button
         component={RouterLink}
         to={loc("/donate")}
@@ -204,23 +187,11 @@ export function Header() {
           ))}
         </Stack>
 
-        <Box
-          sx={{
-            display: overHero ? { xs: "none", md: "flex" } : "flex",
-            flexShrink: 0,
-            alignItems: "center",
-            ...(overHero
-              ? {
-                  position: "absolute",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  insetInlineEnd: { sm: 16 },
-                }
-              : {}),
-          }}
-        >
-          {utilityStack}
-        </Box>
+        {!overHero && (
+          <Box sx={{ display: "flex", flexShrink: 0, alignItems: "center" }}>
+            {utilityStack}
+          </Box>
+        )}
       </Toolbar>
       <Modal open={menuMounted} onClose={closeMenu} disableAutoFocus>
         <Box
