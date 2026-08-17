@@ -13,4 +13,15 @@ const submissionSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+submissionSchema.index(
+  { kind: 1, "payload.emailNormalized": 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      kind: "commitment",
+      "payload.emailNormalized": { $type: "string" },
+    },
+  },
+);
+
 export const Submission = mongoose.model("Submission", submissionSchema);
