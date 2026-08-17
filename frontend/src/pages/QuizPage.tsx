@@ -1,15 +1,16 @@
+import { Typography } from "@mui/material";
 import { QuizExperience } from "../components/QuizExperience";
 import { PageHeader, Section } from "../components/Section";
-import { Typography } from "@mui/material";
 
 export function QuizPage() {
   return (
     <>
-      <PageHeader title="האם זה לשון הרע?" />
-      <Section>
-        <Typography sx={{ mb: 3 }} color="text.secondary">
-          תרגול חינוכי לפי ההגדרה באתר הקיים. אינו פסק הלכה ואינו ייעוץ משפטי.
+      <PageHeader title="האם זה לשון הרע?">
+        <Typography sx={{ fontSize: "1.05rem", lineHeight: 1.7 }}>
+          תרגול חינוכי. אינו פסק הלכה ואינו ייעוץ משפטי.
         </Typography>
+      </PageHeader>
+      <Section muted>
         <QuizExperience />
       </Section>
     </>
