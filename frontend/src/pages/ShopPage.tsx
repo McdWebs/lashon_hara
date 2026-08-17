@@ -1,6 +1,6 @@
 import { Box, Button, Chip, Grid, Pagination, Stack, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Link as RouterLink, useSearchParams } from "react-router-dom";
 import { Band } from "../components/Band";
 import { ProductGrid } from "../components/ProductGrid";
@@ -25,6 +25,7 @@ function CatalogSection({
   setParams: (p: URLSearchParams) => void;
 }) {
   const { lang } = useLocale();
+  const catalogTopRef = useRef<HTMLDivElement>(null);
   const query = useQuery({
     queryKey: ["products", page, category],
     queryFn: () => {
@@ -40,6 +41,7 @@ function CatalogSection({
     : SHOP_COPY.allProducts[lang];
 
   return (
+    <Box ref={catalogTopRef} sx={{ scrollMarginTop: 96 }}>
     <Section wide muted={!category}>
       <Stack direction={{ xs: "column", sm: "row" }} sx={{ justifyContent: "space-between", alignItems: { sm: "center" }, mb: 2, gap: 1 }}>
         <Typography variant="h2" sx={{ fontSize: { xs: "1.4rem", md: "1.75rem" } }}>
@@ -82,6 +84,7 @@ function CatalogSection({
                   const next = new URLSearchParams(params);
                   next.set("page", String(value));
                   setParams(next);
+                  catalogTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
                 }}
                 color="primary"
               />
@@ -90,6 +93,7 @@ function CatalogSection({
         </>
       )}
     </Section>
+    </Box>
   );
 }
 
