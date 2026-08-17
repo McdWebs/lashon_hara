@@ -1,11 +1,14 @@
-import { Alert, Button, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import { LoadingButton } from "../components/States";
 import { NewsletterSignup } from "../components/NewsletterSignup";
 import { PageHeader, Section } from "../components/Section";
-import { SITE, waLink } from "../lib/site";
+import { SITE } from "../lib/site";
 
 export function ContactPage() {
-  const [status, setStatus] = useState<"idle" | "loading" | "ok" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "ok" | "error">(
+    "idle",
+  );
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -32,29 +35,43 @@ export function ContactPage() {
     <>
       <PageHeader title="צור קשר" />
       <Section>
-        <Typography sx={{ mb: 2 }}>הדרך המהירה: WhatsApp.</Typography>
-        <Button variant="contained" href={waLink()} target="_blank" rel="noreferrer" sx={{ mb: 3 }}>
-          דברו איתנו ב-WhatsApp
-        </Button>
-        <Typography>
-          שעות מענה: {SITE.supportHours}. מספר: 054-3644512.
-        </Typography>
-        {status === "ok" ? (
-          <Alert sx={{ mt: 3 }} severity="success">
-            ההודעה נשלחה לתיבה המשותפת.
-          </Alert>
-        ) : (
-          <Stack component="form" spacing={2} sx={{ maxWidth: 480, mt: 3 }} onSubmit={onSubmit}>
-            <TextField required name="name" label="שם" />
-            <TextField required name="email" type="email" label="אימייל" />
-            <TextField name="phone" label="טלפון" />
-            <TextField required name="message" label="הודעה" multiline minRows={4} />
-            {status === "error" && <Alert severity="error">השליחה נכשלה.</Alert>}
-            <Button type="submit" variant="outlined" disabled={status === "loading"}>
-              שליחה למייל
-            </Button>
-          </Stack>
-        )}
+        <Box sx={{ maxWidth: 480, mx: "auto", textAlign: "center" }}>
+          <Typography>שעות מענה: {SITE.supportHours}.</Typography>
+          {status === "ok" ? (
+            <Alert sx={{ mt: 3, textAlign: "start" }} severity="success">
+              ההודעה נשלחה לתיבה המשותפת.
+            </Alert>
+          ) : (
+            <Stack
+              component="form"
+              spacing={2}
+              sx={{ width: "100%", mt: 3, textAlign: "start" }}
+              onSubmit={onSubmit}
+            >
+              <TextField required name="name" label="שם" />
+              <TextField required name="email" type="email" label="אימייל" />
+              <TextField name="phone" label="טלפון" />
+              <TextField
+                required
+                name="message"
+                label="הודעה"
+                multiline
+                minRows={4}
+              />
+              {status === "error" && (
+                <Alert severity="error">השליחה נכשלה.</Alert>
+              )}
+              <LoadingButton
+                type="submit"
+                variant="outlined"
+                loading={status === "loading"}
+                fullWidth
+              >
+                שליחה למייל
+              </LoadingButton>
+            </Stack>
+          )}
+        </Box>
       </Section>
       <Section muted>
         <NewsletterSignup />
