@@ -2,6 +2,7 @@ import {
   Alert,
   Box,
   Button,
+  MenuItem,
   Stack,
   TextField,
   Typography,
@@ -37,6 +38,7 @@ export function SchoolsPage() {
     setStatus("loading");
     const result = await submitForm("school", "/schools", {
       ...Object.fromEntries(form.entries()),
+      role: audiences.find((a) => a.id === audience)?.label ?? "",
       audience,
     });
     setSaved(result.saved);
@@ -80,19 +82,8 @@ export function SchoolsPage() {
           </Button>
         </Stack>
         <Typography color="text.secondary" sx={{ mb: 3 }}>
-          בחרו מי אתם — ונחזור אליכם עם הפרטים של התוכנית.
+          מלאו את הפרטים — ונחזור אליכם עם פרטי התוכנית.
         </Typography>
-        <Stack direction="row" spacing={1} sx={{ mb: 3, flexWrap: "wrap" }}>
-          {audiences.map((a) => (
-            <Button
-              key={a.id}
-              variant={audience === a.id ? "contained" : "outlined"}
-              onClick={() => setAudience(a.id)}
-            >
-              {a.label}
-            </Button>
-          ))}
-        </Stack>
         {status === "ok" ? (
           <Alert severity={saved ? "success" : "warning"}>
             {saved
@@ -112,12 +103,19 @@ export function SchoolsPage() {
           >
             <TextField required name="name" label="שם" />
             <TextField
+              select
               required
               name="role"
-              label="תפקיד"
-              key={audience}
-              defaultValue={audiences.find((a) => a.id === audience)?.label}
-            />
+              label="מי אתם?"
+              value={audience}
+              onChange={(e) => setAudience(e.target.value)}
+            >
+              {audiences.map((a) => (
+                <MenuItem key={a.id} value={a.id}>
+                  {a.label}
+                </MenuItem>
+              ))}
+            </TextField>
             <TextField required name="school" label="בית ספר / רשות" />
             <TextField required name="phone" label="טלפון" />
             <TextField required name="email" type="email" label="אימייל" />
