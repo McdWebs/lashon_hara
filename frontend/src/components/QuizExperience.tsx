@@ -141,36 +141,15 @@ export function QuizExperience() {
   return (
     <QuizCard>
       <Stack spacing={{ xs: 3, md: 4 }}>
-        <Stack
-          direction={{ xs: "column", sm: "row" }}
-          spacing={1}
-          sx={{ justifyContent: "space-between", alignItems: { xs: "flex-start", sm: "center" } }}
-        >
-          <Box>
-            <Box sx={{ width: 40, height: 3, bgcolor: "primary.main", mb: 1.5 }} />
-            <Typography
-              variant="overline"
-              sx={{ color: "primary.main", letterSpacing: 1.5, fontWeight: 700, fontSize: "0.8rem" }}
-            >
-              {quiz.title}
-            </Typography>
-          </Box>
+        <Box>
+          <Box sx={{ width: 40, height: 3, bgcolor: "primary.main", mb: 1.5 }} />
           <Typography
-            sx={{
-              fontWeight: 700,
-              color: "text.secondary",
-              fontSize: "1rem",
-              px: 1.5,
-              py: 0.75,
-              border: "1px solid",
-              borderColor: "divider",
-              borderRadius: 1,
-              bgcolor: "background.paper",
-            }}
+            variant="overline"
+            sx={{ color: "primary.main", letterSpacing: 1.5, fontWeight: 700, fontSize: "0.8rem" }}
           >
-            שאלה {index + 1} מתוך {QUESTIONS_PER_QUIZ}
+            {quiz.title}
           </Typography>
-        </Stack>
+        </Box>
 
         <Stack direction="row" spacing={0.75} aria-label="התקדמות בתרגול">
           {Array.from({ length: QUESTIONS_PER_QUIZ }, (_, i) => (
