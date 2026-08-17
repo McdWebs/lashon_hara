@@ -1,4 +1,13 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const configDir = path.dirname(fileURLToPath(import.meta.url));
+const backendDir = path.resolve(configDir, "../..");
+const rootDir = path.resolve(configDir, "../../..");
+
+dotenv.config({ path: path.join(rootDir, ".env") });
+dotenv.config({ path: path.join(backendDir, ".env"), override: true });
 
 export const env = {
   port: Number(process.env.PORT ?? 3001),
@@ -9,12 +18,9 @@ export const env = {
   whatsappNumber: process.env.WHATSAPP_NUMBER ?? "972543644512",
   supportHours: process.env.SUPPORT_HOURS ?? "09:00-18:00, six days a week",
   wcOrigin: (process.env.WC_ORIGIN ?? "https://lashonhara.co.il").replace(/\/$/, ""),
-  smtp: {
-    host: process.env.SMTP_HOST ?? "",
-    port: Number(process.env.SMTP_PORT ?? 587),
-    user: process.env.SMTP_USER ?? "",
-    pass: process.env.SMTP_PASS ?? "",
-    from: process.env.SMTP_FROM ?? process.env.CONTACT_INBOX ?? "",
+  resend: {
+    apiKey: process.env.RESEND_API_KEY ?? "",
+    from: process.env.RESEND_FROM ?? process.env.CONTACT_INBOX ?? "",
   },
   payment: {
     provider: process.env.PAYMENT_PROVIDER ?? "",

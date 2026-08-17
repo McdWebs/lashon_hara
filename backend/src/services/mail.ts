@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { env } from "../config/env.js";
 
 export async function notifyInbox(subject: string, body: string): Promise<void> {
@@ -7,20 +7,15 @@ export async function notifyInbox(subject: string, body: string): Promise<void> 
     return;
   }
 
-  if (!env.smtp.host) {
+  if (!env.resend.apiKey) {
     console.info(`[inbox fallback] to=${env.contactInbox} subject=${subject}\n${body}`);
     return;
   }
 
-  const transporter = nodemailer.createTransport({
-    host: env.smtp.host,
-    port: env.smtp.port,
-    secure: env.smtp.port === 465,
-    auth: env.smtp.user ? { user: env.smtp.user, pass: env.smtp.pass } : undefined,
-  });
+  const resend = new Resend(env.resend.apiKey);
 
-  await transporter.sendMail({
-    from: env.smtp.from || env.contactInbox,
+  await resend.emails.send({
+    from: env.resend.from,
     to: env.contactInbox,
     subject,
     text: body,
