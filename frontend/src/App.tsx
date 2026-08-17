@@ -27,8 +27,10 @@ import { SchoolsPage } from "./pages/SchoolsPage";
 import { ShopPage } from "./pages/ShopPage";
 import { StoriesPage } from "./pages/StoriesPage";
 import { StoryDetailPage } from "./pages/StoryDetailPage";
-import { DonatePage, FaqPage, MagazinePage, NotFoundPage } from "./pages/SimplePages";
-import { AccountPage, CartPage, CheckoutPage, TermsPage } from "./pages/CommercePages";
+import { DonatePage } from "./pages/DonatePage";
+import { FaqPage, MagazinePage, NotFoundPage } from "./pages/SimplePages";
+import { AccountPage, CartPage, CheckoutPage } from "./pages/CommercePages";
+import { TermsPage } from "./pages/TermsPage";
 import { createAppTheme } from "./theme";
 
 const cacheRtl = createCache({ key: "muirtl", stylisPlugins: [prefixer, rtlPlugin] });
