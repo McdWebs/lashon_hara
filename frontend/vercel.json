@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://lashon-hara-api.onrender.com/api/:path*"
+      "destination": "https://lashon-hara.onrender.com/api/:path*"
     },
     {
       "source": "/health",
-      "destination": "https://lashon-hara-api.onrender.com/health"
+      "destination": "https://lashon-hara.onrender.com/health"
     },
     {
       "source": "/(.*)",
