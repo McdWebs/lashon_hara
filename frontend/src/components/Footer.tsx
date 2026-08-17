@@ -1,6 +1,7 @@
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import { Box, Container, IconButton, Link, Stack, Typography } from "@mui/material";
+import type { SvgIconComponent } from "@mui/icons-material";
+import { Box, Container, Link, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useLocale } from "../i18n/useLocale";
 import { FEATURES, SITE, waLink } from "../lib/site";
@@ -25,11 +26,68 @@ const sectionTitle = {
   textTransform: "uppercase",
 } as const;
 
-const socialIconButton = {
-  color: "inherit",
-  opacity: 0.78,
-  "&:hover": { opacity: 1, color: "primary.main", bgcolor: "transparent" },
-} as const;
+function SocialLink({ href, label, icon: Icon }: { href: string; label: string; icon: SvgIconComponent }) {
+  return (
+    <Box
+      component="a"
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={label}
+      sx={{
+        display: "inline-flex",
+        alignItems: "center",
+        height: 36,
+        px: 1,
+        borderRadius: 999,
+        color: "inherit",
+        textDecoration: "none",
+        opacity: 0.78,
+        overflow: "hidden",
+        transition: "opacity 0.2s ease, color 0.2s ease, background-color 0.2s ease",
+        "&:hover": {
+          opacity: 1,
+          color: "primary.main",
+          bgcolor: "rgba(237, 27, 36, 0.06)",
+          "& .social-label": {
+            maxWidth: 120,
+            opacity: 1,
+            marginInlineEnd: 0.75,
+          },
+        },
+        "@media (prefers-reduced-motion: reduce)": {
+          "& .social-label": {
+            maxWidth: 120,
+            opacity: 1,
+            marginInlineEnd: 0.75,
+          },
+        },
+      }}
+    >
+      <Typography
+        component="span"
+        className="social-label"
+        sx={{
+          maxWidth: 0,
+          opacity: 0,
+          overflow: "hidden",
+          whiteSpace: "nowrap",
+          fontSize: 13,
+          fontWeight: 600,
+          lineHeight: 1,
+          marginInlineEnd: 0,
+          transition: "max-width 0.28s ease, opacity 0.22s ease, margin-inline-end 0.28s ease",
+          "@media (prefers-reduced-motion: reduce)": {
+            transition: "none",
+          },
+        }}
+      >
+        {label}
+      </Typography>
+      <Icon sx={{ fontSize: 20, flexShrink: 0 }} aria-hidden />
+    </Box>
+  );
+}
 
 export function Footer() {
   const { loc, t, lang } = useLocale();
@@ -59,6 +117,7 @@ export function Footer() {
     { to: loc("/activities"), label: he ? "פעילות" : "Activity" },
     { to: loc("/contact"), label: he ? "צור קשר" : "Contact" },
     { to: loc("/faq"), label: he ? "שאלות נפוצות" : "FAQ" },
+    { to: loc("/terms"), label: he ? "תקנון" : "Terms" },
   ];
 
   return (
@@ -157,35 +216,12 @@ export function Footer() {
             alignItems: { xs: "center", sm: "center" },
           }}
         >
-          <Stack direction="row" spacing={2.5} sx={{ flexWrap: "wrap", justifyContent: "center" }}>
+          <Stack direction="row" spacing={1.5} sx={{ flexWrap: "wrap", justifyContent: "center" }}>
             <Link href={waLink()} underline="none" sx={{ ...footLink, py: 0, display: "none" }}>
               WhatsApp
             </Link>
-            <IconButton
-              component="a"
-              href={SITE.instagram}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Instagram"
-              size="small"
-              sx={socialIconButton}
-            >
-              <InstagramIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              component="a"
-              href={SITE.facebook}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Facebook"
-              size="small"
-              sx={socialIconButton}
-            >
-              <FacebookOutlinedIcon fontSize="small" />
-            </IconButton>
-            <Link component={RouterLink} to={loc("/terms")} underline="none" sx={{ ...footLink, py: 0 }}>
-              {he ? "תקנון" : "Terms"}
-            </Link>
+            <SocialLink href={SITE.instagram} label="Instagram" icon={InstagramIcon} />
+            <SocialLink href={SITE.facebook} label="Facebook" icon={FacebookOutlinedIcon} />
           </Stack>
         </Container>
       </Box>

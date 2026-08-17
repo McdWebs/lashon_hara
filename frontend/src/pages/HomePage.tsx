@@ -155,11 +155,60 @@ export function HomePage() {
           <Typography component="h1" sx={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)" }}>
             {t("slogan")}
           </Typography>
-          <Typography sx={{ mt: 0, maxWidth: 440, fontSize: { xs: "1.05rem", md: "1.2rem" }, opacity: 0.92 }}>
-            {t("heroSupport1")} {t("heroSupport2")}
-            <br />
-            {t("heroSupport3")}
-          </Typography>
+          <Box
+            component="p"
+            sx={{
+              m: 0,
+              maxWidth: 560,
+              textShadow: "0 2px 28px rgba(0,0,0,0.45)",
+            }}
+          >
+            <Typography
+              component="span"
+              sx={{
+                display: "block",
+                fontFamily: '"Secular One", Heebo, sans-serif',
+                fontWeight: 400,
+                fontSize: { xs: "1.85rem", sm: "2.15rem", md: "2.5rem" },
+                lineHeight: 1.15,
+                letterSpacing: "-0.02em",
+              }}
+            >
+              {t("heroSupport1")}
+            </Typography>
+            <Typography
+              component="span"
+              sx={{
+                display: "block",
+                fontFamily: '"Secular One", Heebo, sans-serif',
+                fontWeight: 400,
+                fontSize: { xs: "1.85rem", sm: "2.15rem", md: "2.5rem" },
+                lineHeight: 1.15,
+                letterSpacing: "-0.02em",
+                color: "rgba(255,255,255,0.72)",
+                mt: 0.25,
+              }}
+            >
+              {t("heroSupport2")}
+            </Typography>
+            <Typography
+              component="span"
+              sx={{
+                display: "block",
+                mt: { xs: 2, md: 2.5 },
+                pl: 2,
+                borderInlineStart: "3px solid",
+                borderColor: "primary.main",
+                fontFamily: "Heebo, sans-serif",
+                fontWeight: 500,
+                fontSize: { xs: "1.05rem", md: "1.2rem" },
+                lineHeight: 1.65,
+                color: "rgba(255,255,255,0.94)",
+              }}
+            >
+              {t("heroSupport3")}
+            </Typography>
+          </Box>
           <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ mt: 4, alignItems: { sm: "center" } }}>
             <Button
               size="large"
@@ -197,8 +246,8 @@ export function HomePage() {
         </Typography>
         <Typography sx={{ mt: 2, maxWidth: 640 }}>
           {lang === "en"
-            ? "That is the test published on the current site. Gossip, even when true, shaming, mockery."
-            : "זה המבחן שפורסם באתר. רכילות — גם אם הסיפור קרה — ביוש, לעג, הכללה."}
+            ? "Negative speech about others—gossip, shaming, mockery, and generalization, even when the story is true."
+            : "דיבור שלילי על אחר — רכילות, ביוש, לעג והכללה, גם כשהסיפור קרה."}
         </Typography>
         <Button component={RouterLink} to={loc("/message/quiz")} variant="outlined" sx={{ mt: 3 }}>
           {lang === "en" ? "Try a short exercise" : "תרגול קצר: האם זה לשון הרע?"}

@@ -10,7 +10,8 @@ import {
   shareCardText,
   type ShareCardFormat,
 } from "../lib/shareCardCanvas";
-import { waLink } from "../lib/site";
+
+const WHATSAPP_APP_URL = "https://wa.me/";
 
 type Props = {
   firstName: string;
@@ -25,6 +26,7 @@ const FORMATS: { key: ShareCardFormat; label: string; w: number; h: number; file
 export function ShareCard({ firstName, signerNumber }: Props) {
   const [format, setFormat] = useState<ShareCardFormat>("story");
   const [ready, setReady] = useState(false);
+  const [shareHint, setShareHint] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const spec = FORMATS.find((f) => f.key === format) ?? FORMATS[0];
 
@@ -57,34 +59,67 @@ export function ShareCard({ firstName, signerNumber }: Props) {
     downloadCanvas(canvas, spec.filename);
   }
 
-  function shareWhatsApp() {
-    track("commitment_share_clicked", { channel: "whatsapp", format });
-    window.open(waLink(shareCardText()), "_blank", "noopener,noreferrer");
-  }
-
-  async function shareNative() {
+  async function shareWhatsApp() {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    track("commitment_share_clicked", { channel: "native", format });
+    if (!canvas || !ready) return;
+
+    track("commitment_share_clicked", { channel: "whatsapp", format });
 
     const text = shareCardText();
-    if (!navigator.share) {
-      shareWhatsApp();
-      return;
-    }
 
     try {
       const blob = await canvasToBlob(canvas);
-      const file = new File([blob], spec.filename, { type: "image/png" });
-      if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], text, title: "לשון הרע לא מדבר אליי" });
-        return;
-      }
-      await navigator.share({ text, title: "לשון הרע לא מדבר אליי" });
-    } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") return;
-      shareWhatsApp();
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          "image/png": blob,
+          "text/plain": new Blob([text], { type: "text/plain" }),
+        }),
+      ]);
+      setShareHint("התמונה והטקסט הועתקו — בחרו צ'אט והדביקו");
+    } catch {
+      setShareHint("לא ניתן להעתיק מהדפדפן הזה. נסו מהטלפון.");
+      window.setTimeout(() => setShareHint(null), 4000);
+      return;
     }
+
+    window.open(WHATSAPP_APP_URL, "_blank", "noopener,noreferrer");
+    window.setTimeout(() => setShareHint(null), 5000);
+  }
+
+  async function shareImage() {
+    const canvas = canvasRef.current;
+    if (!canvas || !ready) return;
+
+    if (!navigator.share) {
+      setShareHint("שיתוף לא נתמך בדפדפן זה. נסו מהטלפון, או הורידו את התמונה.");
+      window.setTimeout(() => setShareHint(null), 4000);
+      return;
+    }
+
+    const blob = await canvasToBlob(canvas);
+    const file = new File([blob], spec.filename, { type: "image/png" });
+    const text = shareCardText();
+    const title = "לשון הרע לא מדבר אליי";
+    const sharePayloads: ShareData[] = [
+      { files: [file], text, title },
+      { files: [file], title },
+      { files: [file] },
+    ];
+
+    for (const payload of sharePayloads) {
+      if (navigator.canShare?.(payload) === false) continue;
+
+      try {
+        track("commitment_share_clicked", { channel: "native", format });
+        await navigator.share(payload);
+        return;
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+      }
+    }
+
+    setShareHint("לא ניתן לשתף את התמונה מהדפדפן הזה. נסו מהטלפון, או הורידו את התמונה.");
+    window.setTimeout(() => setShareHint(null), 4000);
   }
 
   return (
@@ -122,14 +157,14 @@ export function ShareCard({ firstName, signerNumber }: Props) {
       />
 
       <Typography color="text.secondary" sx={{ fontSize: "0.85rem", textAlign: "center" }}>
-        גם אני חתמתי. גם את/ה? — סרקו את הקוד או שלחו לחבר/ה.
+        {shareHint ?? "גם אני חתמתי. גם את/ה? — סרקו את הקוד או שלחו לחבר/ה."}
       </Typography>
 
       <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
         <Button variant="contained" startIcon={<WhatsAppIcon />} onClick={shareWhatsApp} fullWidth>
           WhatsApp
         </Button>
-        <Button variant="outlined" startIcon={<ShareOutlinedIcon />} onClick={shareNative} fullWidth>
+        <Button variant="outlined" startIcon={<ShareOutlinedIcon />} onClick={shareImage} fullWidth>
           שיתוף
         </Button>
         <Button variant="outlined" onClick={download} fullWidth>
