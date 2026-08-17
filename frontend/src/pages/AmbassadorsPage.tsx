@@ -13,7 +13,8 @@ import {
 } from "@mui/material";
 import type { SvgIconComponent } from "@mui/icons-material";
 import { useState } from "react";
-import { AmbassadorProfileCard } from "../components/AmbassadorProfileCard";
+import { AmbassadorCarousel } from "../components/AmbassadorCarousel";
+import { CityAutocomplete } from "../components/CityAutocomplete";
 import { PageHeader, Section } from "../components/Section";
 import { LoadingButton } from "../components/States";
 import { useLocale } from "../i18n/useLocale";
@@ -64,6 +65,7 @@ function AmbassadorActivityCard({ item }: { item: ActivityItem }) {
       variant="outlined"
       sx={{
         height: "100%",
+        minWidth: 0,
         bgcolor: "background.paper",
         transition: "border-color 0.15s ease, transform 0.15s ease",
         "&:hover": {
@@ -72,26 +74,26 @@ function AmbassadorActivityCard({ item }: { item: ActivityItem }) {
         },
       }}
     >
-      <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
+      <CardContent sx={{ p: { xs: 1.5, sm: 2.5, md: 3 } }}>
         <Box
           sx={{
-            width: 48,
-            height: 48,
+            width: { xs: 36, sm: 48 },
+            height: { xs: 36, sm: 48 },
             borderRadius: 1,
             display: "grid",
             placeItems: "center",
             bgcolor: "rgba(237, 27, 36, 0.08)",
-            mb: 2,
+            mb: { xs: 1, sm: 2 },
           }}
         >
-          <Icon sx={{ fontSize: 26, color: "primary.main" }} aria-hidden />
+          <Icon sx={{ fontSize: { xs: 20, sm: 26 }, color: "primary.main" }} aria-hidden />
         </Box>
-        <Typography variant="h3" sx={{ fontSize: "1.05rem", mb: 0.75 }}>
+        <Typography variant="h3" sx={{ fontSize: { xs: "0.78rem", sm: "0.92rem", md: "1.05rem" }, mb: 0.5, lineHeight: 1.35 }}>
           {item.title[lang]}
         </Typography>
         <Typography
           color="text.secondary"
-          sx={{ fontSize: "0.92rem", lineHeight: 1.65 }}
+          sx={{ fontSize: { xs: "0.72rem", sm: "0.85rem", md: "0.92rem" }, lineHeight: 1.5 }}
         >
           {item.body[lang]}
         </Typography>
@@ -104,6 +106,7 @@ export function AmbassadorsPage() {
   const { lang } = useLocale();
   const [status, setStatus] = useState<"idle" | "loading" | "ok">("idle");
   const [saved, setSaved] = useState(true);
+  const [city, setCity] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -141,9 +144,9 @@ export function AmbassadorsPage() {
         >
           {lang === "en" ? "What ambassadors do" : "מה שגרירים עושים"}
         </Typography>
-        <Grid container spacing={2} sx={{ mb: { xs: 4, md: 5 } }}>
+        <Grid container spacing={{ xs: 1, sm: 2 }} sx={{ mb: { xs: 4, md: 5 } }}>
           {ACTIVITIES.map((item) => (
-            <Grid key={item.title.he} size={{ xs: 12, md: 4 }}>
+            <Grid key={item.title.he} size={4}>
               <AmbassadorActivityCard item={item} />
             </Grid>
           ))}
@@ -158,13 +161,9 @@ export function AmbassadorsPage() {
           </Typography>
         </Box>
 
-        <Grid container spacing={2} sx={{ mb: { xs: 5, md: 6 } }}>
-          {MOCK_AMBASSADORS.map((ambassador) => (
-            <Grid key={ambassador.id} size={{ xs: 12, sm: 6 }}>
-              <AmbassadorProfileCard ambassador={ambassador} />
-            </Grid>
-          ))}
-        </Grid>
+        <Box sx={{ mb: { xs: 5, md: 6 } }}>
+          <AmbassadorCarousel ambassadors={MOCK_AMBASSADORS} />
+        </Box>
 
         <Box sx={{ maxWidth: 520, mx: "auto" }}>
           <Typography
@@ -206,7 +205,12 @@ export function AmbassadorsPage() {
                 type="email"
                 label={lang === "en" ? "Email" : "אימייל"}
               />
-              <TextField name="city" label={lang === "en" ? "City" : "יישוב"} />
+              <CityAutocomplete
+                name="city"
+                label={lang === "en" ? "City / locality" : "יישוב"}
+                value={city}
+                onChange={setCity}
+              />
               <TextField
                 name="note"
                 label={
