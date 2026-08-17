@@ -9,6 +9,7 @@ export type AnalyticsEvent =
   | "school_contact_started"
   | "product_viewed"
   | "product_added_to_cart"
+  | "checkout_started"
   | "commitment_share_clicked"
   | "ambassador_application_completed"
   | "school_contact_completed"

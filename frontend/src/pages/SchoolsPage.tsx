@@ -1,9 +1,12 @@
-import { Alert, Button, Link, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import { PageHeader, Section } from "../components/Section";
 import { track } from "../lib/analytics";
 import { submitForm } from "../lib/forms";
-import { SITE } from "../lib/site";
+import { useLocale } from "../i18n/useLocale";
+import { MEDIA } from "../lib/media";
+import { SCHOOLS_PRODUCT_ID } from "../lib/site";
 
 const audiences = [
   { id: "elementary", label: "יסודי" },
@@ -15,6 +18,7 @@ const audiences = [
 ];
 
 export function SchoolsPage() {
+  const { loc } = useLocale();
   const [audience, setAudience] = useState("admin");
   const [status, setStatus] = useState<"idle" | "loading" | "ok">("idle");
   const [saved, setSaved] = useState(true);
@@ -35,46 +39,95 @@ export function SchoolsPage() {
 
   return (
     <>
-      <PageHeader title="הופכים את בית הספר למרחב בטוח יותר" />
+      <PageHeader title="הופכים את בית הספר למרחב בטוח יותר" image={MEDIA.bracelets} imageAlt="צמידים עם המשפט" />
       <Section>
         <Typography sx={{ mb: 2 }}>
-          באתר הקיים מופיעות סדנאות חינוכיות בבתי ספר וחלוקת מוצרים. המכירות בחנות מאפשרות להמשיך לחלק מוצרים בחינם למוסדות חינוך.
+          סדנאות חינוכיות בבתי ספר וחלוקת מוצרים. המכירות בחנות מאפשרות להמשיך לחלק מוצרים בחינם למוסדות חינוך.
         </Typography>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ mb: 3, flexWrap: "wrap" }}>
+          <Button component={RouterLink} to={loc(`/shop/product/${SCHOOLS_PRODUCT_ID}`)} variant="outlined">
+            חלוקת צמידים לבתי ספר
+          </Button>
+          <Button component={RouterLink} to={loc("/wholesale")} variant="outlined">
+            סיטונאות
+          </Button>
+          <Button component={RouterLink} to={loc("/request-a-quote")} variant="outlined">
+            הצעת מחיר
+          </Button>
+        </Stack>
         <Typography color="text.secondary" sx={{ mb: 3 }}>
-          אין כאן מחירון או עדויות שלא פורסמו. בחרו מי אתם — ונחזור אליכם עם הפרטים האמיתיים של התוכנית.
+          בחרו מי אתם — ונחזור אליכם עם הפרטים האמיתיים של התוכנית.
         </Typography>
         <Stack direction="row" spacing={1} sx={{ mb: 3, flexWrap: "wrap" }}>
           {audiences.map((a) => (
-            <Button key={a.id} variant={audience === a.id ? "contained" : "outlined"} onClick={() => setAudience(a.id)}>
+            <Button
+              key={a.id}
+              variant={audience === a.id ? "contained" : "outlined"}
+              onClick={() => setAudience(a.id)}
+            >
               {a.label}
             </Button>
           ))}
         </Stack>
         {status === "ok" ? (
           <Alert severity={saved ? "success" : "warning"}>
-            {saved ? "הפנייה נקלטה." : "השמירה לשרת נכשלה — פנו ב-WhatsApp 054-3644512."}
+            {saved
+              ? "הפנייה נקלטה."
+              : "השמירה לשרת נכשלה — פנו ב-WhatsApp 054-3644512."}
           </Alert>
         ) : (
-          <Stack component="form" spacing={2} sx={{ maxWidth: 480 }} onSubmit={onSubmit}>
+          <Box
+            component="form"
+            onSubmit={onSubmit}
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+              gap: 2,
+              maxWidth: { xs: 480, sm: 800 },
+            }}
+          >
             <TextField required name="name" label="שם" />
-            <TextField required name="role" label="תפקיד" key={audience} defaultValue={audiences.find((a) => a.id === audience)?.label} />
+            <TextField
+              required
+              name="role"
+              label="תפקיד"
+              key={audience}
+              defaultValue={audiences.find((a) => a.id === audience)?.label}
+            />
             <TextField required name="school" label="בית ספר / רשות" />
             <TextField required name="phone" label="טלפון" />
             <TextField required name="email" type="email" label="אימייל" />
-            <TextField name="message" label="פרטים נוספים" multiline minRows={3} />
-            <Button type="submit" variant="contained" disabled={status === "loading"}>
+            <TextField
+              name="message"
+              label="פרטים נוספים"
+              multiline
+              minRows={3}
+              sx={{ gridColumn: { sm: "1 / -1" } }}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={status === "loading"}
+              sx={{ gridColumn: { sm: "1 / -1" }, justifySelf: { sm: "start" } }}
+            >
               הזמינו פעילות לבית הספר
             </Button>
-            <Button href={`${SITE.wcOrigin}/product/schools/`} variant="text">
-              חלוקת צמידים לבתי ספר (בחנות הקיימת)
-            </Button>
-          </Stack>
+          </Box>
         )}
-        <Typography sx={{ mt: 4, fontWeight: 700 }}>צריכים כמות גדולה?</Typography>
-        <Typography color="text.secondary" sx={{ mb: 1 }}>
+        <Typography sx={{ mt: 4, fontWeight: 700 }}>
+          צריכים כמות גדולה?
+        </Typography>
+        <Typography color="text.secondary" sx={{ mb: 2 }}>
           סיטונאות והזמנות לקבוצה — בלי לעבור בקופה הרגילה אם התהליך אצלכם אחר.
         </Typography>
-        <Link href={`${SITE.wcOrigin}/wholesale/`}>לסיטונאות בחנות הקיימת</Link>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+          <Button component={RouterLink} to={loc("/wholesale")} variant="outlined">
+            סיטונאות
+          </Button>
+          <Button component={RouterLink} to={loc("/custom")} variant="outlined">
+            מוצרים לאירוע
+          </Button>
+        </Stack>
       </Section>
     </>
   );

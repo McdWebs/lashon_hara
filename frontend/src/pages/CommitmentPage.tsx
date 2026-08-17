@@ -4,6 +4,7 @@ import { ShareCard } from "../components/ShareCard";
 import { PageHeader, Section } from "../components/Section";
 import { track } from "../lib/analytics";
 import { submitForm } from "../lib/forms";
+import { MEDIA } from "../lib/media";
 
 const oath = [
   "אני מתחייב/ת בזאת להימנע מהפצת לשון הרע ודברי רכילות.",
@@ -37,7 +38,7 @@ export function CommitmentPage() {
 
   return (
     <>
-      <PageHeader title="השינוי מתחיל בי" />
+      <PageHeader title="השינוי מתחיל בי" image={MEDIA.hoodie} imageAlt="קפוצ׳ון עם המשפט" />
       <Section>
         {oath.map((line) => (
           <Typography key={line} sx={{ mb: 2 }}>
@@ -45,7 +46,7 @@ export function CommitmentPage() {
           </Typography>
         ))}
         {status === "done" ? (
-          <Stack spacing={2}>
+          <Stack spacing={2} sx={{ maxWidth: 480, mx: "auto" }}>
             {!saved && (
               <Alert severity="warning">
                 הכרטיס מוכן לשיתוף, אבל השמירה לתיבת העמותה נכשלה (חסר Mongo/SMTP). שלחו גם ב-WhatsApp כדי שלא נפספס.
@@ -54,13 +55,14 @@ export function CommitmentPage() {
             <ShareCard firstName={firstName} />
           </Stack>
         ) : (
-          <Stack component="form" spacing={2} sx={{ maxWidth: 480 }} onSubmit={onSubmit}>
+          <Stack component="form" spacing={2} sx={{ maxWidth: 480, mx: "auto" }} onSubmit={onSubmit}>
             <TextField required name="firstName" label="שם פרטי" autoComplete="given-name" />
             <TextField required name="phone" label="מספר טלפון" autoComplete="tel" />
             <TextField required name="email" type="email" label="כתובת אימייל" autoComplete="email" />
             <FormControlLabel
               control={<Checkbox name="consent" />}
               label="אני מאשר/ת קבלת מידע ודיוורים מהעמותה. מטרת ההרשמה היא שמירה על קשר, תזכורת ההתחייבות והפצת פעילות העמותה, ללא תשלום."
+              sx={{ alignItems: "flex-start", "& .MuiFormControlLabel-label": { fontSize: "0.8rem", lineHeight: 1.5, color: "text.secondary" } }}
             />
             <Button type="submit" variant="contained" disabled={status === "loading"}>
               קבלו את התחייבותי

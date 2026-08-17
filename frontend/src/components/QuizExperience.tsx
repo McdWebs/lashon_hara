@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { track } from "../lib/analytics";
 import { scenarios, type Answer } from "../lib/quiz";
-import { waLink } from "../lib/site";
 
 const labels: Record<Answer, string> = {
   yes: "כן",
@@ -51,14 +50,6 @@ export function QuizExperience() {
         </Typography>
         <Button variant="contained" component={RouterLink} to="/join/commitment">
           השינוי מתחיל בי
-        </Button>
-        <Button
-          variant="outlined"
-          href={waLink(`תרגלתי באתר לשון הרע לא מדבר אליי (${score}/${scenarios.length}).`)}
-          target="_blank"
-          rel="noreferrer"
-        >
-          שיתוף ב-WhatsApp
         </Button>
       </Stack>
     );

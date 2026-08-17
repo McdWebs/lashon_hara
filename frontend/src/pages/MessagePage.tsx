@@ -1,11 +1,12 @@
 import { Button, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { PageHeader, Section } from "../components/Section";
+import { MEDIA } from "../lib/media";
 
 export function MessagePage() {
   return (
     <>
-      <PageHeader title="המסר" />
+      <PageHeader title="המסר" image={MEDIA.hoodie} imageAlt="קפוצ׳ון עם המשפט" />
       <Section>
         <Typography variant="h2" gutterBottom>
           לשון הרע לא מדבר אליי

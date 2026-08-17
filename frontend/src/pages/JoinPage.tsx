@@ -1,11 +1,12 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { PageHeader, Section } from "../components/Section";
+import { MEDIA } from "../lib/media";
 
 export function JoinPage() {
   return (
     <>
-      <PageHeader title="הצטרפו" />
+      <PageHeader title="הצטרפו" image={MEDIA.neckWarmer} imageAlt="חם צוואר עם המשפט" />
       <Section>
         <Typography sx={{ mb: 4 }}>איך תרצו להיות שותפים?</Typography>
         <Stack spacing={4} sx={{ maxWidth: 640 }}>

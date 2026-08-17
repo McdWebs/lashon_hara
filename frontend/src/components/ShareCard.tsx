@@ -1,7 +1,7 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { useEffect, useRef } from "react";
 import { track } from "../lib/analytics";
-import { SITE, waLink } from "../lib/site";
+import { SITE } from "../lib/site";
 
 const SHARE_LINES = ["אני בוחר/ת לדבר בכבוד.", "השינוי מתחיל בי.", "לשון הרע לא מדבר אליי"];
 
@@ -49,8 +49,6 @@ export function ShareCard({ firstName }: Props) {
     logo.src = SITE.logoSrc;
   }, [firstName]);
 
-  const shareText = `${firstName} התחייב/ה: ${SHARE_LINES.join(" ")} ${SITE.name}`;
-
   function download() {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -75,15 +73,6 @@ export function ShareCard({ firstName }: Props) {
       <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
         <Button variant="contained" onClick={download}>
           הורדת הכרטיס
-        </Button>
-        <Button
-          variant="outlined"
-          href={waLink(shareText)}
-          target="_blank"
-          rel="noreferrer"
-          onClick={() => track("commitment_share_clicked", { channel: "whatsapp" })}
-        >
-          שיתוף ב-WhatsApp
         </Button>
       </Stack>
     </Stack>

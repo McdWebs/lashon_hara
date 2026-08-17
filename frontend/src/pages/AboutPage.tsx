@@ -1,10 +1,11 @@
 import { Typography } from "@mui/material";
 import { PageHeader, Section } from "../components/Section";
+import { MEDIA } from "../lib/media";
 
 export function AboutPage() {
   return (
     <>
-      <PageHeader title="אודות" />
+      <PageHeader title="אודות" image={MEDIA.bracelets} imageAlt="צמידים עם המשפט" />
       <Section>
         <Typography variant="h2" gutterBottom>
           המשימה שלנו

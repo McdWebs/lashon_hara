@@ -2,61 +2,82 @@ import { Box, Button, Link, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { Band } from "../components/Band";
 import { useLocale } from "../i18n/useLocale";
-import type { Audience } from "../i18n/locale";
 import { track } from "../lib/analytics";
 import { MEDIA } from "../lib/media";
-import { usePrefs } from "../lib/prefs";
 
 export function HomePage() {
   const { loc, t, lang } = useLocale();
-  const audience = usePrefs((s) => s.audience);
-  const setAudience = usePrefs((s) => s.setAudience);
 
   const paths = [
     {
       to: "/join/commitment",
       title: lang === "en" ? "Take the commitment" : "השינוי מתחיל בי",
       body: lang === "en" ? "A personal oath. Then share it." : "התחייבות אישית. אחר כך משתפים.",
-      primary: audience !== "school",
     },
     {
       to: "/schools",
       title: lang === "en" ? "Bring it to school" : "לבית הספר",
       body: lang === "en" ? "Workshops and classroom materials." : "סדנאות וחלוקה לכיתות.",
-      primary: audience === "school" || audience === "teacher" || audience === "parent",
     },
     {
       to: "/shop",
       title: lang === "en" ? "Wear the sentence" : "ללבוש את המשפט",
       body: lang === "en" ? "Bracelets and stickers from the real catalog." : "צמידים ומדבקות מהקטלוג הקיים.",
-      primary: false,
     },
   ];
-
-  const ordered = [...paths].sort((a, b) => Number(b.primary) - Number(a.primary));
 
   return (
     <>
       <Box
         sx={{
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", md: "1.05fr 0.95fr" },
-          minHeight: { md: "78vh" },
+          position: "relative",
+          minHeight: { xs: "100vh", md: "100vh" },
           bgcolor: "#111",
           color: "#fff",
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-end",
         }}
       >
         <Box
+          component="video"
+          src={MEDIA.heroVideo}
+          poster={MEDIA.hoodie}
+          autoPlay
+          muted
+          loop
+          playsInline
+          aria-hidden
           sx={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            "@media (prefers-reduced-motion: reduce)": { display: "none" },
+          }}
+        />
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            bgcolor: "rgba(17,17,17,0.55)",
+            pointerEvents: "none",
+          }}
+        />
+        <Box
+          sx={{
+            position: "relative",
             px: { xs: 3, md: 8 },
-            py: { xs: 7, md: 10 },
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
+            py: { xs: 6, md: 10 },
+            maxWidth: 720,
           }}
         >
-          <Typography variant="h1">{t("slogan")}</Typography>
-          <Typography sx={{ mt: 3, maxWidth: 440, fontSize: { xs: "1.05rem", md: "1.2rem" }, opacity: 0.88 }}>
+          <Typography component="h1" sx={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)" }}>
+            {t("slogan")}
+          </Typography>
+          <Typography sx={{ mt: 0, maxWidth: 440, fontSize: { xs: "1.05rem", md: "1.2rem" }, opacity: 0.92 }}>
             {t("heroSupport1")} {t("heroSupport2")}
             <br />
             {t("heroSupport3")}
@@ -83,12 +104,6 @@ export function HomePage() {
             </Link>
           </Stack>
         </Box>
-        <Box
-          component="img"
-          src={MEDIA.hoodie}
-          alt={lang === "en" ? "Hoodie with the movement slogan" : "קפוצ׳ון עם המשפט לשון הרע לא מדבר אליי"}
-          sx={{ width: "100%", height: { xs: 320, md: "100%" }, objectFit: "cover", objectPosition: "top" }}
-        />
       </Box>
 
       <Band>
@@ -139,28 +154,11 @@ export function HomePage() {
       </Box>
 
       <Band tone="paper">
-        <Typography variant="h2" sx={{ mb: 1 }}>
+        <Typography variant="h2" sx={{ mb: 3 }}>
           {lang === "en" ? "If this is you" : "אם זה מדבר אליכם"}
         </Typography>
-        <Stack direction="row" spacing={1} sx={{ mb: 4, flexWrap: "wrap" }}>
-          {(["default", "parent", "teacher", "student", "school"] as Audience[]).map((a) => (
-            <Button key={a} size="small" variant={audience === a ? "contained" : "text"} onClick={() => setAudience(a)}>
-              {t(
-                a === "default"
-                  ? "audienceDefault"
-                  : a === "parent"
-                    ? "audienceParent"
-                    : a === "teacher"
-                      ? "audienceTeacher"
-                      : a === "student"
-                        ? "audienceStudent"
-                        : "audienceSchool",
-              )}
-            </Button>
-          ))}
-        </Stack>
         <Stack spacing={3} sx={{ maxWidth: 640 }}>
-          {ordered.map((p, i) => (
+          {paths.map((p, i) => (
             <Box key={p.to} sx={{ borderTop: "1px solid", borderColor: "divider", pt: 2 }}>
               <Typography variant="h3">{p.title}</Typography>
               <Typography color="text.secondary" sx={{ mt: 0.5 }}>
@@ -208,18 +206,13 @@ export function HomePage() {
           />
           <Box
             component="img"
-            src={MEDIA.sticker}
-            alt={lang === "en" ? "Magnet sticker with the slogan" : "מדבקת מגנט עם המשפט"}
+            src={MEDIA.neckWarmer}
+            alt={lang === "en" ? "Neck warmer with the slogan" : "חם צוואר עם המשפט"}
             sx={{ width: "100%", height: 240, objectFit: "cover" }}
           />
         </Box>
         <Typography variant="h2">
           {lang === "en" ? "The shop funds free distributions to schools." : "החנות מממנת חלוקה חינם לבתי ספר."}
-        </Typography>
-        <Typography sx={{ mt: 1, opacity: 0.8, maxWidth: 560 }}>
-          {lang === "en"
-            ? "That is how the current store describes itself. Bracelets and stickers are how the sentence travels."
-            : "כך מתוארת החנות באתר הקיים. הצמיד והמדבקה הם איך המשפט זז."}
         </Typography>
         <Button component={RouterLink} to={loc("/shop")} variant="contained" sx={{ mt: 3 }} onClick={() => track("cta_shop_clicked")}>
           {t("navShop")}

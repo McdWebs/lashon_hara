@@ -1,8 +1,7 @@
-import { Button, Typography } from "@mui/material";
+import { Link, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
+import { DonateFormSection } from "./CommercePages";
 import { PageHeader, Section } from "../components/Section";
-import { track } from "../lib/analytics";
-import { SITE } from "../lib/site";
 
 export function DonatePage() {
   return (
@@ -11,21 +10,17 @@ export function DonatePage() {
       <Section>
         <Typography sx={{ mb: 2 }}>תרומה לעמותת &quot;לשון הרע לא מדבר אלי&quot;.</Typography>
         <Typography sx={{ mb: 2 }}>
-          באתר הקיים נכתב שהמכירות מאפשרות להמשיך ולחלק מוצרים בחינם לבתי ספר. תרומה ישירה תומכת באותה מטרה — בלי לעבור דרך הקטלוג.
+          המכירות בחנות מאפשרות להמשיך ולחלק מוצרים בחינם לבתי ספר. תרומה ישירה תומכת באותה מטרה — בלי לעבור דרך הקטלוג.
         </Typography>
         <Typography color="text.secondary" sx={{ mb: 3 }}>
-          הסליקה באתר החדש בהמתנה. התשלום עצמו נשאר בדף התרומה הקיים.
+          מלאו את הפרטים ונחזור אליכם עם אפשרויות תרומה. סליקה מקוונת תיפתח בהמשך.
         </Typography>
-        <Button
-          variant="contained"
-          href={`${SITE.wcOrigin}/donate/`}
-          onClick={() => track("donation_started")}
-        >
-          לתרומה בדף הקיים
-        </Button>
-        <Button component={RouterLink} to="/schools" variant="text" sx={{ mt: 2, display: "inline-block", px: 0 }}>
-          הזמנת פעילות לבית ספר
-        </Button>
+        <Stack spacing={2} sx={{ alignItems: "flex-start" }}>
+          <DonateFormSection />
+          <Link component={RouterLink} to="/schools" underline="always" sx={{ fontWeight: 600 }}>
+            הזמנת פעילות לבית ספר
+          </Link>
+        </Stack>
       </Section>
     </>
   );
@@ -37,7 +32,7 @@ export function MagazinePage() {
       <PageHeader title="מאמרים" />
       <Section>
         <Typography>
-          באתר הקיים אין פוסטים בבלוג (0 ברשומות WordPress). המגזין יתחיל רק מתוכן אמיתי, לא ממאמרי SEO מומצאים.
+          המגזין יתחיל רק מתוכן אמיתי, לא ממאמרי SEO מומצאים.
         </Typography>
       </Section>
     </>
@@ -53,10 +48,10 @@ export function FaqPage() {
           <strong>מה זו העמותה?</strong> עמותה לחיזוק תרבות שיח חיובית ולמניעת לשון הרע ושיימינג, כפי שמופיע בדף האודות.
         </Typography>
         <Typography sx={{ mb: 2 }}>
-          <strong>איך קונים?</strong> הקטלוג נטען מהחנות הקיימת. התשלום עדיין בקופה של WooCommerce.
+          <strong>איך קונים?</strong> בוחרים מוצרים בחנות, מוסיפים לסל, ומשלימים את ההזמנה בקופה או ב-WhatsApp עד שהסליקה המקוונת תיפתח.
         </Typography>
         <Typography>
-          <strong>איך יוצרים קשר?</strong> WhatsApp 054-3644512, {SITE.supportHours}.
+          <strong>איך יוצרים קשר?</strong> WhatsApp 054-3644512, 09:00–18:00, שישה ימים בשבוע.
         </Typography>
       </Section>
     </>

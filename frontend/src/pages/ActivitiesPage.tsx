@@ -1,5 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { PageHeader, Section } from "../components/Section";
+import { MEDIA } from "../lib/media";
 
 const items = [
   { title: "חלוקות", body: "הפצת המוצרים עם המסר במרחב הציבורי, בבתי ספר ובקהילות." },
@@ -11,7 +12,7 @@ const items = [
 export function ActivitiesPage() {
   return (
     <>
-      <PageHeader title="הפעילות" />
+      <PageHeader title="הפעילות" image={MEDIA.bracelets} imageAlt="צמידים עם המשפט" />
       <Section>
         <Typography sx={{ mb: 4 }}>
           יחד מחזקים מודעות לשיח מכבד בין אחד לשני, מזכירים שמילים יכולות לפגוע, ומובילים שינוי חברתי דרך חינוך, חלוקת מוצרים עם המסר, וניקיון הרשת החברתית מלשון הרע.
