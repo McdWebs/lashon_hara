@@ -277,31 +277,13 @@ export function HomePage() {
       </Band>
 
       <Band tone="dark">
-        <Box sx={{ display: { xs: "block", sm: "none" }, mb: 4 }}>
+        <Box sx={{ mb: 4 }}>
           <ImageCarousel
             slides={SHOP_SHOWCASE.map((item) => ({
               src: item.src,
               alt: item.alt[lang],
             }))}
           />
-        </Box>
-        <Box
-          sx={{
-            display: { xs: "none", sm: "grid" },
-            gridTemplateColumns: "1fr 1fr",
-            gap: 2,
-            mb: 4,
-          }}
-        >
-          {SHOP_SHOWCASE.map((item) => (
-            <Box
-              key={item.src}
-              component="img"
-              src={item.src}
-              alt={item.alt[lang]}
-              sx={{ width: "100%", height: 240, objectFit: "cover" }}
-            />
-          ))}
         </Box>
         <Typography variant="h2">
           {lang === "en" ? "The shop funds free distributions to schools." : "החנות מממנת חלוקה חינם לבתי ספר."}

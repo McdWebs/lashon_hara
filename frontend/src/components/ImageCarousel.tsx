@@ -115,17 +115,38 @@ export function ImageCarousel({ slides, height = 240, autoPlayMs = DEFAULT_AUTO_
                 width: `${slideShare}%`,
                 flexShrink: 0,
                 height,
+                position: "relative",
+                overflow: "hidden",
               }}
             >
+              <Box
+                component="img"
+                src={slide.src}
+                alt=""
+                aria-hidden
+                draggable={false}
+                sx={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  filter: "blur(16px) brightness(0.92)",
+                  transform: "scale(1.08)",
+                  pointerEvents: "none",
+                }}
+              />
               <Box
                 component="img"
                 src={slide.src}
                 alt={slide.alt}
                 draggable={false}
                 sx={{
+                  position: "relative",
+                  zIndex: 1,
                   width: "100%",
                   height: "100%",
-                  objectFit: "cover",
+                  objectFit: "contain",
                   display: "block",
                 }}
               />

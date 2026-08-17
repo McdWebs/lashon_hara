@@ -144,9 +144,9 @@ export function ShopPage() {
             <Typography variant="h2" sx={{ fontSize: { xs: "1.4rem", md: "1.75rem" }, mb: 3 }}>
               {SHOP_COPY.whyNeed[lang]}
             </Typography>
-            <Grid container spacing={2}>
+            <Grid container spacing={{ xs: 1.5, sm: 2 }}>
               {SHOP_USE_CASES.map((uc) => (
-                <Grid key={uc.kind === "category" ? uc.category : uc.kind === "link" ? uc.to : uc.anchor} size={{ xs: 12, sm: 6, md: 4 }}>
+                <Grid key={uc.kind === "category" ? uc.category : uc.kind === "link" ? uc.to : uc.anchor} size={{ xs: 6, sm: 6, md: 4 }}>
                   <UseCaseCard item={uc} />
                 </Grid>
               ))}
