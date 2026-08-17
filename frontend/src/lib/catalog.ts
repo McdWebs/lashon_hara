@@ -1,3 +1,5 @@
+import { decodeHtmlEntities } from "./html";
+
 export type WcPrices = {
   price: string;
   regular_price: string;
@@ -34,29 +36,52 @@ export type CatalogPage = {
 
 const base = "/api/catalog";
 
+function normalizeProduct(p: WcProduct): WcProduct {
+  return {
+    ...p,
+    name: decodeHtmlEntities(p.name),
+    categories: p.categories.map((c) => ({
+      ...c,
+      name: decodeHtmlEntities(c.name),
+    })),
+    images: p.images.map((img) => ({
+      ...img,
+      alt: decodeHtmlEntities(img.alt),
+    })),
+  };
+}
+
+function normalizeCategory(c: WcCategory): WcCategory {
+  return { ...c, name: decodeHtmlEntities(c.name) };
+}
+
+function normalizePage(page: CatalogPage): CatalogPage {
+  return { ...page, items: page.items.map(normalizeProduct) };
+}
+
 export async function fetchProducts(search: string): Promise<CatalogPage> {
   const res = await fetch(`${base}/products?${search}`);
   if (!res.ok) throw new Error("catalog_unavailable");
-  return res.json() as Promise<CatalogPage>;
+  return normalizePage((await res.json()) as CatalogPage);
 }
 
 export async function fetchProduct(id: string): Promise<WcProduct> {
   const res = await fetch(`${base}/products/${id}`);
   if (!res.ok) throw new Error("product_not_found");
-  return res.json() as Promise<WcProduct>;
+  return normalizeProduct((await res.json()) as WcProduct);
 }
 
 export async function fetchCategories(): Promise<WcCategory[]> {
   const res = await fetch(`${base}/categories`);
   if (!res.ok) throw new Error("categories_unavailable");
-  return res.json() as Promise<WcCategory[]>;
+  return ((await res.json()) as WcCategory[]).map(normalizeCategory);
 }
 
 export async function fetchProductsByIds(ids: number[]): Promise<CatalogPage> {
   if (ids.length === 0) return { items: [], total: 0, totalPages: 1 };
   const res = await fetch(`${base}/products?include=${ids.join(",")}`);
   if (!res.ok) throw new Error("catalog_unavailable");
-  return res.json() as Promise<CatalogPage>;
+  return normalizePage((await res.json()) as CatalogPage);
 }
 
 export async function fetchPopularProducts(limit = 8): Promise<CatalogPage> {

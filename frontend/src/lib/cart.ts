@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { decodeHtmlEntities } from "./html";
 
 export type CartItem = {
   id: number;
@@ -16,7 +17,11 @@ function read(): CartItem[] {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as CartItem[];
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map((item) => ({
+      ...item,
+      name: decodeHtmlEntities(item.name),
+    }));
   } catch {
     return [];
   }
