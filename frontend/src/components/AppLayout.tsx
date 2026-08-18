@@ -5,7 +5,7 @@ import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { LocaleContext, buildLocale } from "../i18n/useLocale";
 import { langFromPath } from "../i18n/locale";
-import { isFullBleedPath } from "../lib/siteMode";
+import { isFullBleedPath, isStorePath } from "../lib/siteMode";
 
 export function AppLayout() {
   const { pathname } = useLocation();
@@ -13,7 +13,8 @@ export function AppLayout() {
   const lang = langFromPath(pathname);
   const locale = useMemo(() => buildLocale(lang), [lang]);
   const search = params.toString();
-  const fullBleed = isFullBleedPath(pathname, params.get("category"));
+  const fullBleed = isFullBleedPath(pathname, params.get("category"), params.get("view"));
+  const store = isStorePath(pathname);
 
   useEffect(() => {
     document.documentElement.lang = lang === "he" ? "he" : "en";
@@ -27,9 +28,18 @@ export function AppLayout() {
 
   return (
     <LocaleContext.Provider value={locale}>
-      <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <Box
+        className={store ? "store-shell" : undefined}
+        sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+      >
         <Header />
-        <Box component="main" sx={{ flex: 1, pt: fullBleed ? 0 : { xs: "64px", md: "72px" } }}>
+        <Box
+          component="main"
+          sx={{
+            flex: 1,
+            pt: fullBleed ? 0 : store ? { xs: "64px", md: "74px" } : { xs: "64px", md: "72px" },
+          }}
+        >
           <Outlet />
         </Box>
         <Footer />

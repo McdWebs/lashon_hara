@@ -1,11 +1,12 @@
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import type { SvgIconComponent } from "@mui/icons-material";
 import { Box, Container, Link, Stack, Typography } from "@mui/material";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import { useLocale } from "../i18n/useLocale";
 import { FEATURES, SITE, waLink } from "../lib/site";
 import { isStorePath } from "../lib/siteMode";
+import { SocialLink } from "./SocialLink";
+import { StoreFooterEditorial } from "./StoreFooterEditorial";
 
 const footLink = {
   color: "inherit",
@@ -27,118 +28,10 @@ const sectionTitle = {
   textTransform: "uppercase",
 } as const;
 
-function SocialLink({ href, label, icon: Icon }: { href: string; label: string; icon: SvgIconComponent }) {
-  return (
-    <Box
-      component="a"
-      href={href}
-      target="_blank"
-      rel="noreferrer"
-      aria-label={label}
-      sx={{
-        display: "inline-flex",
-        alignItems: "center",
-        height: 36,
-        px: 1,
-        borderRadius: 999,
-        color: "inherit",
-        textDecoration: "none",
-        opacity: 0.78,
-        overflow: "hidden",
-        transition: "opacity 0.2s ease, color 0.2s ease, background-color 0.2s ease",
-        "&:hover": {
-          opacity: 1,
-          color: "primary.main",
-          bgcolor: "rgba(237, 27, 36, 0.06)",
-          "& .social-label": {
-            maxWidth: 120,
-            opacity: 1,
-            marginInlineEnd: 0.75,
-          },
-        },
-        "@media (prefers-reduced-motion: reduce)": {
-          "& .social-label": {
-            maxWidth: 120,
-            opacity: 1,
-            marginInlineEnd: 0.75,
-          },
-        },
-      }}
-    >
-      <Typography
-        component="span"
-        className="social-label"
-        sx={{
-          maxWidth: 0,
-          opacity: 0,
-          overflow: "hidden",
-          whiteSpace: "nowrap",
-          fontSize: 13,
-          fontWeight: 600,
-          lineHeight: 1,
-          marginInlineEnd: 0,
-          transition: "max-width 0.28s ease, opacity 0.22s ease, margin-inline-end 0.28s ease",
-          "@media (prefers-reduced-motion: reduce)": {
-            transition: "none",
-          },
-        }}
-      >
-        {label}
-      </Typography>
-      <Icon sx={{ fontSize: 20, flexShrink: 0 }} aria-hidden />
-    </Box>
-  );
-}
-
 export function Footer() {
   const { pathname } = useLocation();
-  if (isStorePath(pathname)) return <StoreFooter />;
+  if (isStorePath(pathname)) return <StoreFooterEditorial />;
   return <ExplanatoryFooter />;
-}
-
-function StoreFooter() {
-  const { loc, t, lang } = useLocale();
-  const he = lang !== "en";
-
-  return (
-    <Box
-      component="footer"
-      sx={{ bgcolor: "background.paper", color: "text.primary", borderTop: "1px solid", borderColor: "divider" }}
-    >
-      <Container
-        sx={{
-          maxWidth: 1120,
-          px: { xs: 2, md: 3 },
-          py: { xs: 4, md: 5 },
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 2,
-          textAlign: "center",
-        }}
-      >
-        <Box
-          component={RouterLink}
-          to={loc("/")}
-          sx={{ display: "inline-flex" }}
-        >
-          <Box component="img" src={SITE.logoSrc} alt={t("navShop")} sx={{ height: 28, width: "auto" }} />
-        </Box>
-        <Stack direction="row" spacing={2.5} sx={{ alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
-          <Link component={RouterLink} to={loc("/movement")} underline="none" sx={{ ...footLink, py: 0 }}>
-            {t("navWhy")}
-          </Link>
-          <Link component={RouterLink} to={loc("/terms")} underline="none" sx={{ ...footLink, py: 0 }}>
-            {he ? "תקנון" : "Terms"}
-          </Link>
-        </Stack>
-        <Stack direction="row" spacing={1}>
-          <SocialLink href={SITE.instagram} label="Instagram" icon={InstagramIcon} />
-          <SocialLink href={SITE.facebook} label="Facebook" icon={FacebookOutlinedIcon} />
-        </Stack>
-      </Container>
-    </Box>
-  );
 }
 
 function ExplanatoryFooter() {

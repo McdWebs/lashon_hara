@@ -9,7 +9,7 @@ import { useLocale } from "../i18n/useLocale";
 import { FEATURES, SITE } from "../lib/site";
 import { isMovementPath, isStorePath } from "../lib/siteMode";
 import { useScrolledPastHero } from "../lib/useScrolledPastHero";
-import { StoreHeader } from "./HeaderStore";
+import { StoreHeaderEditorial } from "./StoreHeaderEditorial";
 
 const navLinkSx = {
   color: "text.primary",
@@ -81,7 +81,7 @@ function mobileMenuBubbleSx(
 
 export function Header() {
   const { pathname } = useLocation();
-  if (isStorePath(pathname)) return <StoreHeader />;
+  if (isStorePath(pathname)) return <StoreHeaderEditorial />;
   return <ExplanatoryHeader />;
 }
 
