@@ -1,0 +1,105 @@
+{
+  "category": {
+    "id": 154,
+    "name": "מסכות הגנה לפנים",
+    "slug": "1100100"
+  },
+  "products": [
+    {
+      "id": 42859,
+      "name": "שלט שולחני 'בשולחן זה מדברים לשון הרע'",
+      "price": "1990",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/shelet/"
+    },
+    {
+      "id": 42704,
+      "name": "שלט 'כאן לא מדברים לשון הרע'",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%a9%d7%9c%d7%98-%d7%9b%d7%90%d7%9f-%d7%9c%d7%90-%d7%9e%d7%93%d7%91%d7%a8%d7%99%d7%9d-%d7%9c%d7%a9%d7%95%d7%9f-%d7%94%d7%a8%d7%a2/"
+    },
+    {
+      "id": 42397,
+      "name": "ערכת 40 מסכות אל-בד",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/100102-1/"
+    },
+    {
+      "id": 24177,
+      "name": "מארז של 20 מסיכות אל-בד + 4 תופסנים למסיכה",
+      "price": "3000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/100119/"
+    },
+    {
+      "id": 17968,
+      "name": "זוג מחזיקי מסכה לפנים",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10160/"
+    },
+    {
+      "id": 16551,
+      "name": "מסכות בד רב פעמיות – 10 במארז",
+      "price": "1500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%9e%d7%a1%d7%9b%d7%95%d7%aa-%d7%91%d7%93-%d7%a8%d7%91-%d7%a4%d7%a2%d7%9e%d7%99%d7%95%d7%aa-10-%d7%91%d7%9e%d7%90%d7%a8%d7%96/"
+    },
+    {
+      "id": 8014,
+      "name": "מסיכת בד לפנים עם הסלוגן באנגלית",
+      "price": "300",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/100107/"
+    },
+    {
+      "id": 7669,
+      "name": "מסכות בד רב פעמיות – 5 במארז",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/100105/"
+    },
+    {
+      "id": 7666,
+      "name": "מארז משפחתי – 10 מסכות בד + 10 מסכות אל-בד",
+      "price": "1500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/100109/"
+    },
+    {
+      "id": 7457,
+      "name": "תורמים מסכות לצוותים הרפואיים!",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/1001818/"
+    },
+    {
+      "id": 7453,
+      "name": "מארז של 5 מסכות אל-בד לפנים",
+      "price": "200",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/100102/"
+    },
+    {
+      "id": 7430,
+      "name": "2 מסכות בד לפנים עם הסלוגן",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/100115/"
+    }
+  ]
+}

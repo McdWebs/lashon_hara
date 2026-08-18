@@ -1,0 +1,393 @@
+{
+  "category": {
+    "id": 23,
+    "name": "מוצרים מיוחדים ומדליקים",
+    "slug": "%d7%9e%d7%95%d7%a6%d7%a8%d7%99%d7%9d-%d7%9e%d7%99%d7%95%d7%97%d7%93%d7%99%d7%9d-%d7%95%d7%9e%d7%93%d7%9c%d7%99%d7%a7%d7%99%d7%9d"
+  },
+  "products": [
+    {
+      "id": 48597,
+      "name": "שלט שולחני משולב אנגלית  LASHON HARA FREE ZONE",
+      "price": "1990",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%a9%d7%9c%d7%98-%d7%a9%d7%95%d7%9c%d7%97%d7%a0%d7%99-%d7%9b%d7%90%d7%9f-%d7%9c%d7%90-%d7%9e%d7%93%d7%91%d7%a8%d7%99%d7%9d-%d7%9c%d7%a9%d7%95%d7%9f-%d7%94%d7%a8%d7%a2-%d7%91%d7%90%d7%a0%d7%92/"
+    },
+    {
+      "id": 48595,
+      "name": "שלט שולחן שבת \"בשולחן זה לא מדברים לשון הרע\"",
+      "price": "1990",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%a9%d7%9c%d7%98-%d7%a9%d7%9c%d7%95%d7%97%d7%9f-%d7%a9%d7%91%d7%aa-%d7%91%d7%a9%d7%95%d7%9c%d7%97%d7%9f-%d7%96%d7%94-%d7%9c%d7%90-%d7%9e%d7%93%d7%91%d7%a8%d7%99%d7%9d-%d7%9c%d7%a9%d7%95%d7%9f/"
+    },
+    {
+      "id": 48383,
+      "name": "פאץ' ייחודי לכל לוחם ולוחמת",
+      "price": "1800",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%a4%d7%90%d7%a5-%d7%99%d7%99%d7%97%d7%95%d7%93%d7%99-%d7%9c%d7%9b%d7%9c-%d7%9c%d7%95%d7%97%d7%9d-%d7%95%d7%9c%d7%95%d7%97%d7%9e%d7%aa/"
+    },
+    {
+      "id": 48366,
+      "name": "מראה כיס",
+      "price": "3600",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%9e%d7%a8%d7%90%d7%94-%d7%9b%d7%99%d7%a1/"
+    },
+    {
+      "id": 42859,
+      "name": "שלט שולחני 'בשולחן זה מדברים לשון הרע'",
+      "price": "1990",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/shelet/"
+    },
+    {
+      "id": 42704,
+      "name": "שלט 'כאן לא מדברים לשון הרע'",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%a9%d7%9c%d7%98-%d7%9b%d7%90%d7%9f-%d7%9c%d7%90-%d7%9e%d7%93%d7%91%d7%a8%d7%99%d7%9d-%d7%9c%d7%a9%d7%95%d7%9f-%d7%94%d7%a8%d7%a2/"
+    },
+    {
+      "id": 42537,
+      "name": "צמיד בד אופנתי בעבודת יד – צבע שחור",
+      "price": "6900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99948/"
+    },
+    {
+      "id": 41944,
+      "name": "שרשרת עם הסלוגן בארבע שפות",
+      "price": "9900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/94012/"
+    },
+    {
+      "id": 33989,
+      "name": "חולצה  דגם סחלב – עם כיתוב בגב – מאונך",
+      "price": "4500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10024/"
+    },
+    {
+      "id": 33970,
+      "name": "חולצה דגם יסמין – עם כיתוב במרכז החזה",
+      "price": "4500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10044/"
+    },
+    {
+      "id": 33938,
+      "name": "חולצה דגם ורד – עם כיתוב במותן",
+      "price": "4500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10061/"
+    },
+    {
+      "id": 33921,
+      "name": "חולצת טריקו 'לשון הרע לא מדבר אלי'",
+      "price": "2000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98101/"
+    },
+    {
+      "id": 21291,
+      "name": "חולצת \"לשון הרע\" מנוקד",
+      "price": "4500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%97%d7%95%d7%9c%d7%a6%d7%aa-%d7%9c%d7%a9%d7%95%d7%9f-%d7%94%d7%a8%d7%a2-%d7%9e%d7%a0%d7%95%d7%a7%d7%93/"
+    },
+    {
+      "id": 17968,
+      "name": "זוג מחזיקי מסכה לפנים",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10160/"
+    },
+    {
+      "id": 17663,
+      "name": "חזרה ללימודים עם לשון הרע לא מדבר אלי – מארז מיוחד",
+      "price": "3990",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/93120/"
+    },
+    {
+      "id": 16551,
+      "name": "מסכות בד רב פעמיות – 10 במארז",
+      "price": "1500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%9e%d7%a1%d7%9b%d7%95%d7%aa-%d7%91%d7%93-%d7%a8%d7%91-%d7%a4%d7%a2%d7%9e%d7%99%d7%95%d7%aa-10-%d7%91%d7%9e%d7%90%d7%a8%d7%96/"
+    },
+    {
+      "id": 8032,
+      "name": "כיפת בד i-kipa עם הסלוגן באנגלית",
+      "price": "2000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10081/"
+    },
+    {
+      "id": 8029,
+      "name": "כיפת בד – i-kipa עם הסלוגן",
+      "price": "2000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10080/"
+    },
+    {
+      "id": 7669,
+      "name": "מסכות בד רב פעמיות – 5 במארז",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/100105/"
+    },
+    {
+      "id": 7457,
+      "name": "תורמים מסכות לצוותים הרפואיים!",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/1001818/"
+    },
+    {
+      "id": 6083,
+      "name": "צמיד בד אופנתי בעבודת יד – צבע לבן שחור",
+      "price": "6900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99955/"
+    },
+    {
+      "id": 6082,
+      "name": "צמיד בד אופנתי בעבודת יד – צבע אדום",
+      "price": "6900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99951/"
+    },
+    {
+      "id": 6081,
+      "name": "צמיד בד אופנתי בעבודת יד – צבע סגול לבן",
+      "price": "6900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99956/"
+    },
+    {
+      "id": 6080,
+      "name": "צמיד בד אופנתי בעבודת יד – צבע בז'",
+      "price": "6900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99949/"
+    },
+    {
+      "id": 6079,
+      "name": "צמיד בד אופנתי בעבודת יד – צבע אפור כהה",
+      "price": "6900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99952/"
+    },
+    {
+      "id": 6065,
+      "name": "צמיד בד אופנתי בעבודת יד – צבע כחול",
+      "price": "6900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99947/"
+    },
+    {
+      "id": 3655,
+      "name": "שוקולד עגול עם הלוגו",
+      "price": "300",
+      "currency_code": "ILS",
+      "is_in_stock": false,
+      "permalink": "https://lashonhara.co.il/product/11107/"
+    },
+    {
+      "id": 2815,
+      "name": "אפליקציה לגיהוץ – פאצ' – שחור",
+      "price": "700",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98207/"
+    },
+    {
+      "id": 2816,
+      "name": "אפליקציה לגיהוץ – פאצ' – לבן",
+      "price": "700",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98208/"
+    },
+    {
+      "id": 2212,
+      "name": "תג למזוודה בצבע אדום",
+      "price": "700",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99914/"
+    },
+    {
+      "id": 2210,
+      "name": "תיק צד עם פייטים מחליפי צבעים ורוד וכסף",
+      "price": "4000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/93492/"
+    },
+    {
+      "id": 2208,
+      "name": "תיק צד עם פייטים מחליפי צבעים שחור וכסף",
+      "price": "4000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/93493/"
+    },
+    {
+      "id": 1052,
+      "name": "טבעת סיליקון אדומה",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98279/"
+    },
+    {
+      "id": 263,
+      "name": "מניפת עץ איכותית",
+      "price": "2000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/90005/"
+    },
+    {
+      "id": 747,
+      "name": "מעמד מגנטי לסלולארי",
+      "price": "2500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/94019/"
+    },
+    {
+      "id": 588,
+      "name": "כרית פייטים מחליפה צבעים",
+      "price": "3500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98232/"
+    },
+    {
+      "id": 587,
+      "name": "ערכת טיסה ממותגת",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98231/"
+    },
+    {
+      "id": 354,
+      "name": "תיק גב מבד ניילון",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/93490/"
+    },
+    {
+      "id": 353,
+      "name": "מטריית סלוגן לבנה בציפוי אינטראקטיבי ייחודי",
+      "price": "1990",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/90010/"
+    },
+    {
+      "id": 352,
+      "name": "מטריית סלוגן שחורה בציפוי אינטראקטיבי ייחודי",
+      "price": "1990",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/90012/"
+    },
+    {
+      "id": 324,
+      "name": "שעון יד מחוגים רצועות סיליקון – כחול",
+      "price": "2500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/97001/"
+    },
+    {
+      "id": 322,
+      "name": "שעון יד מחוגים רצועות סיליקון – וורוד",
+      "price": "2500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/97000/"
+    },
+    {
+      "id": 209,
+      "name": "פופ סוקט (Pop Socket) שחור לפלאפון",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/96002/"
+    },
+    {
+      "id": 207,
+      "name": "פופ סוקט (Pop Socket) לבן לפלאפון",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/96001/"
+    },
+    {
+      "id": 196,
+      "name": "פד ממותג לעכבר",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/93306/"
+    },
+    {
+      "id": 154,
+      "name": "מחזיק כרטיסי אשראי לפלאפון – אדום",
+      "price": "700",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/91001/"
+    },
+    {
+      "id": 129,
+      "name": "מחזיק כרטיסי אשראי לפלאפון – שחור",
+      "price": "700",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/91002/"
+    },
+    {
+      "id": 53,
+      "name": "מאוורר לייזר נייד",
+      "price": "1500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/90000/"
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "category": {
+    "id": 35,
+    "name": "צמידים בציפוי זהב וכסף",
+    "slug": "206080"
+  },
+  "products": [
+    {
+      "id": 48402,
+      "name": "צמיד מתכת צר בציפוי זהב צהוב- חריטת אותיות ללא תוספת צבע",
+      "price": "9900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%a6%d7%9e%d7%99%d7%93-%d7%9e%d7%aa%d7%9b%d7%aa-%d7%a6%d7%a8-%d7%91%d7%a6%d7%99%d7%a4%d7%95%d7%99-%d7%96%d7%94%d7%91-%d7%a6%d7%94%d7%95%d7%91-%d7%97%d7%a8%d7%99%d7%98%d7%aa-%d7%90%d7%95%d7%aa%d7%99/"
+    },
+    {
+      "id": 41944,
+      "name": "שרשרת עם הסלוגן בארבע שפות",
+      "price": "9900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/94012/"
+    },
+    {
+      "id": 6008,
+      "name": "צמיד מתכת רחב בציפוי זהב וורוד – חריטת אותיות ללא תוספת צבע",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/16675/"
+    },
+    {
+      "id": 742,
+      "name": "צמיד מתכת רחב בציפוי שחור מבריק – חריטת אותיות בצבע כסף",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/16615/"
+    },
+    {
+      "id": 740,
+      "name": "צמיד מתכת רחב בציפוי זהב צהוב – חריטת אותיות ללא תוספת צבע",
+      "price": "6000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/16679/"
+    },
+    {
+      "id": 713,
+      "name": "צמיד מתכת רחב בציפוי שחור מבריק – חריטת אותיות בשחור מט",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10205/"
+    },
+    {
+      "id": 642,
+      "name": "צמיד מתכת צר בציפוי זהב וורוד – חריטת אותיות ללא תוספת צבע",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/16677/"
+    },
+    {
+      "id": 584,
+      "name": "צמיד מתכת צר בציפוי כסף – חריטת אותיות ללא תוספת צבע",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/17702/"
+    },
+    {
+      "id": 583,
+      "name": "צמיד מתכת צר בציפוי כסף – חריטת אותיות בצבעי הלוגו",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/17704/"
+    },
+    {
+      "id": 350,
+      "name": "צמיד מתכת רחב בציפוי זהב וורוד – חריטת אותיות בצבעי הלוגו",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/16676/"
+    },
+    {
+      "id": 313,
+      "name": "צמיד מתכת רחב בציפוי כסף – חריטת אותיות בצבעי הלוגו",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/17707/"
+    },
+    {
+      "id": 244,
+      "name": "צמיד מתכת רחב בציפוי כסף – חריטת אותיות ללא תוספת צבע",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/17703/"
+    }
+  ]
+}

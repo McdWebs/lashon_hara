@@ -1,0 +1,97 @@
+{
+  "category": {
+    "id": 18,
+    "name": "מדבקות, סטיקרים ומוצרים לרכב",
+    "slug": "%d7%9e%d7%93%d7%91%d7%a7%d7%95%d7%aa-%d7%a1%d7%98%d7%99%d7%a7%d7%a8%d7%99%d7%9d-%d7%95%d7%9e%d7%95%d7%a6%d7%a8%d7%99%d7%9d-%d7%9c%d7%a8%d7%9b%d7%91"
+  },
+  "products": [
+    {
+      "id": 49265,
+      "name": "מדבקת מגנט לפלאפון",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%9e%d7%93%d7%91%d7%a7%d7%aa-%d7%9e%d7%92%d7%a0%d7%98-%d7%9c%d7%a4%d7%9c%d7%90%d7%a4%d7%95%d7%9f/"
+    },
+    {
+      "id": 42859,
+      "name": "שלט שולחני 'בשולחן זה מדברים לשון הרע'",
+      "price": "1990",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/shelet/"
+    },
+    {
+      "id": 42704,
+      "name": "שלט 'כאן לא מדברים לשון הרע'",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%a9%d7%9c%d7%98-%d7%9b%d7%90%d7%9f-%d7%9c%d7%90-%d7%9e%d7%93%d7%91%d7%a8%d7%99%d7%9d-%d7%9c%d7%a9%d7%95%d7%9f-%d7%94%d7%a8%d7%a2/"
+    },
+    {
+      "id": 4043,
+      "name": "מדבקת קריסטל עגולה – לבן",
+      "price": "300",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/49913/"
+    },
+    {
+      "id": 747,
+      "name": "מעמד מגנטי לסלולארי",
+      "price": "2500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/94019/"
+    },
+    {
+      "id": 744,
+      "name": "סטיקר סלוגן – מטר",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/94009/"
+    },
+    {
+      "id": 743,
+      "name": "סטיקר סלוגן – חצי מטר",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/94008/"
+    },
+    {
+      "id": 45,
+      "name": "ריחן לרכב",
+      "price": "300",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/90004/"
+    },
+    {
+      "id": 44,
+      "name": "כרזת סלוגן במסגרת שחורה",
+      "price": "2000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/90032/"
+    },
+    {
+      "id": 43,
+      "name": "כרזת סלוגן במסגרת זהב",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/90031/"
+    },
+    {
+      "id": 36,
+      "name": "סטיקר סלוגן",
+      "price": "20",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/90003/"
+    }
+  ]
+}

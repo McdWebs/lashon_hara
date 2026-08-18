@@ -1,0 +1,81 @@
+{
+  "category": {
+    "id": 135,
+    "name": "צמידי בד בעבודת יד",
+    "slug": "fabric"
+  },
+  "products": [
+    {
+      "id": 42550,
+      "name": "רביעיית צמידי בד כולל סטנד",
+      "price": "18000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/180/"
+    },
+    {
+      "id": 42547,
+      "name": "שישיית צמידי בד כולל סטנד",
+      "price": "24900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/249/"
+    },
+    {
+      "id": 42537,
+      "name": "צמיד בד אופנתי בעבודת יד – צבע שחור",
+      "price": "6900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99948/"
+    },
+    {
+      "id": 6083,
+      "name": "צמיד בד אופנתי בעבודת יד – צבע לבן שחור",
+      "price": "6900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99955/"
+    },
+    {
+      "id": 6082,
+      "name": "צמיד בד אופנתי בעבודת יד – צבע אדום",
+      "price": "6900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99951/"
+    },
+    {
+      "id": 6081,
+      "name": "צמיד בד אופנתי בעבודת יד – צבע סגול לבן",
+      "price": "6900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99956/"
+    },
+    {
+      "id": 6080,
+      "name": "צמיד בד אופנתי בעבודת יד – צבע בז'",
+      "price": "6900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99949/"
+    },
+    {
+      "id": 6079,
+      "name": "צמיד בד אופנתי בעבודת יד – צבע אפור כהה",
+      "price": "6900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99952/"
+    },
+    {
+      "id": 6065,
+      "name": "צמיד בד אופנתי בעבודת יד – צבע כחול",
+      "price": "6900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99947/"
+    }
+  ]
+}

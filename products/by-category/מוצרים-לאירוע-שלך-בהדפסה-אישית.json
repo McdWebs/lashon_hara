@@ -1,0 +1,17 @@
+{
+  "category": {
+    "id": 44,
+    "name": "מוצרים לאירוע שלך - בהדפסה אישית",
+    "slug": "%d7%9e%d7%95%d7%a6%d7%a8%d7%99%d7%9d-%d7%9c%d7%90%d7%99%d7%a8%d7%95%d7%a2-%d7%a9%d7%9c%d7%9a-%d7%91%d7%94%d7%93%d7%a4%d7%a1%d7%94-%d7%90%d7%99%d7%a9%d7%99%d7%aa"
+  },
+  "products": [
+    {
+      "id": 6865,
+      "name": "תחפושת \"לשון הרע לא מדבר אלי\"",
+      "price": "9900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/80626/"
+    }
+  ]
+}

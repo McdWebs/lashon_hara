@@ -1,0 +1,81 @@
+{
+  "category": {
+    "id": 29,
+    "name": "מחזיקי מפתחות",
+    "slug": "%d7%9e%d7%97%d7%96%d7%99%d7%a7%d7%99-%d7%9e%d7%a4%d7%aa%d7%97%d7%95%d7%aa"
+  },
+  "products": [
+    {
+      "id": 48380,
+      "name": "מחזיק מפתחות שון",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%9e%d7%97%d7%96%d7%99%d7%a7-%d7%9e%d7%a4%d7%aa%d7%97%d7%95%d7%aa-%d7%a9%d7%95%d7%9f/"
+    },
+    {
+      "id": 4659,
+      "name": "מחזיק מפתחות צבע שחור – כל אות בצבע אחר",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/91000/"
+    },
+    {
+      "id": 1128,
+      "name": "מחזיק מפתחות זברה – בעיצוב אלין כהן",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/16100/"
+    },
+    {
+      "id": 709,
+      "name": "מחזיק מפתחות מנומר – בעיצוב נטלי דדון",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/91010/"
+    },
+    {
+      "id": 596,
+      "name": "מחזיק מפתחות גלקסיה – בעיצוב שלומית מלכה",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/91009/"
+    },
+    {
+      "id": 592,
+      "name": "מחזיק מפתחות צבאי",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/91006/"
+    },
+    {
+      "id": 127,
+      "name": "מחזיק מפתחות לבן",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/91004/"
+    },
+    {
+      "id": 81,
+      "name": "מחזיק מפתחות אדום",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/91003/"
+    },
+    {
+      "id": 65,
+      "name": "מחזיק מפתחות שחור",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/91005/"
+    }
+  ]
+}

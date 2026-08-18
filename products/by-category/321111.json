@@ -1,0 +1,113 @@
+{
+  "category": {
+    "id": 161,
+    "name": "צמידים מובלטים",
+    "slug": "321111"
+  },
+  "products": [
+    {
+      "id": 8197,
+      "name": "צמיד סיליקון מובלט סגול חציל",
+      "price": "200",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/11632/"
+    },
+    {
+      "id": 317,
+      "name": "צמיד סיליקון מובלט ירוק תפוח",
+      "price": "200",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/11332/"
+    },
+    {
+      "id": 315,
+      "name": "צמיד סיליקון מובלט טורקיז",
+      "price": "200",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/11323/"
+    },
+    {
+      "id": 280,
+      "name": "צמיד סיליקון מובלט וורוד",
+      "price": "200",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10832/"
+    },
+    {
+      "id": 279,
+      "name": "צמיד סיליקון מובלט אדום",
+      "price": "200",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10432/"
+    },
+    {
+      "id": 278,
+      "name": "צמיד סיליקון מובלט צהוב",
+      "price": "200",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/11933/"
+    },
+    {
+      "id": 276,
+      "name": "צמיד סיליקון מובלט לבן",
+      "price": "200",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10132/"
+    },
+    {
+      "id": 193,
+      "name": "צמיד סיליקון מובלט חום",
+      "price": "200",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10923/"
+    },
+    {
+      "id": 192,
+      "name": "צמיד סיליקון מובלט ירוק",
+      "price": "200",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/11232/"
+    },
+    {
+      "id": 191,
+      "name": "צמיד סיליקון מובלט כחול",
+      "price": "200",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/11432/"
+    },
+    {
+      "id": 190,
+      "name": "צמיד סיליקון מובלט כתום",
+      "price": "200",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/11532/"
+    },
+    {
+      "id": 189,
+      "name": "צמיד סיליקון מובלט סגול",
+      "price": "200",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/11631/"
+    },
+    {
+      "id": 188,
+      "name": "צמיד סיליקון מובלט שחור",
+      "price": "200",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10233/"
+    }
+  ]
+}

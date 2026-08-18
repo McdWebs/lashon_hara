@@ -1,0 +1,65 @@
+{
+  "category": {
+    "id": 146,
+    "name": "חולצות ופריטי לבוש",
+    "slug": "99975"
+  },
+  "products": [
+    {
+      "id": 49463,
+      "name": "קפוצ׳ון מתערוכת לשון הרע לא מדבר אליי-די לחרמות!",
+      "price": "15000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%a7%d7%a4%d7%95%d7%a6%d7%b3%d7%95%d7%9f-%d7%9e%d7%aa%d7%a2%d7%a8%d7%95%d7%9b%d7%aa-%d7%9c%d7%a9%d7%95%d7%9f-%d7%94%d7%a8%d7%a2-%d7%9c%d7%90-%d7%9e%d7%93%d7%91%d7%a8-%d7%90%d7%9c%d7%99%d7%99-2/"
+    },
+    {
+      "id": 49456,
+      "name": "קפוצ׳ון מתערוכת לשון הרע לא מדבר אליי-די לחרמות!",
+      "price": "15000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%a7%d7%a4%d7%95%d7%a6%d7%b3%d7%95%d7%9f-%d7%9e%d7%aa%d7%a2%d7%a8%d7%95%d7%9b%d7%aa-%d7%9c%d7%a9%d7%95%d7%9f-%d7%94%d7%a8%d7%a2-%d7%9c%d7%90-%d7%9e%d7%93%d7%91%d7%a8-%d7%90%d7%9c%d7%99%d7%99-%d7%93/"
+    },
+    {
+      "id": 49253,
+      "name": "חם-צוואר לחורף (מתאים לצוואר ולכיסוי פנים) עם האייקון של שון שומר הלשון",
+      "price": "2500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%97%d7%9d-%d7%a6%d7%95%d7%95%d7%90%d7%a8-%d7%9c%d7%97%d7%95%d7%a8%d7%a3-%d7%9e%d7%aa%d7%90%d7%99%d7%9d-%d7%9c%d7%a6%d7%95%d7%95%d7%90%d7%a8-%d7%95%d7%9c%d7%9b%d7%99%d7%a1%d7%95%d7%99-%d7%a4%d7%a0/"
+    },
+    {
+      "id": 17968,
+      "name": "זוג מחזיקי מסכה לפנים",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10160/"
+    },
+    {
+      "id": 16551,
+      "name": "מסכות בד רב פעמיות – 10 במארז",
+      "price": "1500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%9e%d7%a1%d7%9b%d7%95%d7%aa-%d7%91%d7%93-%d7%a8%d7%91-%d7%a4%d7%a2%d7%9e%d7%99%d7%95%d7%aa-10-%d7%91%d7%9e%d7%90%d7%a8%d7%96/"
+    },
+    {
+      "id": 7669,
+      "name": "מסכות בד רב פעמיות – 5 במארז",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/100105/"
+    },
+    {
+      "id": 7457,
+      "name": "תורמים מסכות לצוותים הרפואיים!",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/1001818/"
+    }
+  ]
+}

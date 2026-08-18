@@ -1,0 +1,41 @@
+{
+  "category": {
+    "id": 149,
+    "name": "כובעים וכיפות",
+    "slug": "%d7%9b%d7%95%d7%91%d7%a2%d7%99%d7%9d"
+  },
+  "products": [
+    {
+      "id": 43185,
+      "name": "כובע שמש  \"LH\"",
+      "price": "4900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%9b%d7%95%d7%91%d7%a2-%d7%a9%d7%9e%d7%a9-%d7%9c%d7%a9%d7%95%d7%9f-%d7%94%d7%a8%d7%a2-lh/"
+    },
+    {
+      "id": 8032,
+      "name": "כיפת בד i-kipa עם הסלוגן באנגלית",
+      "price": "2000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10081/"
+    },
+    {
+      "id": 8029,
+      "name": "כיפת בד – i-kipa עם הסלוגן",
+      "price": "2000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10080/"
+    },
+    {
+      "id": 759,
+      "name": "כובע מצחייה ממותג שחור",
+      "price": "3000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98204/"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "category": {
+    "id": 49,
+    "name": "טבעות בציפוי זהב וכסף",
+    "slug": "%d7%98%d7%91%d7%a2%d7%95%d7%aa-%d7%91%d7%a6%d7%99%d7%a4%d7%95%d7%99-%d7%96%d7%94%d7%91-%d7%95%d7%9b%d7%a1%d7%a3"
+  },
+  "products": [
+    {
+      "id": 2569,
+      "name": "טבעת בציפוי שחור מט, חריטת אותיות בצבע שחור מבריק",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98296/"
+    },
+    {
+      "id": 2563,
+      "name": "טבעת בציפוי זהב צהוב, חריטת אותיות ללא תוספת צבע",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98292/"
+    },
+    {
+      "id": 688,
+      "name": "טבעת בציפוי זהב וורוד, חריטת אותיות בצבע שחור",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98261/"
+    },
+    {
+      "id": 687,
+      "name": "טבעת בציפוי זהב וורוד, חריטת אותיות ללא תוספת צבע",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98265/"
+    },
+    {
+      "id": 672,
+      "name": "טבעת בציפוי כסף, חריטת אותיות בצבע שחור",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98244/"
+    },
+    {
+      "id": 671,
+      "name": "טבעת בציפוי כסף, חריטת אותיות ללא תוספת צבע",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98249/"
+    }
+  ]
+}

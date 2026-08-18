@@ -1,0 +1,73 @@
+{
+  "category": {
+    "id": 173,
+    "name": "צמידים מיוחדים",
+    "slug": "011011"
+  },
+  "products": [
+    {
+      "id": 48454,
+      "name": "צמיד לשון הרע לא מדבר אלי \"מפיצים את האור מגרשים את החשוך\"",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%a6%d7%9e%d7%99%d7%93-%d7%9c%d7%a9%d7%95%d7%9f-%d7%94%d7%a8%d7%a2-%d7%9c%d7%90-%d7%9e%d7%93%d7%91%d7%a8-%d7%90%d7%9c%d7%99-%d7%9e%d7%a4%d7%99%d7%a6%d7%99%d7%9d-%d7%90%d7%aa-%d7%94%d7%90%d7%95/"
+    },
+    {
+      "id": 6792,
+      "name": "צמיד סיליקון מהדורת יום העצמאות שיש",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/14021/"
+    },
+    {
+      "id": 3970,
+      "name": "צמיד סיליקון מהדורת יום העצמאות מובלט",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/14022/"
+    },
+    {
+      "id": 3177,
+      "name": "צמיד במהדורה מוגבלת – כל אות בצבע אחר – לבן",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10110/"
+    },
+    {
+      "id": 3176,
+      "name": "צמיד במהדורה מוגבלת – כל אות בצבע אחר – שחור",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10210/"
+    },
+    {
+      "id": 595,
+      "name": "צמיד סיליקון גלקסיה – בעיצוב שלומית מלכה",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/14002/"
+    },
+    {
+      "id": 283,
+      "name": "צמיד סיליקון שחור עם מילוי זוהר בחושך",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10392/"
+    },
+    {
+      "id": 63,
+      "name": "צמיד סיליקון ירוק זוהר בחושך – בעיצוב עומר אדם",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/11202/"
+    }
+  ]
+}

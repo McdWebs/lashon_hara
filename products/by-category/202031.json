@@ -1,0 +1,57 @@
+{
+  "category": {
+    "id": 167,
+    "name": "צמידים בעיצוב מפורסמים",
+    "slug": "202031"
+  },
+  "products": [
+    {
+      "id": 1123,
+      "name": "צמיד סיליקון זברה – בעיצוב אלין כהן",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/13102/"
+    },
+    {
+      "id": 1121,
+      "name": "צמיד סיליקון דק מבריק על כחול כהה – בעיצוב בר רפאלי",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/19022/"
+    },
+    {
+      "id": 1112,
+      "name": "צמיד סיליקון \"האדום של שוקי\"",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/19018/"
+    },
+    {
+      "id": 638,
+      "name": "צמיד סיליקון מנומר חום – בעיצוב נטלי דדון",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/12202/"
+    },
+    {
+      "id": 595,
+      "name": "צמיד סיליקון גלקסיה – בעיצוב שלומית מלכה",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/14002/"
+    },
+    {
+      "id": 63,
+      "name": "צמיד סיליקון ירוק זוהר בחושך – בעיצוב עומר אדם",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/11202/"
+    }
+  ]
+}

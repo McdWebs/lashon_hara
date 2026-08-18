@@ -1,0 +1,57 @@
+{
+  "category": {
+    "id": 282,
+    "name": "'צמידי הניצחון'",
+    "slug": "%d7%a6%d7%9e%d7%99%d7%93%d7%99-%d7%a2%d7%9d-%d7%99%d7%a9%d7%a8%d7%90%d7%9c"
+  },
+  "products": [
+    {
+      "id": 46889,
+      "name": "מחזיק מפתחות 'להשבת החטופים'",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%9e%d7%97%d7%96%d7%99%d7%a7-%d7%9e%d7%a4%d7%aa%d7%97%d7%95%d7%aa-%d7%9c%d7%94%d7%a9%d7%91%d7%aa-%d7%94%d7%97%d7%98%d7%95%d7%a4%d7%99%d7%9d/"
+    },
+    {
+      "id": 46547,
+      "name": "צמיד 'להשבת החטופים'",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%a6%d7%9e%d7%99%d7%93-bring-them-home/"
+    },
+    {
+      "id": 46377,
+      "name": "צמיד 'אין לנו ארץ אחרת' – לשון הרע לא מדבר אליי!",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%9c%d7%a9%d7%95%d7%9f-%d7%94%d7%a8%d7%a2-%d7%90%d7%99%d7%9f-%d7%9c%d7%a0%d7%95-%d7%90%d7%a8%d7%a5-%d7%90%d7%97%d7%a8%d7%aa/"
+    },
+    {
+      "id": 46376,
+      "name": "צמיד 'כוחנו באחדותנו' – לשון הרע לא מדבר אליי!",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%9c%d7%a9%d7%95%d7%9f-%d7%94%d7%a8%d7%a2-%d7%9b%d7%95%d7%9c%d7%a0%d7%95-%d7%91%d7%90%d7%97%d7%93%d7%95%d7%aa%d7%a0%d7%95/"
+    },
+    {
+      "id": 46372,
+      "name": "צמיד 'עם ישראל חי' – לשון הרע לא מדבר אליי!",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%9c%d7%a9%d7%95%d7%9f-%d7%94%d7%a8%d7%a2-%d7%a2%d7%9d-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%97%d7%99/"
+    },
+    {
+      "id": 46357,
+      "name": "סט 'צמידי הניצחון'",
+      "price": "9900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%a6%d7%9e%d7%99%d7%93%d7%99%d7%9d-%d7%9c%d7%a2%d7%9d-%d7%99%d7%a9%d7%a8%d7%90%d7%9c/"
+    }
+  ]
+}

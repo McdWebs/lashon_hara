@@ -1,0 +1,153 @@
+{
+  "category": {
+    "id": 19,
+    "name": "מוצרי ספורט",
+    "slug": "%d7%9e%d7%95%d7%a6%d7%a8%d7%99-%d7%a1%d7%a4%d7%95%d7%a8%d7%98"
+  },
+  "products": [
+    {
+      "id": 49255,
+      "name": "כדורגל איכותי עם האייקון של שון שומר הלשון",
+      "price": "9900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%9b%d7%93%d7%95%d7%a8%d7%92%d7%9c-%d7%90%d7%99%d7%9b%d7%95%d7%aa%d7%99-%d7%a2%d7%9d-%d7%94%d7%90%d7%99%d7%99%d7%a7%d7%95%d7%9f-%d7%a9%d7%9c-%d7%a9%d7%95%d7%9f-%d7%a9%d7%95%d7%9e%d7%a8-%d7%94%d7%9c/"
+    },
+    {
+      "id": 42861,
+      "name": "רגע לפני שזה מתפוצץ – קפוצ'ון עם הקמפיין החדש",
+      "price": "15000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99884/"
+    },
+    {
+      "id": 33989,
+      "name": "חולצה  דגם סחלב – עם כיתוב בגב – מאונך",
+      "price": "4500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10024/"
+    },
+    {
+      "id": 33970,
+      "name": "חולצה דגם יסמין – עם כיתוב במרכז החזה",
+      "price": "4500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10044/"
+    },
+    {
+      "id": 33938,
+      "name": "חולצה דגם ורד – עם כיתוב במותן",
+      "price": "4500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10061/"
+    },
+    {
+      "id": 33921,
+      "name": "חולצת טריקו 'לשון הרע לא מדבר אלי'",
+      "price": "2000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98101/"
+    },
+    {
+      "id": 33904,
+      "name": "חולצת טריקו – 'מי שמדבר איתך ידבר עליך'",
+      "price": "4500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98402/"
+    },
+    {
+      "id": 33889,
+      "name": "חולצת טריקו – 'בסוף זה יחזור אליך כמו בומרנג'",
+      "price": "4500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98602/"
+    },
+    {
+      "id": 21291,
+      "name": "חולצת \"לשון הרע\" מנוקד",
+      "price": "4500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%97%d7%95%d7%9c%d7%a6%d7%aa-%d7%9c%d7%a9%d7%95%d7%9f-%d7%94%d7%a8%d7%a2-%d7%9e%d7%a0%d7%95%d7%a7%d7%93/"
+    },
+    {
+      "id": 16532,
+      "name": "גופיית דרייפיט שחורה \"לשון הרע\"",
+      "price": "4500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10152/"
+    },
+    {
+      "id": 14183,
+      "name": "חולצת טריקו – \"תחשוב טוב\" – צבע שחור",
+      "price": "4500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/10092/"
+    },
+    {
+      "id": 7004,
+      "name": "קפוצ'ון \"לשון הרע לא מדבר אלי\"",
+      "price": "7900",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99857/"
+    },
+    {
+      "id": 3153,
+      "name": "גופיית \"לשון הרע\"",
+      "price": "3000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98702/"
+    },
+    {
+      "id": 759,
+      "name": "כובע מצחייה ממותג שחור",
+      "price": "3000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98204/"
+    },
+    {
+      "id": 329,
+      "name": "מימיית מתכת בינונית – אדום",
+      "price": "2500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99001/"
+    },
+    {
+      "id": 328,
+      "name": "מימיית מתכת בינונית –  כסופה",
+      "price": "2500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99002/"
+    },
+    {
+      "id": 326,
+      "name": "מימיית מתכת גדולה – אדום",
+      "price": "3000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/99003/"
+    },
+    {
+      "id": 325,
+      "name": "סופגי זיעה לזרוע",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/90006/"
+    }
+  ]
+}

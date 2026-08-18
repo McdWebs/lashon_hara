@@ -1,0 +1,97 @@
+{
+  "category": {
+    "id": 24,
+    "name": "מוצרים למשרד",
+    "slug": "%d7%9e%d7%95%d7%a6%d7%a8%d7%99%d7%9d-%d7%9c%d7%9e%d7%a9%d7%a8%d7%93"
+  },
+  "products": [
+    {
+      "id": 42859,
+      "name": "שלט שולחני 'בשולחן זה מדברים לשון הרע'",
+      "price": "1990",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/shelet/"
+    },
+    {
+      "id": 42704,
+      "name": "שלט 'כאן לא מדברים לשון הרע'",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/%d7%a9%d7%9c%d7%98-%d7%9b%d7%90%d7%9f-%d7%9c%d7%90-%d7%9e%d7%93%d7%91%d7%a8%d7%99%d7%9d-%d7%9c%d7%a9%d7%95%d7%9f-%d7%94%d7%a8%d7%a2/"
+    },
+    {
+      "id": 2198,
+      "name": "סימניית לשון הרע לא מדבר אלי",
+      "price": "100",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/93601/"
+    },
+    {
+      "id": 588,
+      "name": "כרית פייטים מחליפה צבעים",
+      "price": "3500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98232/"
+    },
+    {
+      "id": 587,
+      "name": "ערכת טיסה ממותגת",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98231/"
+    },
+    {
+      "id": 224,
+      "name": "טוש מרקר צהוב",
+      "price": "300",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/93002/"
+    },
+    {
+      "id": 196,
+      "name": "פד ממותג לעכבר",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/93306/"
+    },
+    {
+      "id": 184,
+      "name": "עט 6 צבעים ממותג",
+      "price": "400",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/93305/"
+    },
+    {
+      "id": 183,
+      "name": "סט עפרונות ממותגים",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/93010/"
+    },
+    {
+      "id": 44,
+      "name": "כרזת סלוגן במסגרת שחורה",
+      "price": "2000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/90032/"
+    },
+    {
+      "id": 43,
+      "name": "כרזת סלוגן במסגרת זהב",
+      "price": "1000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/90031/"
+    }
+  ]
+}

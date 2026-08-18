@@ -1,0 +1,33 @@
+{
+  "category": {
+    "id": 163,
+    "name": "צמידי סיליקון רחבים",
+    "slug": "715999"
+  },
+  "products": [
+    {
+      "id": 728,
+      "name": "צמיד סיליקון רחב וורוד",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98717/"
+    },
+    {
+      "id": 727,
+      "name": "צמיד סיליקון רחב לבן",
+      "price": "700",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98716/"
+    },
+    {
+      "id": 726,
+      "name": "צמיד סיליקון רחב שחור",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98715/"
+    }
+  ]
+}

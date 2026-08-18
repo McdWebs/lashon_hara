@@ -1,0 +1,57 @@
+{
+  "category": {
+    "id": 125,
+    "name": "קעקועים",
+    "slug": "%d7%a7%d7%a2%d7%a7%d7%95%d7%a2%d7%99%d7%9d"
+  },
+  "products": [
+    {
+      "id": 9705,
+      "name": "מדבקת קעקוע באנגלית",
+      "price": "300",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/94002/"
+    },
+    {
+      "id": 195,
+      "name": "מדבקת קעקוע בצבעים זהב וכסף",
+      "price": "400",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/94007/"
+    },
+    {
+      "id": 194,
+      "name": "מדבקת קעקוע כסף",
+      "price": "400",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/94006/"
+    },
+    {
+      "id": 137,
+      "name": "מדבקת קעקוע זהב",
+      "price": "400",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/94004/"
+    },
+    {
+      "id": 64,
+      "name": "מדבקת קעקוע עם פרח",
+      "price": "300",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/94000/"
+    },
+    {
+      "id": 62,
+      "name": "מדבקת קעקוע",
+      "price": "300",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/94003/"
+    }
+  ]
+}

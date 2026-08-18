@@ -1,0 +1,73 @@
+{
+  "category": {
+    "id": 164,
+    "name": "צמידים דקים",
+    "slug": "339011"
+  },
+  "products": [
+    {
+      "id": 43000,
+      "name": "צמיד סיליקון דק צבעוני",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/96608/"
+    },
+    {
+      "id": 42996,
+      "name": "צמיד סיליקון דק שיש שחור-לבן",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/96609/"
+    },
+    {
+      "id": 5617,
+      "name": "צמיד סיליקון דק אדום",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/96606/"
+    },
+    {
+      "id": 1121,
+      "name": "צמיד סיליקון דק מבריק על כחול כהה – בעיצוב בר רפאלי",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/19022/"
+    },
+    {
+      "id": 1048,
+      "name": "צמיד סיליקון דק וורוד בייבי",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/19005/"
+    },
+    {
+      "id": 1046,
+      "name": "צמיד סיליקון דק בצבע כסף",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/19008/"
+    },
+    {
+      "id": 1045,
+      "name": "צמיד סיליקון דק כחול בהיר",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/19009/"
+    },
+    {
+      "id": 1021,
+      "name": "צמיד סיליקון דק שחור",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/19003/"
+    }
+  ]
+}
