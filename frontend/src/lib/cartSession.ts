@@ -1,3 +1,5 @@
+import { decodeHtmlEntities } from "./html";
+
 const TOKEN_KEY = "lh-cart-token";
 const NONCE_KEY = "lh-cart-nonce";
 
@@ -88,9 +90,15 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
   const res = await fetch(path, { ...init, headers });
   persistSession(res);
-  const data = (await res.json()) as T & { code?: string };
+  const data = (await res.json()) as T & { code?: string; message?: string };
   if (!res.ok) {
-    throw new Error(typeof data?.code === "string" ? data.code : "cart_request_failed");
+    const message =
+      typeof data?.message === "string" && data.message
+        ? decodeHtmlEntities(data.message)
+        : typeof data?.code === "string"
+          ? data.code
+          : "cart_request_failed";
+    throw new Error(message);
   }
   return data;
 }
