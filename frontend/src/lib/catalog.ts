@@ -114,7 +114,10 @@ export async function fetchProduct(id: string): Promise<WcProduct> {
 }
 
 export async function fetchCategories(): Promise<WcCategory[]> {
-  const res = await fetch(`${base}/categories`);
+  const url = useWcDirect
+    ? `${base}/products/categories?per_page=100`
+    : `${base}/categories`;
+  const res = await fetch(url);
   if (!res.ok) throw new Error("categories_unavailable");
   const categories = ((await res.json()) as WcCategory[]).map(normalizeCategory);
   return dedupeCategories(categories);
