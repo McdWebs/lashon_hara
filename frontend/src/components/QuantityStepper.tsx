@@ -7,12 +7,14 @@ export function QuantityStepper({
   onChange,
   min = 1,
   max = 99,
+  step = 1,
   size = "medium",
 }: {
   value: number;
   onChange: (n: number) => void;
   min?: number;
   max?: number;
+  step?: number;
   size?: "small" | "medium";
 }) {
   const btnSize = size === "small" ? "small" : "medium";
@@ -34,7 +36,7 @@ export function QuantityStepper({
         size={btnSize}
         aria-label="הפחתה"
         disabled={value <= min}
-        onClick={() => onChange(Math.max(min, value - 1))}
+        onClick={() => onChange(Math.max(min, value - step))}
       >
         <RemoveIcon fontSize="small" />
       </IconButton>
@@ -43,7 +45,7 @@ export function QuantityStepper({
         size={btnSize}
         aria-label="הוספה"
         disabled={value >= max}
-        onClick={() => onChange(Math.min(max, value + 1))}
+        onClick={() => onChange(Math.min(max, value + step))}
       >
         <AddIcon fontSize="small" />
       </IconButton>

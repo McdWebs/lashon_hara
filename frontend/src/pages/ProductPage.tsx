@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Link as RouterLink, useParams } from "react-router-dom";
 import { ProductGrid } from "../components/ProductGrid";
+import { ProductOrderNotice } from "../components/ProductOrderNotice";
 import { QuantityStepper } from "../components/QuantityStepper";
 import { SchoolsOrderForm } from "../components/SchoolsOrderForm";
 import { ShippingStrip } from "../components/ShippingStrip";
@@ -20,6 +21,11 @@ import { SchoolOrderProcessContent } from "../content/schoolOrderProcessHe";
 import { track } from "../lib/analytics";
 import { useCart } from "../lib/cart";
 import { fetchProduct, fetchRelatedProducts } from "../lib/catalog";
+import {
+  clampOrderQuantity,
+  formatOrderRulesNotice,
+  getProductOrderRules,
+} from "../lib/productOrderRules";
 import { useLocale } from "../i18n/useLocale";
 import { formatIls, SCHOOLS_PRODUCT_ID } from "../lib/site";
 
@@ -30,6 +36,8 @@ export function ProductPage() {
   const [quantity, setQuantity] = useState(1);
   const [imageIndex, setImageIndex] = useState(0);
   const [snackOpen, setSnackOpen] = useState(false);
+  const [snackError, setSnackError] = useState(false);
+  const [snackMessage, setSnackMessage] = useState("");
 
   const query = useQuery({
     queryKey: ["product", id],
@@ -51,8 +59,12 @@ export function ProductPage() {
 
   useEffect(() => {
     setImageIndex(0);
-    setQuantity(1);
   }, [id]);
+
+  useEffect(() => {
+    if (!query.data) return;
+    setQuantity(getProductOrderRules(query.data).min);
+  }, [query.data?.id]);
 
   if (query.isLoading) return <ProductPageSkeleton />;
   if (query.isError || !query.data) {
@@ -65,17 +77,36 @@ export function ProductPage() {
 
   const p = query.data;
   const isSchoolsProduct = p.id === SCHOOLS_PRODUCT_ID;
+  const orderRules = getProductOrderRules(p);
   const images = p.images.length > 0 ? p.images : [];
   const img = images[imageIndex] ?? images[0];
   const unit = p.prices.currency_minor_unit ?? 2;
 
   async function handleAddToCart() {
-    try {
-      await addItem(p.id, quantity);
-      track("product_added_to_cart", { id: p.id, quantity });
+    const qty = clampOrderQuantity(quantity, orderRules);
+    if (qty !== quantity) setQuantity(qty);
+    if (qty < orderRules.min) {
+      setSnackError(true);
+      setSnackMessage(formatOrderRulesNotice(orderRules, lang));
       setSnackOpen(true);
-    } catch {
-      /* the snackbar simply won't show; button remains usable to retry */
+      return;
+    }
+    try {
+      await addItem(p.id, qty);
+      track("product_added_to_cart", { id: p.id, quantity: qty });
+      setSnackError(false);
+      setSnackMessage("");
+      setSnackOpen(true);
+    } catch (err) {
+      setSnackError(true);
+      setSnackMessage(
+        err instanceof Error
+          ? err.message
+          : lang === "en"
+            ? "Couldn't add to cart. Please try again."
+            : "לא הצלחנו להוסיף לסל. נסו שוב.",
+      );
+      setSnackOpen(true);
     }
   }
 
@@ -98,12 +129,19 @@ export function ProductPage() {
         }}
       />
       <ShippingStrip />
+      <ProductOrderNotice rules={orderRules} lang={lang} />
       <Stack
         direction="row"
         spacing={2}
         sx={{ alignItems: "center", flexWrap: "wrap" }}
       >
-        <QuantityStepper value={quantity} onChange={setQuantity} />
+        <QuantityStepper
+          value={quantity}
+          onChange={setQuantity}
+          min={orderRules.min}
+          max={orderRules.max}
+          step={orderRules.step}
+        />
         <Button
           variant="contained"
           size="large"
@@ -274,6 +312,9 @@ export function ProductPage() {
             <QuantityStepper
               value={quantity}
               onChange={setQuantity}
+              min={orderRules.min}
+              max={orderRules.max}
+              step={orderRules.step}
               size="small"
             />
             <Button variant="contained" fullWidth onClick={handleAddToCart}>
@@ -291,21 +332,28 @@ export function ProductPage() {
         sx={{ bottom: { xs: 88, md: 24 } }}
       >
         <Alert
-          severity="success"
+          severity={snackError ? "error" : "success"}
           sx={{ width: "100%", alignItems: "center" }}
           action={
-            <Button
-              color="inherit"
-              size="small"
-              component={RouterLink}
-              to={loc("/cart")}
-              onClick={() => setSnackOpen(false)}
-            >
-              {lang === "en" ? "View cart" : "לסל"}
-            </Button>
+            !snackError ? (
+              <Button
+                color="inherit"
+                size="small"
+                component={RouterLink}
+                to={loc("/cart")}
+                onClick={() => setSnackOpen(false)}
+              >
+                {lang === "en" ? "View cart" : "לסל"}
+              </Button>
+            ) : undefined
           }
         >
-          {lang === "en" ? "Added to cart" : "נוסף לסל"}
+          {snackError
+            ? snackMessage ||
+              (lang === "en" ? "Couldn't add to cart. Please try again." : "לא הצלחנו להוסיף לסל. נסו שוב.")
+            : lang === "en"
+              ? "Added to cart"
+              : "נוסף לסל"}
         </Alert>
       </Snackbar>
     </>

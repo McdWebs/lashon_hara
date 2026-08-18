@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Link as RouterLink, useParams } from "react-router-dom";
 import { ProductGrid } from "../components/ProductGrid";
+import { ProductOrderNotice } from "../components/ProductOrderNotice";
 import { QuantityStepper } from "../components/QuantityStepper";
 import { ErrorState, ProductGridSkeleton, ProductPageSkeleton } from "../components/States";
 import { VariationPicker } from "../components/VariationPicker";
@@ -13,6 +14,11 @@ import { useLocale } from "../i18n/useLocale";
 import { track } from "../lib/analytics";
 import { useCart } from "../lib/cart";
 import { fetchProduct, fetchRelatedProducts } from "../lib/catalog";
+import {
+  clampOrderQuantity,
+  formatOrderRulesNotice,
+  getProductOrderRules,
+} from "../lib/productOrderRules";
 import { formatIls, SCHOOLS_PRODUCT_ID } from "../lib/site";
 import { STORE_MAX_WIDTH } from "../lib/storeUi";
 import { ProductPage } from "./ProductPage";
@@ -67,6 +73,7 @@ export function ProductPageEditorial() {
   const [imageIndex, setImageIndex] = useState(0);
   const [snackOpen, setSnackOpen] = useState(false);
   const [snackError, setSnackError] = useState(false);
+  const [snackMessage, setSnackMessage] = useState("");
   const [adding, setAdding] = useState(false);
   const [variationId, setVariationId] = useState<number | null>(null);
   const query = useQuery({
@@ -83,9 +90,13 @@ export function ProductPageEditorial() {
 
   useEffect(() => {
     setImageIndex(0);
-    setQuantity(1);
     setVariationId(null);
   }, [id]);
+
+  useEffect(() => {
+    if (!query.data) return;
+    setQuantity(getProductOrderRules(query.data).min);
+  }, [query.data?.id]);
 
   useEffect(() => {
     if (query.data) track("product_viewed", { id: query.data.id, name: query.data.name });
@@ -102,6 +113,7 @@ export function ProductPageEditorial() {
   if (query.data.id === SCHOOLS_PRODUCT_ID) return <ProductPage />;
 
   const product = query.data;
+  const orderRules = getProductOrderRules(product);
   const images = product.images;
   const image = images[imageIndex] ?? images[0];
   const unit = product.prices.currency_minor_unit ?? 2;
@@ -114,14 +126,30 @@ export function ProductPageEditorial() {
   async function addToCart() {
     const targetId = isVariable ? variationId : product.id;
     if (!targetId) return;
+    const qty = clampOrderQuantity(quantity, orderRules);
+    if (qty !== quantity) setQuantity(qty);
+    if (qty < orderRules.min) {
+      setSnackError(true);
+      setSnackMessage(formatOrderRulesNotice(orderRules, lang));
+      setSnackOpen(true);
+      return;
+    }
     setAdding(true);
     try {
-      await addItem(targetId, quantity);
-      track("product_added_to_cart", { id: targetId, quantity });
+      await addItem(targetId, qty);
+      track("product_added_to_cart", { id: targetId, quantity: qty });
       setSnackError(false);
+      setSnackMessage("");
       setSnackOpen(true);
-    } catch {
+    } catch (err) {
       setSnackError(true);
+      setSnackMessage(
+        err instanceof Error
+          ? err.message
+          : lang === "en"
+            ? "Couldn't add to cart. Please try again."
+            : "לא הצלחנו להוסיף לסל. נסו שוב.",
+      );
       setSnackOpen(true);
     } finally {
       setAdding(false);
@@ -267,8 +295,16 @@ export function ProductPageEditorial() {
                 />
               )}
 
+              <ProductOrderNotice rules={orderRules} lang={lang} />
+
               <Stack direction="row" sx={{ mt: 3.5, gap: 1.5, alignItems: "stretch" }}>
-                <QuantityStepper value={quantity} onChange={setQuantity} />
+                <QuantityStepper
+                  value={quantity}
+                  onChange={setQuantity}
+                  min={orderRules.min}
+                  max={orderRules.max}
+                  step={orderRules.step}
+                />
                 <Button
                   variant="contained"
                   color="secondary"
@@ -346,7 +382,13 @@ export function ProductPageEditorial() {
           <Typography sx={{ fontSize: 14, fontWeight: 600, minWidth: 70 }}>
             {formatIls(product.prices.price, unit)}
           </Typography>
-          <Button fullWidth variant="contained" color="secondary" onClick={addToCart} disabled={adding || !canAddToCart}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="secondary"
+            onClick={addToCart}
+            disabled={adding || !canAddToCart}
+          >
             {isVariable && !canAddToCart
               ? lang === "en"
                 ? "Choose options"
@@ -367,9 +409,8 @@ export function ProductPageEditorial() {
       >
         <Alert severity={snackError ? "error" : "success"} onClose={() => setSnackOpen(false)}>
           {snackError
-            ? lang === "en"
-              ? "Couldn't add to cart. Please try again."
-              : "לא הצלחנו להוסיף לסל. נסו שוב."
+            ? snackMessage ||
+              (lang === "en" ? "Couldn't add to cart. Please try again." : "לא הצלחנו להוסיף לסל. נסו שוב.")
             : lang === "en"
               ? "Added to cart"
               : "נוסף לסל"}
