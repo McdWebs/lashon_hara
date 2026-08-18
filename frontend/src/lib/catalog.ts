@@ -37,7 +37,12 @@ export type WcProduct = {
   categories: Array<{ id: number; name: string; slug: string }>;
   short_description?: string;
   description?: string;
-  add_to_cart?: { url?: string };
+  add_to_cart?: {
+    url?: string;
+    minimum?: number;
+    maximum?: number;
+    multiple_of?: number;
+  };
   attributes?: WcAttribute[];
   variations?: WcVariation[];
 };
