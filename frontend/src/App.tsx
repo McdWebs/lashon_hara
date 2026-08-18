@@ -30,7 +30,9 @@ import { StoryDetailPage } from "./pages/StoryDetailPage";
 import { DonatePage } from "./pages/DonatePage";
 import { FaqPage, MagazinePage, NotFoundPage } from "./pages/SimplePages";
 import { AccountPage } from "./pages/CommercePages";
-import { CartPageEditorial, CheckoutPageEditorial } from "./pages/StoreCommerceEditorial";
+import { CheckoutPageEditorial } from "./pages/CheckoutPageEditorial";
+import { OrderConfirmationPage } from "./pages/OrderConfirmationPage";
+import { CartPageEditorial } from "./pages/StoreCommerceEditorial";
 import { TermsPage } from "./pages/TermsPage";
 import { createAppTheme } from "./theme";
 
@@ -66,6 +68,7 @@ function sitePages() {
       <Route path="shop/product/:id" element={<ProductPageEditorial />} />
       <Route path="cart" element={<CartPageEditorial />} />
       <Route path="checkout" element={<CheckoutPageEditorial />} />
+      <Route path="order-confirmation" element={<OrderConfirmationPage />} />
       <Route
         path="my-account"
         element={FEATURES.accountPage ? <AccountPage /> : <LocaleRedirect to="/" />}

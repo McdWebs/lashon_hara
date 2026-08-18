@@ -10,6 +10,8 @@ export type AnalyticsEvent =
   | "product_viewed"
   | "product_added_to_cart"
   | "checkout_started"
+  | "checkout_completed"
+  | "payment_failed"
   | "commitment_share_clicked"
   | "ambassador_application_completed"
   | "school_contact_completed"

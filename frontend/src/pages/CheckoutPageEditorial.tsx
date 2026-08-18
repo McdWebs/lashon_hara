@@ -1,0 +1,445 @@
+import { Alert, Box, Checkbox, FormControlLabel, Radio, RadioGroup, Stack, TextField, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { CityAutocomplete } from "../components/CityAutocomplete";
+import { LoadingButton } from "../components/States";
+import { useLocale } from "../i18n/useLocale";
+import { track } from "../lib/analytics";
+import { useCart } from "../lib/cart";
+import { cartApi, checkoutRequest, type WcShippingPackage } from "../lib/cartSession";
+import { decodeHtmlEntities } from "../lib/html";
+import { formatIls } from "../lib/site";
+import { STORE_MAX_WIDTH } from "../lib/storeUi";
+import { EmptyCommerce, OrderTotal } from "./StoreCommerceEditorial";
+
+type AddressForm = {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  address1: string;
+  address2: string;
+  city: string | null;
+  postcode: string;
+};
+
+const emptyAddress: AddressForm = {
+  firstName: "",
+  lastName: "",
+  phone: "",
+  email: "",
+  address1: "",
+  address2: "",
+  city: null,
+  postcode: "",
+};
+
+function toWcAddress(form: AddressForm, withEmail: boolean) {
+  return {
+    first_name: form.firstName,
+    last_name: form.lastName,
+    address_1: form.address1,
+    address_2: form.address2,
+    city: form.city ?? "",
+    postcode: form.postcode,
+    country: "IL",
+    phone: form.phone,
+    ...(withEmail ? { email: form.email } : {}),
+  };
+}
+
+function isAddressComplete(form: AddressForm) {
+  return Boolean(
+    form.firstName && form.lastName && form.phone && form.address1 && form.address2 && form.city && form.postcode,
+  );
+}
+
+const ERROR_MESSAGES: Record<string, { he: string; en: string }> = {
+  woocommerce_rest_product_out_of_stock: {
+    he: "אחד הפריטים בסל אזל מהמלאי. נא לעדכן את הסל ולנסות שוב.",
+    en: "One of the items in your cart is out of stock. Please update your cart and try again.",
+  },
+  woocommerce_rest_missing_email_address: {
+    he: "יש להזין כתובת מייל תקינה.",
+    en: "Please enter a valid email address.",
+  },
+  woocommerce_rest_invalid_address: {
+    he: "חסרים פרטים בכתובת — נא לוודא שמולא מספר בניין/דירה.",
+    en: "There's a problem with the address — please make sure the building/apartment number is filled in.",
+  },
+};
+
+function errorMessage(code: string, lang: "he" | "en") {
+  return ERROR_MESSAGES[code]?.[lang] ?? (lang === "en" ? "Something went wrong. Please try again." : "משהו השתבש. נסו שוב.");
+}
+
+export function CheckoutPageEditorial() {
+  const { lang, loc } = useLocale();
+  const navigate = useNavigate();
+  const items = useCart((state) => state.items);
+  const currencyMinorUnit = useCart((state) => state.currencyMinorUnit);
+  const needsShipping = useCart((state) => state.needsShipping);
+
+  const [billing, setBilling] = useState<AddressForm>(emptyAddress);
+  const [shipToDifferent, setShipToDifferent] = useState(false);
+  const [shipping, setShipping] = useState<AddressForm>(emptyAddress);
+  const [note, setNote] = useState("");
+
+  const [shippingPackages, setShippingPackages] = useState<WcShippingPackage[]>([]);
+  const [selectedRateId, setSelectedRateId] = useState<string | null>(null);
+  const [checkingShipping, setCheckingShipping] = useState(false);
+
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  function updateBilling<K extends keyof AddressForm>(key: K, value: AddressForm[K]) {
+    setBilling((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function updateShipping<K extends keyof AddressForm>(key: K, value: AddressForm[K]) {
+    setShipping((prev) => ({ ...prev, [key]: value }));
+  }
+
+  const activeShipping = shipToDifferent ? shipping : billing;
+  const shippingAddressReady = isAddressComplete(activeShipping);
+
+  useEffect(() => {
+    if (!needsShipping || !shippingAddressReady) return;
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      setCheckingShipping(true);
+      try {
+        const cart = await cartApi.updateCustomer({
+          billing_address: toWcAddress(billing, true),
+          shipping_address: toWcAddress(activeShipping, false),
+        });
+        if (cancelled) return;
+        setShippingPackages(cart.shipping_rates);
+        const defaultRate = cart.shipping_rates[0]?.shipping_rates.find((r) => r.selected);
+        setSelectedRateId(defaultRate?.rate_id ?? cart.shipping_rates[0]?.shipping_rates[0]?.rate_id ?? null);
+      } catch {
+        /* the "Complete purchase" flow will surface the real error if it still can't proceed */
+      } finally {
+        if (!cancelled) setCheckingShipping(false);
+      }
+    }, 500);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    needsShipping,
+    shippingAddressReady,
+    billing.firstName,
+    billing.lastName,
+    billing.address1,
+    billing.city,
+    billing.postcode,
+    activeShipping.firstName,
+    activeShipping.lastName,
+    activeShipping.address1,
+    activeShipping.city,
+    activeShipping.postcode,
+  ]);
+
+  async function handleSubmit() {
+    if (!isAddressComplete(billing) || !billing.email) return;
+    if (shipToDifferent && !isAddressComplete(shipping)) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      if (needsShipping) {
+        const cart = await cartApi.updateCustomer({
+          billing_address: toWcAddress(billing, true),
+          shipping_address: toWcAddress(activeShipping, false),
+        });
+        const firstPackage = cart.shipping_rates[0];
+        const rateId = selectedRateId ?? firstPackage?.shipping_rates.find((r) => r.selected)?.rate_id;
+        if (firstPackage && rateId) {
+          await cartApi.selectShippingRate({ package_id: firstPackage.package_id, rate_id: rateId });
+        }
+      }
+
+      track("checkout_started");
+
+      const result = await checkoutRequest({
+        billing_address: toWcAddress(billing, true),
+        shipping_address: needsShipping ? toWcAddress(activeShipping, false) : undefined,
+        customer_note: note || undefined,
+      });
+
+      sessionStorage.setItem("lh-last-order", JSON.stringify({ id: result.order_id, key: result.order_key }));
+
+      if (result.payment_result.redirect_url) {
+        window.location.href = result.payment_result.redirect_url;
+        return;
+      }
+      navigate(loc(`/order-confirmation?order_id=${result.order_id}&key=${encodeURIComponent(result.order_key)}`));
+    } catch (err) {
+      const code = err instanceof Error ? err.message : "checkout_failed";
+      setError(errorMessage(code, lang));
+      setSubmitting(false);
+      track("payment_failed", { code });
+    }
+  }
+
+  if (items.length === 0) {
+    return (
+      <Box sx={{ bgcolor: "#f8f6f1", minHeight: "70vh", py: { xs: 6, md: 10 } }}>
+        <Box sx={{ maxWidth: STORE_MAX_WIDTH, mx: "auto", px: { xs: 2.5, md: 3.5 } }}>
+          <EmptyCommerce checkout />
+        </Box>
+      </Box>
+    );
+  }
+
+  const canSubmit =
+    isAddressComplete(billing) &&
+    Boolean(billing.email) &&
+    (!shipToDifferent || isAddressComplete(shipping)) &&
+    !checkingShipping &&
+    (!needsShipping || Boolean(selectedRateId));
+
+  const selectedRate = shippingPackages[0]?.shipping_rates.find((r) => r.rate_id === selectedRateId);
+  const itemsSubtotal = items.reduce((sum, item) => sum + Number(item.lineTotal), 0);
+  const displayTotal = String(itemsSubtotal + (needsShipping && selectedRate ? Number(selectedRate.price) : 0));
+
+  return (
+    <Box sx={{ bgcolor: "#f8f6f1", minHeight: "70vh", py: { xs: 6, md: 10 } }}>
+      <Box sx={{ maxWidth: STORE_MAX_WIDTH, mx: "auto", px: { xs: 2.5, md: 3.5 } }}>
+        <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", mb: 1 }}>
+          {lang === "en" ? "Almost there" : "כמעט סיימנו"}
+        </Typography>
+        <Typography component="h1" sx={{ fontFamily: '"Secular One", Heebo, sans-serif', fontSize: { xs: 48, md: 74 }, lineHeight: 1 }}>
+          {lang === "en" ? "Checkout" : "השלמת הזמנה"}
+        </Typography>
+
+        <Box
+          sx={{
+            mt: { xs: 5, md: 7 },
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1fr) 360px" },
+            gap: { xs: 6, md: 10 },
+            alignItems: "start",
+          }}
+        >
+          <Box sx={{ bgcolor: "#fffdf8", p: { xs: 3, md: 4 } }}>
+            <Typography sx={{ fontWeight: 700, mb: 2 }}>
+              {lang === "en" ? "Contact & delivery address" : "פרטי קשר וכתובת למשלוח"}
+            </Typography>
+            <Stack sx={{ gap: 1.75 }}>
+              <Stack direction="row" sx={{ gap: 1.5, flexWrap: "wrap" }}>
+                <TextField
+                  required
+                  size="small"
+                  label={lang === "en" ? "First name" : "שם פרטי"}
+                  value={billing.firstName}
+                  onChange={(e) => updateBilling("firstName", e.target.value)}
+                  sx={{ flex: 1, minWidth: 140 }}
+                />
+                <TextField
+                  required
+                  size="small"
+                  label={lang === "en" ? "Last name" : "שם משפחה"}
+                  value={billing.lastName}
+                  onChange={(e) => updateBilling("lastName", e.target.value)}
+                  sx={{ flex: 1, minWidth: 140 }}
+                />
+              </Stack>
+              <Stack direction="row" sx={{ gap: 1.5, flexWrap: "wrap" }}>
+                <TextField
+                  required
+                  size="small"
+                  type="tel"
+                  label={lang === "en" ? "Phone" : "טלפון"}
+                  value={billing.phone}
+                  onChange={(e) => updateBilling("phone", e.target.value)}
+                  sx={{ flex: 1, minWidth: 140 }}
+                />
+                <TextField
+                  required
+                  size="small"
+                  type="email"
+                  label={lang === "en" ? "Email" : "כתובת מייל"}
+                  value={billing.email}
+                  onChange={(e) => updateBilling("email", e.target.value)}
+                  sx={{ flex: 1, minWidth: 140 }}
+                />
+              </Stack>
+              <TextField
+                required
+                size="small"
+                label={lang === "en" ? "Address" : "כתובת"}
+                value={billing.address1}
+                onChange={(e) => updateBilling("address1", e.target.value)}
+              />
+              <TextField
+                required
+                size="small"
+                label={lang === "en" ? "Building / apartment number" : "מספר בניין / דירה"}
+                value={billing.address2}
+                onChange={(e) => updateBilling("address2", e.target.value)}
+              />
+              <Stack direction="row" sx={{ gap: 1.5, flexWrap: "wrap" }}>
+                <Box sx={{ flex: 1, minWidth: 160 }}>
+                  <CityAutocomplete
+                    label={lang === "en" ? "City" : "עיר"}
+                    required
+                    size="small"
+                    value={billing.city}
+                    onChange={(value) => updateBilling("city", value)}
+                  />
+                </Box>
+                <TextField
+                  required
+                  size="small"
+                  label={lang === "en" ? "Postcode" : "מיקוד"}
+                  value={billing.postcode}
+                  onChange={(e) => updateBilling("postcode", e.target.value)}
+                  sx={{ flex: 1, minWidth: 140 }}
+                />
+              </Stack>
+
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={shipToDifferent}
+                    onChange={(e) => setShipToDifferent(e.target.checked)}
+                  />
+                }
+                label={lang === "en" ? "Ship to a different address" : "משלוח לכתובת אחרת"}
+              />
+
+              {shipToDifferent && (
+                <Stack sx={{ gap: 1.75, pt: 1, borderTop: "1px solid rgba(17,17,17,.1)" }}>
+                  <Stack direction="row" sx={{ gap: 1.5, flexWrap: "wrap" }}>
+                    <TextField
+                      required
+                      size="small"
+                      label={lang === "en" ? "First name" : "שם פרטי"}
+                      value={shipping.firstName}
+                      onChange={(e) => updateShipping("firstName", e.target.value)}
+                      sx={{ flex: 1, minWidth: 140 }}
+                    />
+                    <TextField
+                      required
+                      size="small"
+                      label={lang === "en" ? "Last name" : "שם משפחה"}
+                      value={shipping.lastName}
+                      onChange={(e) => updateShipping("lastName", e.target.value)}
+                      sx={{ flex: 1, minWidth: 140 }}
+                    />
+                  </Stack>
+                  <TextField
+                    required
+                    size="small"
+                    label={lang === "en" ? "Address" : "כתובת"}
+                    value={shipping.address1}
+                    onChange={(e) => updateShipping("address1", e.target.value)}
+                  />
+                  <TextField
+                    required
+                    size="small"
+                    label={lang === "en" ? "Building / apartment number" : "מספר בניין / דירה"}
+                    value={shipping.address2}
+                    onChange={(e) => updateShipping("address2", e.target.value)}
+                  />
+                  <Stack direction="row" sx={{ gap: 1.5, flexWrap: "wrap" }}>
+                    <Box sx={{ flex: 1, minWidth: 160 }}>
+                      <CityAutocomplete
+                        label={lang === "en" ? "City" : "עיר"}
+                        required
+                        size="small"
+                        value={shipping.city}
+                        onChange={(value) => updateShipping("city", value)}
+                      />
+                    </Box>
+                    <TextField
+                      required
+                      size="small"
+                      label={lang === "en" ? "Postcode" : "מיקוד"}
+                      value={shipping.postcode}
+                      onChange={(e) => updateShipping("postcode", e.target.value)}
+                      sx={{ flex: 1, minWidth: 140 }}
+                    />
+                    <TextField
+                      required
+                      size="small"
+                      type="tel"
+                      label={lang === "en" ? "Phone" : "טלפון"}
+                      value={shipping.phone}
+                      onChange={(e) => updateShipping("phone", e.target.value)}
+                      sx={{ flex: 1, minWidth: 140 }}
+                    />
+                  </Stack>
+                </Stack>
+              )}
+
+              {needsShipping && shippingPackages[0]?.shipping_rates && shippingPackages[0].shipping_rates.length > 0 && (
+                <Box sx={{ pt: 1 }}>
+                  <Typography sx={{ fontWeight: 700, mb: 1 }}>
+                    {lang === "en" ? "Delivery method" : "אופן משלוח"}
+                  </Typography>
+                  <RadioGroup value={selectedRateId ?? ""} onChange={(e) => setSelectedRateId(e.target.value)}>
+                    {shippingPackages[0].shipping_rates.map((rate) => (
+                      <FormControlLabel
+                        key={rate.rate_id}
+                        value={rate.rate_id}
+                        control={<Radio size="small" />}
+                        label={`${decodeHtmlEntities(rate.name)} — ${rate.price === "0" ? (lang === "en" ? "Free" : "חינם") : formatIls(rate.price, rate.currency_minor_unit)}`}
+                      />
+                    ))}
+                  </RadioGroup>
+                </Box>
+              )}
+              {checkingShipping && (
+                <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
+                  {lang === "en" ? "Checking delivery options…" : "בודקים אפשרויות משלוח…"}
+                </Typography>
+              )}
+
+              <TextField
+                size="small"
+                multiline
+                minRows={2}
+                label={lang === "en" ? "Order note (optional)" : "הערה להזמנה (לא חובה)"}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+              />
+            </Stack>
+          </Box>
+
+          <OrderTotal
+            items={items}
+            total={displayTotal}
+            unit={currencyMinorUnit}
+            action={
+              <>
+                {error && <Alert severity="error">{error}</Alert>}
+                <LoadingButton
+                  variant="contained"
+                  color="secondary"
+                  size="large"
+                  fullWidth
+                  loading={submitting}
+                  disabled={!canSubmit}
+                  onClick={handleSubmit}
+                >
+                  {lang === "en" ? "Complete purchase" : "לתשלום"}
+                </LoadingButton>
+                <Box
+                  component={RouterLink}
+                  to={loc("/cart")}
+                  sx={{ display: "block", textAlign: "center", color: "inherit", textDecoration: "underline", textUnderlineOffset: 4, fontSize: 14 }}
+                >
+                  {lang === "en" ? "Back to cart" : "חזרה לסל"}
+                </Box>
+              </>
+            }
+          />
+        </Box>
+      </Box>
+    </Box>
+  );
+}
