@@ -1,8 +1,14 @@
+import CheckIcon from "@mui/icons-material/Check";
+import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import { Box, Typography } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import type { WcProduct } from "../lib/catalog";
 import { useLocale } from "../i18n/useLocale";
+import { track } from "../lib/analytics";
+import { useCart } from "../lib/cart";
+import type { WcProduct } from "../lib/catalog";
 import { formatIls } from "../lib/site";
+import { STORE_COPY } from "../lib/storeUi";
 
 type ProductCardImageOverride = {
   src: string;
@@ -17,7 +23,11 @@ export function ProductCard({
   product: WcProduct;
   imageOverride?: ProductCardImageOverride;
 }) {
-  const { loc } = useLocale();
+  const { loc, lang } = useLocale();
+  const copy = STORE_COPY[lang];
+  const addItem = useCart((state) => state.addItem);
+  const [added, setAdded] = useState(false);
+  const addedTimer = useRef<number>(0);
   const img = imageOverride?.src ?? product.images[0]?.src ?? product.images[0]?.thumbnail;
   const imgAlt = imageOverride?.alt ?? product.images[0]?.alt ?? product.name;
   const hoverImg = imageOverride?.hoverSrc ?? product.images[1]?.src ?? product.images[1]?.thumbnail;
@@ -28,18 +38,38 @@ export function ProductCard({
     product.prices.regular_price !== product.prices.price &&
     Number(product.prices.regular_price) > Number(product.prices.price);
 
+  useEffect(() => () => window.clearTimeout(addedTimer.current), []);
+
+  function handleQuickAdd(event: React.MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.prices.price,
+      currencyMinorUnit: unit,
+      image: img,
+    });
+    track("product_added_to_cart", { id: product.id, quantity: 1, source: "quick_add" });
+    setAdded(true);
+    window.clearTimeout(addedTimer.current);
+    addedTimer.current = window.setTimeout(() => setAdded(false), 1800);
+  }
+
   return (
     <Box
-      component={RouterLink}
-      to={productTo}
       sx={{
         display: "flex",
         flexDirection: "column",
         height: "100%",
         color: "inherit",
-        textDecoration: "none",
         "&:hover .product-card-img": { transform: "scale(1.025)" },
         "&:hover .product-card-hover-img": { opacity: 1 },
+        "&:hover .product-card-quick-add": {
+          opacity: 1,
+          transform: "translateX(-50%) translateY(0)",
+        },
+        "&:hover .product-card-quick-fade": { opacity: 1 },
       }}
     >
       <Box
@@ -51,36 +81,48 @@ export function ProductCard({
         }}
       >
         <Box
-          className="product-card-img"
-          component="img"
-          src={img}
-          alt={imgAlt}
+          component={RouterLink}
+          to={productTo}
+          aria-label={product.name}
           sx={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
             display: "block",
-            transition: "transform 0.65s cubic-bezier(.2,.7,.2,1)",
+            height: "100%",
+            color: "inherit",
+            textDecoration: "none",
           }}
-        />
-        {hoverImg && (
+        >
           <Box
-            className="product-card-hover-img"
+            className="product-card-img"
             component="img"
-            src={hoverImg}
-            alt=""
-            aria-hidden
+            src={img}
+            alt={imgAlt}
             sx={{
-              position: "absolute",
-              inset: 0,
               width: "100%",
               height: "100%",
               objectFit: "cover",
-              opacity: 0,
-              transition: "opacity .35s ease",
+              display: "block",
+              transition: "transform 0.65s cubic-bezier(.2,.7,.2,1)",
             }}
           />
-        )}
+          {hoverImg && (
+            <Box
+              className="product-card-hover-img"
+              component="img"
+              src={hoverImg}
+              alt=""
+              aria-hidden
+              sx={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                opacity: 0,
+                transition: "opacity .35s ease",
+              }}
+            />
+          )}
+        </Box>
         {onSale && (
           <Typography
             component="span"
@@ -101,8 +143,82 @@ export function ProductCard({
             SALE
           </Typography>
         )}
+        <Box
+          className="product-card-quick-fade"
+          aria-hidden
+          sx={{
+            position: "absolute",
+            insetInline: 0,
+            bottom: 0,
+            height: "42%",
+            pointerEvents: "none",
+            background: "linear-gradient(180deg, rgba(17,17,17,0) 0%, rgba(17,17,17,.28) 100%)",
+            opacity: { xs: 1, md: added ? 1 : 0 },
+            transition: "opacity .35s ease",
+          }}
+        />
+        <Box
+          className="product-card-quick-add"
+          component="button"
+          type="button"
+          onClick={handleQuickAdd}
+          aria-label={added ? copy.addedToCart : copy.addToCart}
+          sx={{
+            appearance: "none",
+            position: "absolute",
+            zIndex: 1,
+            left: "50%",
+            bottom: { xs: 10, md: 14 },
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 0.85,
+            minHeight: 40,
+            px: 1.75,
+            border: "1px solid rgba(17,17,17,.08)",
+            borderRadius: "999px",
+            cursor: "pointer",
+            fontFamily: "inherit",
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: "0.1em",
+            lineHeight: 1,
+            whiteSpace: "nowrap",
+            color: added ? "#fffdf8" : "#111",
+            bgcolor: added ? "#123e3e" : "rgba(255,253,248,.94)",
+            boxShadow: added
+              ? "0 10px 24px rgba(18,62,62,.28)"
+              : "0 10px 28px rgba(17,17,17,.16)",
+            backdropFilter: added ? "none" : "blur(12px)",
+            WebkitBackdropFilter: added ? "none" : "blur(12px)",
+            opacity: { xs: 1, md: added ? 1 : 0 },
+            transform: {
+              xs: "translateX(-50%)",
+              md: added ? "translateX(-50%)" : "translateX(-50%) translateY(10px)",
+            },
+            transition:
+              "opacity .3s ease, transform .3s cubic-bezier(.2,.7,.2,1), background-color .25s ease, color .25s ease, box-shadow .25s ease",
+            "&:hover": {
+              bgcolor: added ? "#0f3535" : "#fffdf8",
+              boxShadow: added
+                ? "0 12px 28px rgba(18,62,62,.32)"
+                : "0 12px 32px rgba(17,17,17,.2)",
+            },
+            "&:active": {
+              transform: "translateX(-50%) scale(0.97)",
+            },
+            "& .MuiSvgIcon-root": { fontSize: 16 },
+          }}
+        >
+          {added ? <CheckIcon /> : <ShoppingBagOutlinedIcon />}
+          {added ? copy.addedToCart : copy.addToCart}
+        </Box>
       </Box>
-      <Box sx={{ pt: { xs: 1.25, md: 1.6 }, pb: 1 }}>
+      <Box
+        component={RouterLink}
+        to={productTo}
+        sx={{ pt: { xs: 1.25, md: 1.6 }, pb: 1, color: "inherit", textDecoration: "none" }}
+      >
         <Typography
           className="product-card-name"
           sx={{

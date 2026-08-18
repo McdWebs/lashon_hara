@@ -1,7 +1,7 @@
 export const STORE_MAX_WIDTH = 1320;
 
 export const STORE_HERO_IMAGE = "/images/metal_bracelet/3_color_bracelets.jpeg";
-export const STORE_FEATURED_IMAGE = "/images/fabric_bracelet/beige_bracelet.jpeg";
+export const STORE_FEATURED_IMAGE = "/images/fabric_bracelet/all_bracelet.jpeg";
 
 export type StoreCategoryTileVariant = "overlay" | "hero" | "inset" | "band";
 
@@ -173,6 +173,8 @@ export const STORE_COPY = {
     menu: "תפריט",
     why: "הסיפור שלנו",
     cart: "סל",
+    addToCart: "הוספה לסל",
+    addedToCart: "נוסף לסל",
   },
   en: {
     announcement: "Free shipping on orders over ₪250",
@@ -215,5 +217,7 @@ export const STORE_COPY = {
     menu: "Menu",
     why: "Our story",
     cart: "Cart",
+    addToCart: "Add to cart",
+    addedToCart: "Added",
   },
 } as const;

@@ -214,7 +214,7 @@ function FeaturedEdit({
           <Box
             component="img"
             src={STORE_FEATURED_IMAGE}
-            alt={lang === "en" ? "Fabric bracelets from the collection" : "צמידי בד מהקולקציה"}
+            alt={lang === "en" ? "Fabric and metal bracelets from the collection" : "צמידי בד ומתכת מהקולקציה"}
             sx={{
               display: "block",
               width: "100%",
