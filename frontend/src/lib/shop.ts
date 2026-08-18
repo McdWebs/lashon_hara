@@ -70,6 +70,20 @@ export const SHOP_CATEGORY_CHIPS = [
   { category: "20", label: { he: "צמידים", en: "Bracelets" } },
 ] as const;
 
+/** Catalog filter chip order (WooCommerce category IDs). */
+export const CATEGORY_CHIP_ORDER = [
+  35, 135, 48, 146, 20, 282, 29, 166, 18, 19, 125, 26, 23, 31, 154, 24, 273, 39, 44, 251,
+] as const;
+
+export function sortCategoriesForChips<T extends { id: number }>(categories: T[]): T[] {
+  const order = new Map<number, number>(CATEGORY_CHIP_ORDER.map((id, index) => [id, index]));
+  return [...categories].sort((a, b) => {
+    const ai = order.get(a.id) ?? Number.MAX_SAFE_INTEGER;
+    const bi = order.get(b.id) ?? Number.MAX_SAFE_INTEGER;
+    return ai - bi;
+  });
+}
+
 export const STORE_NAV_CATEGORIES = [
   { category: "146", labelKey: "navApparel" as const },
   { category: "20", labelKey: "navBracelets" as const },
