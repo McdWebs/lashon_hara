@@ -1,4 +1,5 @@
 import { decodeHtmlEntities } from "./html";
+import { dedupeCategories } from "./categoryDedup";
 
 export type WcPrices = {
   price: string;
@@ -115,7 +116,8 @@ export async function fetchProduct(id: string): Promise<WcProduct> {
 export async function fetchCategories(): Promise<WcCategory[]> {
   const res = await fetch(`${base}/categories`);
   if (!res.ok) throw new Error("categories_unavailable");
-  return ((await res.json()) as WcCategory[]).map(normalizeCategory);
+  const categories = ((await res.json()) as WcCategory[]).map(normalizeCategory);
+  return dedupeCategories(categories);
 }
 
 export async function fetchProductsByIds(ids: number[]): Promise<CatalogPage> {

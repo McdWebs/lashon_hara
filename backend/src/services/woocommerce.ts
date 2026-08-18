@@ -1,4 +1,5 @@
 import { env } from "../config/env.js";
+import { dedupeCategories } from "./categoryDedup.js";
 
 async function wcFetch(path: string, search = ""): Promise<Response> {
   const url = `${env.wcOrigin}/wp-json/wc/store/v1${path}${search}`;
@@ -44,5 +45,6 @@ export async function listProductsByIds(ids: string[]) {
 
 export async function listCategories() {
   const res = await wcFetch("/products/categories", "?per_page=100");
-  return res.json();
+  const categories = (await res.json()) as Array<{ id: number }>;
+  return dedupeCategories(categories);
 }
