@@ -18,7 +18,7 @@ So: products are managed in WooCommerce (WordPress admin), not in this git repo.
 ## Files
 
 - `all-products.json` — all 280 products, flattened to the fields that matter (id, name, slug, permalink, price, stock status, categories, images, short description).
-- `categories.json` — all 42 WooCommerce categories (id, name, slug, parent, product count), sorted by product count.
+- `categories.json` — all 20 WooCommerce categories (id, name, slug, parent, product count), sorted by product count.
 - `categories-index.md` — human-readable table of categories with links to their per-category file.
 - `by-category/*.json` — one file per category, containing that category's product list (a product can appear in more than one category file if it's tagged with multiple categories in WooCommerce).
 - `by-category/_uncategorized.json` — the handful of products with no category assigned.

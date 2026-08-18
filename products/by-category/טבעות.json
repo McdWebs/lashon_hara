@@ -1,0 +1,121 @@
+{
+  "category": {
+    "id": 48,
+    "name": "טבעות",
+    "slug": "%d7%98%d7%91%d7%a2%d7%95%d7%aa"
+  },
+  "products": [
+    {
+      "id": 671,
+      "name": "טבעת בציפוי כסף, חריטת אותיות ללא תוספת צבע",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98249/"
+    },
+    {
+      "id": 672,
+      "name": "טבעת בציפוי כסף, חריטת אותיות בצבע שחור",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98244/"
+    },
+    {
+      "id": 687,
+      "name": "טבעת בציפוי זהב וורוד, חריטת אותיות ללא תוספת צבע",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98265/"
+    },
+    {
+      "id": 688,
+      "name": "טבעת בציפוי זהב וורוד, חריטת אותיות בצבע שחור",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98261/"
+    },
+    {
+      "id": 1050,
+      "name": "טבעת סיליקון שחורה",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98273/"
+    },
+    {
+      "id": 1051,
+      "name": "טבעת סיליקון לבנה",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98271/"
+    },
+    {
+      "id": 1052,
+      "name": "טבעת סיליקון אדומה",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98279/"
+    },
+    {
+      "id": 1053,
+      "name": "טבעת סיליקון צבאי",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98275/"
+    },
+    {
+      "id": 1054,
+      "name": "טבעת סיליקון לבנה, אותיות בצבע זהב",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98280/"
+    },
+    {
+      "id": 1057,
+      "name": "טבעת סיליקון כחול כהה",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98277/"
+    },
+    {
+      "id": 1064,
+      "name": "טבעת סיליקון וורוד פוקסיה",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98278/"
+    },
+    {
+      "id": 1065,
+      "name": "טבעת סיליקון ירוקה",
+      "price": "500",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98276/"
+    },
+    {
+      "id": 2563,
+      "name": "טבעת בציפוי זהב צהוב, חריטת אותיות ללא תוספת צבע",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98292/"
+    },
+    {
+      "id": 2569,
+      "name": "טבעת בציפוי שחור מט, חריטת אותיות בצבע שחור מבריק",
+      "price": "5000",
+      "currency_code": "ILS",
+      "is_in_stock": true,
+      "permalink": "https://lashonhara.co.il/product/98296/"
+    }
+  ]
+}
