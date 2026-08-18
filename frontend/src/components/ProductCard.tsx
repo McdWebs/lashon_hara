@@ -8,6 +8,7 @@ import { track } from "../lib/analytics";
 import { useCart } from "../lib/cart";
 import type { WcProduct } from "../lib/catalog";
 import { formatIls } from "../lib/site";
+import { getProductOrderRules, hasOrderConstraints } from "../lib/productOrderRules";
 import { STORE_COPY } from "../lib/storeUi";
 
 type ProductCardImageOverride = {
@@ -33,6 +34,8 @@ export function ProductCard({
   const imgAlt = imageOverride?.alt ?? product.images[0]?.alt ?? product.name;
   const hoverImg = imageOverride?.hoverSrc ?? product.images[1]?.src ?? product.images[1]?.thumbnail;
   const unit = product.prices.currency_minor_unit ?? 2;
+  const orderRules = getProductOrderRules(product);
+  const requiresMinOrder = hasOrderConstraints(orderRules);
   const productTo = loc(`/shop/product/${product.id}`);
   const onSale =
     product.prices.regular_price &&
@@ -44,13 +47,13 @@ export function ProductCard({
   async function handleQuickAdd(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();
-    if (product.type === "variable") {
+    if (product.type === "variable" || requiresMinOrder) {
       navigate(productTo);
       return;
     }
     try {
-      await addItem(product.id, 1);
-      track("product_added_to_cart", { id: product.id, quantity: 1, source: "quick_add" });
+      await addItem(product.id, orderRules.min);
+      track("product_added_to_cart", { id: product.id, quantity: orderRules.min, source: "quick_add" });
       setAdded(true);
       window.clearTimeout(addedTimer.current);
       addedTimer.current = window.setTimeout(() => setAdded(false), 1800);
@@ -144,6 +147,28 @@ export function ProductCard({
             }}
           >
             SALE
+          </Typography>
+        )}
+        {requiresMinOrder && (
+          <Typography
+            component="span"
+            sx={{
+              position: "absolute",
+              insetInlineEnd: 10,
+              top: 10,
+              bgcolor: "#123e3e",
+              color: "#fffdf8",
+              px: 1,
+              py: 0.5,
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: "0.04em",
+              lineHeight: 1,
+              maxWidth: "72%",
+              textAlign: "center",
+            }}
+          >
+            {lang === "en" ? `Min. ${orderRules.min}` : `מינ׳ ${orderRules.min}`}
           </Typography>
         )}
         <Box
@@ -246,6 +271,11 @@ export function ProductCard({
               sx={{ textDecoration: "line-through", color: "text.secondary", fontSize: "0.75rem" }}
             >
               {formatIls(product.prices.regular_price, unit)}
+            </Typography>
+          )}
+          {requiresMinOrder && (
+            <Typography sx={{ color: "text.secondary", fontSize: "0.72rem" }}>
+              {lang === "en" ? `Min. order ${orderRules.min}` : `מינימום ${orderRules.min} יח׳`}
             </Typography>
           )}
         </Box>
