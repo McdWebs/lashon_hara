@@ -16,7 +16,6 @@ import { ShippingStrip } from "../components/ShippingStrip";
 import { Section, PageHeader } from "../components/Section";
 import { track } from "../lib/analytics";
 import {
-  cartTotalMinor,
   cartWhatsAppText,
   type CartItem,
   useCart,
@@ -26,6 +25,10 @@ import { formatIls, waLink } from "../lib/site";
 
 function lineTotalMinor(item: CartItem) {
   return Number(item.price) * item.quantity;
+}
+
+function cartTotalMinor(items: CartItem[]) {
+  return items.reduce((sum, item) => sum + lineTotalMinor(item), 0);
 }
 
 function CartLineItem({
@@ -356,10 +359,10 @@ export function CartPage() {
             >
               {items.map((item) => (
                 <CartLineItem
-                  key={item.id}
+                  key={item.key}
                   item={item}
-                  onRemove={() => removeItem(item.id)}
-                  onQuantityChange={(n) => setQuantity(item.id, n)}
+                  onRemove={() => removeItem(item.key)}
+                  onQuantityChange={(n) => setQuantity(item.key, n)}
                 />
               ))}
             </Card>

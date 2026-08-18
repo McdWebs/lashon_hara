@@ -3,7 +3,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { Box, Button, Drawer, IconButton, Link, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useLocale } from "../i18n/useLocale";
-import { cartTotalMinor, useCart } from "../lib/cart";
+import { useCart } from "../lib/cart";
 import { formatIls } from "../lib/site";
 import { STORE_COPY } from "../lib/storeUi";
 import { QuantityStepper } from "./QuantityStepper";
@@ -20,8 +20,8 @@ export function StoreCartDrawer({
   const items = useCart((state) => state.items);
   const removeItem = useCart((state) => state.removeItem);
   const setQuantity = useCart((state) => state.setQuantity);
-  const total = cartTotalMinor(items);
-  const unit = items[0]?.currencyMinorUnit ?? 2;
+  const total = useCart((state) => state.totalPrice);
+  const unit = useCart((state) => state.currencyMinorUnit);
 
   return (
     <Drawer
@@ -80,7 +80,7 @@ export function StoreCartDrawer({
             <Box sx={{ flex: 1, overflowY: "auto", px: 2.5 }}>
               {items.map((item) => (
                 <Stack
-                  key={item.id}
+                  key={item.key}
                   direction="row"
                   spacing={2}
                   sx={{ py: 2.5, borderBottom: "1px solid rgba(17,17,17,.12)", alignItems: "flex-start" }}
@@ -114,11 +114,11 @@ export function StoreCartDrawer({
                       <QuantityStepper
                         size="small"
                         value={item.quantity}
-                        onChange={(quantity) => setQuantity(item.id, quantity)}
+                        onChange={(quantity) => setQuantity(item.key, quantity)}
                       />
                       <IconButton
                         size="small"
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => removeItem(item.key)}
                         aria-label={lang === "en" ? "Remove item" : "הסרת פריט"}
                       >
                         <DeleteOutlineIcon fontSize="small" />

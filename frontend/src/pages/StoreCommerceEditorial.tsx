@@ -4,25 +4,22 @@ import { Box, Button, IconButton, Link, Stack, Typography } from "@mui/material"
 import { Link as RouterLink } from "react-router-dom";
 import { QuantityStepper } from "../components/QuantityStepper";
 import { useLocale } from "../i18n/useLocale";
-import { track } from "../lib/analytics";
-import { cartTotalMinor, cartWhatsAppText, useCart, type CartItem } from "../lib/cart";
-import { formatIls, waLink } from "../lib/site";
+import { type CartItem, useCart } from "../lib/cart";
+import { formatIls } from "../lib/site";
 import { STORE_MAX_WIDTH } from "../lib/storeUi";
 
-function lineTotal(item: CartItem) {
-  return Number(item.price) * item.quantity;
-}
-
-function OrderTotal({
+export function OrderTotal({
   items,
+  total,
+  unit,
   action,
 }: {
   items: CartItem[];
+  total: string;
+  unit: number;
   action: React.ReactNode;
 }) {
   const { lang } = useLocale();
-  const total = cartTotalMinor(items);
-  const unit = items[0]?.currencyMinorUnit ?? 2;
   return (
     <Box sx={{ position: { md: "sticky" }, top: { md: 132 }, borderTop: "1px solid #111", pt: 2.5 }}>
       <Typography sx={{ fontFamily: '"Secular One", Heebo, sans-serif', fontSize: 24, mb: 2.5 }}>
@@ -30,12 +27,12 @@ function OrderTotal({
       </Typography>
       <Stack sx={{ gap: 1.2 }}>
         {items.map((item) => (
-          <Stack key={item.id} direction="row" sx={{ justifyContent: "space-between", gap: 2 }}>
+          <Stack key={item.key} direction="row" sx={{ justifyContent: "space-between", gap: 2 }}>
             <Typography sx={{ color: "text.secondary", fontSize: 13, lineHeight: 1.4 }}>
               {item.name} × {item.quantity}
             </Typography>
             <Typography sx={{ fontSize: 13, whiteSpace: "nowrap" }}>
-              {formatIls(lineTotal(item), item.currencyMinorUnit)}
+              {formatIls(item.lineTotal, item.currencyMinorUnit)}
             </Typography>
           </Stack>
         ))}
@@ -65,7 +62,7 @@ function OrderTotal({
   );
 }
 
-function EmptyCommerce({ checkout = false }: { checkout?: boolean }) {
+export function EmptyCommerce({ checkout = false }: { checkout?: boolean }) {
   const { lang, loc } = useLocale();
   return (
     <Stack sx={{ minHeight: 480, alignItems: "center", justifyContent: "center", textAlign: "center" }}>
@@ -94,6 +91,8 @@ export function CartPageEditorial() {
   const items = useCart((state) => state.items);
   const removeItem = useCart((state) => state.removeItem);
   const setQuantity = useCart((state) => state.setQuantity);
+  const totalPrice = useCart((state) => state.totalPrice);
+  const currencyMinorUnit = useCart((state) => state.currencyMinorUnit);
 
   return (
     <Box sx={{ bgcolor: "#f8f6f1", minHeight: "70vh", py: { xs: 6, md: 10 } }}>
@@ -120,7 +119,7 @@ export function CartPageEditorial() {
             <Box>
               {items.map((item) => (
                 <Stack
-                  key={item.id}
+                  key={item.key}
                   direction="row"
                   sx={{ py: 2.5, gap: { xs: 1.5, sm: 2.5 }, borderTop: "1px solid rgba(17,17,17,.14)" }}
                 >
@@ -144,12 +143,12 @@ export function CartPageEditorial() {
                       </Typography>
                     </Box>
                     <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between", gap: 1 }}>
-                      <QuantityStepper value={item.quantity} onChange={(quantity) => setQuantity(item.id, quantity)} size="small" />
+                      <QuantityStepper value={item.quantity} onChange={(quantity) => setQuantity(item.key, quantity)} size="small" />
                       <Stack direction="row" sx={{ alignItems: "center", gap: 0.5 }}>
                         <Typography sx={{ fontWeight: 600, fontSize: 14 }}>
-                          {formatIls(lineTotal(item), item.currencyMinorUnit)}
+                          {formatIls(item.lineTotal, item.currencyMinorUnit)}
                         </Typography>
-                        <IconButton size="small" onClick={() => removeItem(item.id)} aria-label={lang === "en" ? "Remove" : "הסרה"}>
+                        <IconButton size="small" onClick={() => removeItem(item.key)} aria-label={lang === "en" ? "Remove" : "הסרה"}>
                           <CloseIcon fontSize="small" />
                         </IconButton>
                       </Stack>
@@ -160,6 +159,8 @@ export function CartPageEditorial() {
             </Box>
             <OrderTotal
               items={items}
+              total={totalPrice}
+              unit={currencyMinorUnit}
               action={
                 <>
                   <Button component={RouterLink} to={loc("/checkout")} variant="contained" color="secondary" size="large" fullWidth>
@@ -167,69 +168,6 @@ export function CartPageEditorial() {
                   </Button>
                   <Button component={RouterLink} to={loc("/shop")} fullWidth sx={{ color: "inherit", textDecoration: "underline", textUnderlineOffset: 4 }}>
                     {lang === "en" ? "Continue shopping" : "המשך קנייה"}
-                  </Button>
-                </>
-              }
-            />
-          </Box>
-        )}
-      </Box>
-    </Box>
-  );
-}
-
-export function CheckoutPageEditorial() {
-  const { lang, loc } = useLocale();
-  const items = useCart((state) => state.items);
-  return (
-    <Box sx={{ bgcolor: "#f8f6f1", minHeight: "70vh", py: { xs: 6, md: 10 } }}>
-      <Box sx={{ maxWidth: STORE_MAX_WIDTH, mx: "auto", px: { xs: 2.5, md: 3.5 } }}>
-        <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", mb: 1 }}>
-          {lang === "en" ? "Almost there" : "כמעט סיימנו"}
-        </Typography>
-        <Typography component="h1" sx={{ fontFamily: '"Secular One", Heebo, sans-serif', fontSize: { xs: 48, md: 74 }, lineHeight: 1 }}>
-          {lang === "en" ? "Checkout" : "השלמת הזמנה"}
-        </Typography>
-        {items.length === 0 ? (
-          <EmptyCommerce checkout />
-        ) : (
-          <Box
-            sx={{
-              mt: { xs: 5, md: 7 },
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1fr) 360px" },
-              gap: { xs: 6, md: 10 },
-              alignItems: "start",
-            }}
-          >
-            <Box sx={{ bgcolor: "#e9e2d8", p: { xs: 3, md: 5 } }}>
-              <Typography sx={{ fontFamily: '"Secular One", Heebo, sans-serif', fontSize: { xs: 28, md: 36 }, lineHeight: 1.2 }}>
-                {lang === "en" ? "We finish every order personally." : "כל הזמנה נסגרת איתנו באופן אישי."}
-              </Typography>
-              <Typography sx={{ mt: 2, maxWidth: 540, color: "rgba(17,17,17,.66)", lineHeight: 1.75 }}>
-                {lang === "en"
-                  ? "Continue to WhatsApp with your cart already attached. We'll confirm availability, delivery, and payment with you."
-                  : "ממשיכים ל-WhatsApp כשהסל כבר מצורף. נאשר יחד זמינות, משלוח ותשלום."}
-              </Typography>
-            </Box>
-            <OrderTotal
-              items={items}
-              action={
-                <>
-                  <Button
-                    href={waLink(cartWhatsAppText(items))}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => track("checkout_started")}
-                    variant="contained"
-                    color="secondary"
-                    size="large"
-                    fullWidth
-                  >
-                    {lang === "en" ? "Complete on WhatsApp" : "להשלמה ב-WhatsApp"}
-                  </Button>
-                  <Button component={RouterLink} to={loc("/cart")} fullWidth sx={{ color: "inherit", textDecoration: "underline", textUnderlineOffset: 4 }}>
-                    {lang === "en" ? "Back to cart" : "חזרה לסל"}
                   </Button>
                 </>
               }
