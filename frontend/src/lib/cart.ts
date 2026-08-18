@@ -1,84 +1,125 @@
 import { create } from "zustand";
+import { cartApi, clearCartSession, type WcCart, type WcCartItem } from "./cartSession";
 import { decodeHtmlEntities } from "./html";
 
 export type CartItem = {
+  key: string;
   id: number;
   name: string;
   price: string;
+  lineTotal: string;
   currencyMinorUnit: number;
   image?: string;
   quantity: number;
 };
 
-const STORAGE_KEY = "lh-cart";
-
-function read(): CartItem[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as CartItem[];
-    if (!Array.isArray(parsed)) return [];
-    return parsed.map((item) => ({
-      ...item,
-      name: decodeHtmlEntities(item.name),
-    }));
-  } catch {
-    return [];
-  }
+function mapItem(item: WcCartItem): CartItem {
+  return {
+    key: item.key,
+    id: item.id,
+    name: decodeHtmlEntities(item.name),
+    price: item.prices.price,
+    lineTotal: item.totals.line_total,
+    currencyMinorUnit: item.prices.currency_minor_unit,
+    image: item.images[0]?.thumbnail || item.images[0]?.src,
+    quantity: item.quantity,
+  };
 }
 
-function persist(items: CartItem[]) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  } catch {
-    /* ignore */
-  }
+function fromWcCart(cart: WcCart) {
+  return {
+    items: cart.items.map(mapItem),
+    totalPrice: cart.totals.total_price,
+    currencyMinorUnit: cart.totals.currency_minor_unit,
+    needsShipping: cart.needs_shipping,
+  };
 }
 
 type CartState = {
   items: CartItem[];
-  addItem: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
-  removeItem: (id: number) => void;
-  setQuantity: (id: number, quantity: number) => void;
-  clear: () => void;
+  totalPrice: string;
+  currencyMinorUnit: number;
+  needsShipping: boolean;
+  hydrated: boolean;
+  loading: boolean;
+  error: string | null;
+  hydrate: () => Promise<void>;
+  addItem: (id: number, quantity?: number) => Promise<void>;
+  setQuantity: (key: string, quantity: number) => Promise<void>;
+  removeItem: (key: string) => Promise<void>;
+  clear: () => Promise<void>;
 };
 
 export const useCart = create<CartState>((set, get) => ({
-  items: typeof window === "undefined" ? [] : read(),
-  addItem: (item, quantity = 1) => {
-    const items = [...get().items];
-    const idx = items.findIndex((i) => i.id === item.id);
-    if (idx >= 0) {
-      items[idx] = { ...items[idx], quantity: items[idx].quantity + quantity };
-    } else {
-      items.push({ ...item, quantity });
+  items: [],
+  totalPrice: "0",
+  currencyMinorUnit: 2,
+  needsShipping: false,
+  hydrated: false,
+  loading: false,
+  error: null,
+
+  hydrate: async () => {
+    if (get().hydrated || typeof window === "undefined") return;
+    set({ loading: true, error: null });
+    try {
+      const cart = await cartApi.get();
+      set({ ...fromWcCart(cart), hydrated: true, loading: false });
+    } catch {
+      set({ hydrated: true, loading: false });
     }
-    persist(items);
-    set({ items });
   },
-  removeItem: (id) => {
-    const items = get().items.filter((i) => i.id !== id);
-    persist(items);
-    set({ items });
+
+  addItem: async (id, quantity = 1) => {
+    set({ loading: true, error: null });
+    try {
+      const cart = await cartApi.addItem(id, quantity);
+      set({ ...fromWcCart(cart), loading: false });
+    } catch (err) {
+      set({ loading: false, error: err instanceof Error ? err.message : "cart_error" });
+      throw err;
+    }
   },
-  setQuantity: (id, quantity) => {
+
+  setQuantity: async (key, quantity) => {
     if (quantity < 1) {
-      get().removeItem(id);
+      await get().removeItem(key);
       return;
     }
-    const items = get().items.map((i) => (i.id === id ? { ...i, quantity } : i));
-    persist(items);
-    set({ items });
+    const prevItems = get().items;
+    set({ items: prevItems.map((i) => (i.key === key ? { ...i, quantity } : i)), error: null });
+    try {
+      const cart = await cartApi.updateItem(key, quantity);
+      set({ ...fromWcCart(cart) });
+    } catch (err) {
+      set({ items: prevItems, error: err instanceof Error ? err.message : "cart_error" });
+      throw err;
+    }
   },
-  clear: () => {
-    persist([]);
-    set({ items: [] });
+
+  removeItem: async (key) => {
+    const prevItems = get().items;
+    set({ items: prevItems.filter((i) => i.key !== key), error: null });
+    try {
+      const cart = await cartApi.removeItem(key);
+      set({ ...fromWcCart(cart) });
+    } catch (err) {
+      set({ items: prevItems, error: err instanceof Error ? err.message : "cart_error" });
+      throw err;
+    }
+  },
+
+  clear: async () => {
+    try {
+      const cart = await cartApi.clear();
+      set({ ...fromWcCart(cart) });
+    } catch {
+      set({ items: [], totalPrice: "0" });
+    } finally {
+      clearCartSession();
+    }
   },
 }));
-
-export function cartTotalMinor(items: CartItem[]) {
-  return items.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
-}
 
 export function cartWhatsAppText(items: CartItem[]) {
   const lines = items.map((i) => `• ${i.name} × ${i.quantity}`);

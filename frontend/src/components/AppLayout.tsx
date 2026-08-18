@@ -5,6 +5,7 @@ import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { LocaleContext, buildLocale } from "../i18n/useLocale";
 import { langFromPath } from "../i18n/locale";
+import { useCart } from "../lib/cart";
 import { isFullBleedPath, isStorePath } from "../lib/siteMode";
 
 export function AppLayout() {
@@ -15,12 +16,17 @@ export function AppLayout() {
   const search = params.toString();
   const fullBleed = isFullBleedPath(pathname, params.get("category"), params.get("view"));
   const store = isStorePath(pathname);
+  const hydrateCart = useCart((s) => s.hydrate);
 
   useEffect(() => {
     document.documentElement.lang = lang === "he" ? "he" : "en";
     document.documentElement.dir = lang === "he" ? "rtl" : "ltr";
     document.title = locale.t("slogan");
   }, [lang, locale]);
+
+  useEffect(() => {
+    hydrateCart();
+  }, [hydrateCart]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
