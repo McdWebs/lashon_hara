@@ -69,19 +69,14 @@ export function ProductPage() {
   const img = images[imageIndex] ?? images[0];
   const unit = p.prices.currency_minor_unit ?? 2;
 
-  function handleAddToCart() {
-    addItem(
-      {
-        id: p.id,
-        name: p.name,
-        price: p.prices.price,
-        currencyMinorUnit: unit,
-        image: img?.src || img?.thumbnail,
-      },
-      quantity,
-    );
-    track("product_added_to_cart", { id: p.id, quantity });
-    setSnackOpen(true);
+  async function handleAddToCart() {
+    try {
+      await addItem(p.id, quantity);
+      track("product_added_to_cart", { id: p.id, quantity });
+      setSnackOpen(true);
+    } catch {
+      /* the snackbar simply won't show; button remains usable to retry */
+    }
   }
 
   const purchaseBlock = isSchoolsProduct ? null : (

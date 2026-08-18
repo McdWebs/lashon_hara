@@ -8,6 +8,7 @@ import { Link as RouterLink, useParams } from "react-router-dom";
 import { ProductGrid } from "../components/ProductGrid";
 import { QuantityStepper } from "../components/QuantityStepper";
 import { ErrorState, ProductGridSkeleton, ProductPageSkeleton } from "../components/States";
+import { VariationPicker } from "../components/VariationPicker";
 import { useLocale } from "../i18n/useLocale";
 import { track } from "../lib/analytics";
 import { useCart } from "../lib/cart";
@@ -65,6 +66,9 @@ export function ProductPageEditorial() {
   const [quantity, setQuantity] = useState(1);
   const [imageIndex, setImageIndex] = useState(0);
   const [snackOpen, setSnackOpen] = useState(false);
+  const [snackError, setSnackError] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const [variationId, setVariationId] = useState<number | null>(null);
   const query = useQuery({
     queryKey: ["product", id],
     queryFn: () => fetchProduct(id ?? ""),
@@ -80,6 +84,7 @@ export function ProductPageEditorial() {
   useEffect(() => {
     setImageIndex(0);
     setQuantity(1);
+    setVariationId(null);
   }, [id]);
 
   useEffect(() => {
@@ -103,20 +108,24 @@ export function ProductPageEditorial() {
   const onSale =
     product.prices.regular_price &&
     Number(product.prices.regular_price) > Number(product.prices.price);
+  const isVariable = product.type === "variable";
+  const canAddToCart = !isVariable || Boolean(variationId);
 
-  function addToCart() {
-    addItem(
-      {
-        id: product.id,
-        name: product.name,
-        price: product.prices.price,
-        currencyMinorUnit: unit,
-        image: image?.src || image?.thumbnail,
-      },
-      quantity,
-    );
-    track("product_added_to_cart", { id: product.id, quantity });
-    setSnackOpen(true);
+  async function addToCart() {
+    const targetId = isVariable ? variationId : product.id;
+    if (!targetId) return;
+    setAdding(true);
+    try {
+      await addItem(targetId, quantity);
+      track("product_added_to_cart", { id: targetId, quantity });
+      setSnackError(false);
+      setSnackOpen(true);
+    } catch {
+      setSnackError(true);
+      setSnackOpen(true);
+    } finally {
+      setAdding(false);
+    }
   }
 
   return (
@@ -250,6 +259,14 @@ export function ProductPageEditorial() {
                 dangerouslySetInnerHTML={{ __html: product.short_description || "" }}
               />
 
+              {isVariable && product.attributes && product.variations && (
+                <VariationPicker
+                  attributes={product.attributes}
+                  variations={product.variations}
+                  onResolve={setVariationId}
+                />
+              )}
+
               <Stack direction="row" sx={{ mt: 3.5, gap: 1.5, alignItems: "stretch" }}>
                 <QuantityStepper value={quantity} onChange={setQuantity} />
                 <Button
@@ -257,9 +274,16 @@ export function ProductPageEditorial() {
                   color="secondary"
                   size="large"
                   onClick={addToCart}
+                  disabled={adding || !canAddToCart}
                   sx={{ flex: 1, minHeight: 50 }}
                 >
-                  {lang === "en" ? "Add to cart" : "הוספה לסל"}
+                  {isVariable && !canAddToCart
+                    ? lang === "en"
+                      ? "Choose options"
+                      : "בחירת אפשרויות"
+                    : lang === "en"
+                      ? "Add to cart"
+                      : "הוספה לסל"}
                 </Button>
               </Stack>
 
@@ -322,8 +346,14 @@ export function ProductPageEditorial() {
           <Typography sx={{ fontSize: 14, fontWeight: 600, minWidth: 70 }}>
             {formatIls(product.prices.price, unit)}
           </Typography>
-          <Button fullWidth variant="contained" color="secondary" onClick={addToCart}>
-            {lang === "en" ? "Add to cart" : "הוספה לסל"}
+          <Button fullWidth variant="contained" color="secondary" onClick={addToCart} disabled={adding || !canAddToCart}>
+            {isVariable && !canAddToCart
+              ? lang === "en"
+                ? "Choose options"
+                : "בחירת אפשרויות"
+              : lang === "en"
+                ? "Add to cart"
+                : "הוספה לסל"}
           </Button>
         </Stack>
       </Box>
@@ -335,8 +365,14 @@ export function ProductPageEditorial() {
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         sx={{ bottom: { xs: 78, md: 24 } }}
       >
-        <Alert severity="success" onClose={() => setSnackOpen(false)}>
-          {lang === "en" ? "Added to cart" : "נוסף לסל"}
+        <Alert severity={snackError ? "error" : "success"} onClose={() => setSnackOpen(false)}>
+          {snackError
+            ? lang === "en"
+              ? "Couldn't add to cart. Please try again."
+              : "לא הצלחנו להוסיף לסל. נסו שוב."
+            : lang === "en"
+              ? "Added to cart"
+              : "נוסף לסל"}
         </Alert>
       </Snackbar>
     </>

@@ -2,7 +2,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import { Box, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useLocale } from "../i18n/useLocale";
 import { track } from "../lib/analytics";
 import { useCart } from "../lib/cart";
@@ -24,6 +24,7 @@ export function ProductCard({
   imageOverride?: ProductCardImageOverride;
 }) {
   const { loc, lang } = useLocale();
+  const navigate = useNavigate();
   const copy = STORE_COPY[lang];
   const addItem = useCart((state) => state.addItem);
   const [added, setAdded] = useState(false);
@@ -40,20 +41,22 @@ export function ProductCard({
 
   useEffect(() => () => window.clearTimeout(addedTimer.current), []);
 
-  function handleQuickAdd(event: React.MouseEvent<HTMLButtonElement>) {
+  async function handleQuickAdd(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();
-    addItem({
-      id: product.id,
-      name: product.name,
-      price: product.prices.price,
-      currencyMinorUnit: unit,
-      image: img,
-    });
-    track("product_added_to_cart", { id: product.id, quantity: 1, source: "quick_add" });
-    setAdded(true);
-    window.clearTimeout(addedTimer.current);
-    addedTimer.current = window.setTimeout(() => setAdded(false), 1800);
+    if (product.type === "variable") {
+      navigate(productTo);
+      return;
+    }
+    try {
+      await addItem(product.id, 1);
+      track("product_added_to_cart", { id: product.id, quantity: 1, source: "quick_add" });
+      setAdded(true);
+      window.clearTimeout(addedTimer.current);
+      addedTimer.current = window.setTimeout(() => setAdded(false), 1800);
+    } catch {
+      /* leave the button as-is so the shopper can try again */
+    }
   }
 
   return (

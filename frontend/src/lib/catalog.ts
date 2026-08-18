@@ -7,6 +7,25 @@ export type WcPrices = {
   currency_code: string;
 };
 
+export type WcAttributeTerm = {
+  id: number;
+  name: string;
+  slug: string;
+};
+
+export type WcAttribute = {
+  id: number;
+  name: string;
+  taxonomy?: string;
+  has_variations?: boolean;
+  terms: WcAttributeTerm[];
+};
+
+export type WcVariation = {
+  id: number;
+  attributes: Array<{ name: string; value: string }>;
+};
+
 export type WcProduct = {
   id: number;
   name: string;
@@ -18,6 +37,8 @@ export type WcProduct = {
   short_description?: string;
   description?: string;
   add_to_cart?: { url?: string };
+  attributes?: WcAttribute[];
+  variations?: WcVariation[];
 };
 
 export type WcCategory = {
@@ -62,6 +83,11 @@ function normalizeProduct(p: WcProduct): WcProduct {
     images: p.images.map((img) => ({
       ...img,
       alt: decodeHtmlEntities(img.alt),
+    })),
+    attributes: p.attributes?.map((attr) => ({
+      ...attr,
+      name: decodeHtmlEntities(attr.name),
+      terms: attr.terms.map((term) => ({ ...term, name: decodeHtmlEntities(term.name) })),
     })),
   };
 }
