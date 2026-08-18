@@ -2,8 +2,6 @@ import {
   Alert,
   Box,
   Button,
-  Card,
-  CardContent,
   CircularProgress,
   Grid,
   Skeleton,
@@ -57,21 +55,21 @@ export function LoadingButton({
 
 export function ProductCardSkeleton() {
   return (
-    <Card variant="outlined" sx={{ height: "100%" }}>
+    <Box sx={{ height: "100%" }}>
       <Skeleton variant="rectangular" sx={{ aspectRatio: "1 / 1", width: "100%" }} />
-      <CardContent sx={{ pt: 1.5, pb: "16px !important" }}>
-        <Skeleton width="90%" height={22} />
-        <Skeleton width="45%" height={26} sx={{ mt: 1.25 }} />
-      </CardContent>
-    </Card>
+      <Box sx={{ pt: 1.75 }}>
+        <Skeleton width="90%" height={20} />
+        <Skeleton width="40%" height={22} sx={{ mt: 1 }} />
+      </Box>
+    </Box>
   );
 }
 
 export function ProductGridSkeleton({ count = 8 }: { count?: number }) {
   return (
-    <Grid container spacing={2} aria-hidden>
+    <Grid container spacing={{ xs: 2, md: 3.5 }} aria-hidden>
       {Array.from({ length: count }, (_, i) => (
-        <Grid key={i} size={{ xs: 6, sm: 6, md: 3 }}>
+        <Grid key={i} size={{ xs: 6, sm: 6, md: 4 }}>
           <ProductCardSkeleton />
         </Grid>
       ))}

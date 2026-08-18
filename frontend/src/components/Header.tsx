@@ -6,9 +6,10 @@ import { Link as RouterLink, NavLink, useLocation } from "react-router-dom";
 import { AccountButton } from "./AccountButton";
 import { CartButton } from "./CartButton";
 import { useLocale } from "../i18n/useLocale";
-import { stripLocale } from "../i18n/locale";
 import { FEATURES, SITE } from "../lib/site";
+import { isMovementPath, isStorePath } from "../lib/siteMode";
 import { useScrolledPastHero } from "../lib/useScrolledPastHero";
+import { StoreHeader } from "./HeaderStore";
 
 const navLinkSx = {
   color: "text.primary",
@@ -79,13 +80,19 @@ function mobileMenuBubbleSx(
 }
 
 export function Header() {
+  const { pathname } = useLocation();
+  if (isStorePath(pathname)) return <StoreHeader />;
+  return <ExplanatoryHeader />;
+}
+
+function ExplanatoryHeader() {
   const [open, setOpen] = useState(false);
   const [menuMounted, setMenuMounted] = useState(false);
   const scrolled = useScrolledPastHero();
   const theme = useTheme();
   const { loc, t } = useLocale();
   const { pathname } = useLocation();
-  const isHome = stripLocale(pathname) === "/";
+  const isHome = isMovementPath(pathname);
   const overHero = isHome && !scrolled;
   const headerColor = overHero ? "#fff" : "inherit";
   const flowFromLogo = theme.direction === "rtl" ? "translateX(10px)" : "translateX(-10px)";
@@ -94,7 +101,7 @@ export function Header() {
     { to: loc("/message"), label: t("navMessage") },
     { to: loc("/join"), label: t("navJoin") },
     { to: loc("/schools"), label: t("navSchools") },
-    { to: loc("/shop"), label: t("navShop") },
+    { to: loc("/"), label: t("navShop") },
   ];
 
   useEffect(() => {
@@ -118,7 +125,7 @@ export function Header() {
   ];
 
   const mobileMenuActionItems: MobileMenuItem[] = [
-    { to: loc("/shop"), label: t("navShop") },
+    { to: loc("/"), label: t("navShop") },
     { to: loc("/donate"), label: t("navDonate"), primary: true },
     { to: loc("/cart"), label: t("navCart") },
   ];
@@ -197,7 +204,7 @@ export function Header() {
         {/* Centered hero logo — stays in the middle, fades out on scroll */}
         <Box
           component={RouterLink}
-          to={loc("/")}
+          to={loc("/movement")}
           aria-hidden={!overHero}
           tabIndex={overHero ? 0 : -1}
           sx={{
@@ -248,7 +255,7 @@ export function Header() {
         >
           <Box
             component={RouterLink}
-            to={loc("/")}
+            to={loc("/movement")}
             aria-hidden={overHero}
             tabIndex={overHero ? -1 : 0}
             sx={{
@@ -313,6 +320,7 @@ export function Header() {
                   key={item.to}
                   component={NavLink}
                   to={item.to}
+                  end={item.to === loc("/")}
                   underline="none"
                   sx={{
                     ...navLinkSx,

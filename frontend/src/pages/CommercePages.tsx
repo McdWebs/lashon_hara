@@ -22,7 +22,6 @@ import {
   useCart,
 } from "../lib/cart";
 import { useLocale } from "../i18n/useLocale";
-import { SHOP_COPY } from "../lib/shop";
 import { formatIls, waLink } from "../lib/site";
 
 function lineTotalMinor(item: CartItem) {
@@ -246,13 +245,6 @@ function OrderSummary({
             {formatIls(totalMinor, unit)}
           </Typography>
         </Stack>
-
-        <Typography
-          color="text.secondary"
-          sx={{ mb: 2.5, fontSize: "0.85rem", lineHeight: 1.6 }}
-        >
-          {SHOP_COPY.mission[lang]}
-        </Typography>
 
         {children && <Stack spacing={1.5}>{children}</Stack>}
 

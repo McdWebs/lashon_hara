@@ -2,9 +2,10 @@ import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import type { SvgIconComponent } from "@mui/icons-material";
 import { Box, Container, Link, Stack, Typography } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 import { useLocale } from "../i18n/useLocale";
 import { FEATURES, SITE, waLink } from "../lib/site";
+import { isStorePath } from "../lib/siteMode";
 
 const footLink = {
   color: "inherit",
@@ -90,13 +91,64 @@ function SocialLink({ href, label, icon: Icon }: { href: string; label: string; 
 }
 
 export function Footer() {
+  const { pathname } = useLocation();
+  if (isStorePath(pathname)) return <StoreFooter />;
+  return <ExplanatoryFooter />;
+}
+
+function StoreFooter() {
+  const { loc, t, lang } = useLocale();
+  const he = lang !== "en";
+
+  return (
+    <Box
+      component="footer"
+      sx={{ bgcolor: "background.paper", color: "text.primary", borderTop: "1px solid", borderColor: "divider" }}
+    >
+      <Container
+        sx={{
+          maxWidth: 1120,
+          px: { xs: 2, md: 3 },
+          py: { xs: 4, md: 5 },
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 2,
+          textAlign: "center",
+        }}
+      >
+        <Box
+          component={RouterLink}
+          to={loc("/")}
+          sx={{ display: "inline-flex" }}
+        >
+          <Box component="img" src={SITE.logoSrc} alt={t("navShop")} sx={{ height: 28, width: "auto" }} />
+        </Box>
+        <Stack direction="row" spacing={2.5} sx={{ alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
+          <Link component={RouterLink} to={loc("/movement")} underline="none" sx={{ ...footLink, py: 0 }}>
+            {t("navWhy")}
+          </Link>
+          <Link component={RouterLink} to={loc("/terms")} underline="none" sx={{ ...footLink, py: 0 }}>
+            {he ? "תקנון" : "Terms"}
+          </Link>
+        </Stack>
+        <Stack direction="row" spacing={1}>
+          <SocialLink href={SITE.instagram} label="Instagram" icon={InstagramIcon} />
+          <SocialLink href={SITE.facebook} label="Facebook" icon={FacebookOutlinedIcon} />
+        </Stack>
+      </Container>
+    </Box>
+  );
+}
+
+function ExplanatoryFooter() {
   const { loc, t, lang } = useLocale();
   const he = lang !== "en";
 
   const move = [
     { to: loc("/join/commitment"), label: t("ctaJoin") },
     { to: loc("/schools"), label: t("navSchools") },
-    { to: loc("/shop"), label: t("navShop") },
+    { to: loc("/"), label: t("navShop") },
     { to: loc("/donate"), label: t("navDonate") },
   ];
 
@@ -140,7 +192,13 @@ export function Footer() {
               textAlign: { xs: "center", md: "start" },
             }}
           >
-            <Box component="img" src={SITE.logoSrc} alt={t("slogan")} sx={{ height: { xs: 28, md: 32 }, width: "auto" }} />
+            <Box
+              component={RouterLink}
+              to={loc("/movement")}
+              sx={{ display: "inline-flex" }}
+            >
+              <Box component="img" src={SITE.logoSrc} alt={t("slogan")} sx={{ height: { xs: 28, md: 32 }, width: "auto" }} />
+            </Box>
             <Typography sx={{ color: "text.secondary", fontSize: { xs: "0.92rem", md: "1rem" }, lineHeight: 1.65 }}>
               {he
                 ? "מאז 2007 — שלטי חוצות, צמידים, בתי ספר. משפט שעונדים, לא רק כותבים."

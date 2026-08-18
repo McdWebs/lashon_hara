@@ -70,6 +70,12 @@ export const SHOP_CATEGORY_CHIPS = [
   { category: "20", label: { he: "צמידים", en: "Bracelets" } },
 ] as const;
 
+export const STORE_NAV_CATEGORIES = [
+  { category: "146", labelKey: "navApparel" as const },
+  { category: "20", labelKey: "navBracelets" as const },
+  { category: "18", labelKey: "navAccessories" as const },
+] as const;
+
 export const SHOP_COPY = {
   mission: {
     he: "כל רכישה תומכת בחלוקה חינם של מוצרים לבתי ספר ומוסדות חינוך.",

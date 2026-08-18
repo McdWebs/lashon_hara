@@ -24,7 +24,7 @@ import { ProductPage } from "./pages/ProductPage";
 import { QuizPage } from "./pages/QuizPage";
 import { ResourcesPage } from "./pages/ResourcesPage";
 import { SchoolsPage } from "./pages/SchoolsPage";
-import { ShopPage } from "./pages/ShopPage";
+import { StorePage } from "./pages/StorePage";
 import { StoriesPage } from "./pages/StoriesPage";
 import { StoryDetailPage } from "./pages/StoryDetailPage";
 import { DonatePage } from "./pages/DonatePage";
@@ -43,7 +43,8 @@ const queryClient = new QueryClient({
 function sitePages() {
   return (
     <>
-      <Route index element={<HomePage />} />
+      <Route index element={<StorePage />} />
+      <Route path="movement" element={<HomePage />} />
       <Route path="message" element={<MessagePage />} />
       <Route path="message/quiz" element={<QuizPage />} />
       <Route path="about" element={<AboutPage />} />
@@ -59,8 +60,8 @@ function sitePages() {
       <Route path="stories/:slug" element={<StoryDetailPage />} />
       <Route path="resources" element={<ResourcesPage />} />
       <Route path="magazine" element={<MagazinePage />} />
-      <Route path="shop" element={<ShopPage />} />
-      <Route path="shop-m" element={<LocaleRedirect to="/shop" />} />
+      <Route path="shop" element={<StorePage />} />
+      <Route path="shop-m" element={<LocaleRedirect to="/" />} />
       <Route path="shop/product/:id" element={<ProductPage />} />
       <Route path="cart" element={<CartPage />} />
       <Route path="checkout" element={<CheckoutPage />} />
