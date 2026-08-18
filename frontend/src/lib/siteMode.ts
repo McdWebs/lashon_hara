@@ -12,12 +12,20 @@ export function isMovementPath(pathname: string): boolean {
   return stripLocale(pathname) === "/movement";
 }
 
-export function isStoreLandingPath(pathname: string, category?: string | null): boolean {
-  if (category) return false;
+export function isStoreLandingPath(
+  pathname: string,
+  category?: string | null,
+  view?: string | null,
+): boolean {
+  if (category || view === "catalog") return false;
   const path = stripLocale(pathname);
   return path === "/" || path === "/shop";
 }
 
-export function isFullBleedPath(pathname: string, category?: string | null): boolean {
-  return isMovementPath(pathname) || isStoreLandingPath(pathname, category);
+export function isFullBleedPath(
+  pathname: string,
+  category?: string | null,
+  view?: string | null,
+): boolean {
+  return isMovementPath(pathname) || isStoreLandingPath(pathname, category, view);
 }
