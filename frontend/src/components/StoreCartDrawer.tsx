@@ -1,12 +1,53 @@
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import { Box, Button, Drawer, IconButton, Link, Stack, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Drawer, IconButton, Link, Stack, Typography } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { useLocale } from "../i18n/useLocale";
 import { useCart } from "../lib/cart";
 import { formatIls } from "../lib/site";
 import { STORE_COPY } from "../lib/storeUi";
 import { QuantityStepper } from "./QuantityStepper";
+
+function AnimatedTotal({ value, unit }: { value: string; unit: number }) {
+  const target = Number(value) / Math.pow(10, unit);
+  const displayRef = useRef(target);
+  const [display, setDisplay] = useState(target);
+  const rafRef = useRef(0);
+
+  useEffect(() => {
+    const from = displayRef.current;
+    const to = target;
+    if (from === to) return;
+    const duration = 350;
+    const start = performance.now();
+
+    function tick(now: number) {
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const current = from + (to - from) * eased;
+      displayRef.current = current;
+      setDisplay(current);
+      if (t < 1) rafRef.current = requestAnimationFrame(tick);
+    }
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [target]);
+
+  const formatted = formatIls(
+    String(Math.round(display * Math.pow(10, unit))),
+    unit,
+  );
+
+  return (
+    <Typography
+      sx={{ fontFamily: '"Secular One", Heebo, sans-serif', fontSize: 24 }}
+    >
+      {formatted}
+    </Typography>
+  );
+}
 
 export function StoreCartDrawer({
   open,
@@ -22,6 +63,25 @@ export function StoreCartDrawer({
   const setQuantity = useCart((state) => state.setQuantity);
   const total = useCart((state) => state.totalPrice);
   const unit = useCart((state) => state.currencyMinorUnit);
+  const [pendingKey, setPendingKey] = useState<string | null>(null);
+
+  async function handleSetQuantity(key: string, quantity: number) {
+    setPendingKey(key);
+    try {
+      await setQuantity(key, quantity);
+    } finally {
+      setPendingKey((k) => (k === key ? null : k));
+    }
+  }
+
+  async function handleRemove(key: string) {
+    setPendingKey(key);
+    try {
+      await removeItem(key);
+    } finally {
+      setPendingKey((k) => (k === key ? null : k));
+    }
+  }
 
   return (
     <Drawer
@@ -86,11 +146,11 @@ export function StoreCartDrawer({
                   sx={{ py: 2.5, borderBottom: "1px solid rgba(17,17,17,.12)", alignItems: "flex-start" }}
                 >
                   {item.image && (
-                    <Link component={RouterLink} to={loc(`/shop/product/${item.id}`)} onClick={onClose}>
+                    <Link component={RouterLink} to={loc(`/shop/product/${item.id}`)} onClick={onClose} aria-label={item.name}>
                       <Box
                         component="img"
                         src={item.image}
-                        alt={item.name}
+                        alt=""
                         sx={{ width: 92, height: 112, objectFit: "cover", display: "block", bgcolor: "#eee9e0" }}
                       />
                     </Link>
@@ -114,14 +174,20 @@ export function StoreCartDrawer({
                       <QuantityStepper
                         size="small"
                         value={item.quantity}
-                        onChange={(quantity) => setQuantity(item.key, quantity)}
+                        onChange={(quantity) => handleSetQuantity(item.key, quantity)}
+                        loading={pendingKey === item.key}
                       />
                       <IconButton
                         size="small"
-                        onClick={() => removeItem(item.key)}
+                        onClick={() => handleRemove(item.key)}
+                        disabled={pendingKey === item.key}
                         aria-label={lang === "en" ? "Remove item" : "הסרת פריט"}
                       >
-                        <DeleteOutlineIcon fontSize="small" />
+                        {pendingKey === item.key ? (
+                          <CircularProgress size={16} color="inherit" />
+                        ) : (
+                          <DeleteOutlineIcon fontSize="small" />
+                        )}
                       </IconButton>
                     </Stack>
                   </Stack>
@@ -133,9 +199,7 @@ export function StoreCartDrawer({
                 <Typography sx={{ fontSize: 14, color: "text.secondary" }}>
                   {lang === "en" ? "Subtotal" : "סכום ביניים"}
                 </Typography>
-                <Typography sx={{ fontFamily: '"Secular One", Heebo, sans-serif', fontSize: 24 }}>
-                  {formatIls(total, unit)}
-                </Typography>
+                <AnimatedTotal value={total} unit={unit} />
               </Stack>
               <Button
                 fullWidth

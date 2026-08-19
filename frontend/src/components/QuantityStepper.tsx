@@ -1,6 +1,7 @@
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { IconButton, Stack, Typography } from "@mui/material";
+import { CircularProgress, IconButton, Stack, Typography } from "@mui/material";
+import { useLocale } from "../i18n/useLocale";
 
 export function QuantityStepper({
   value,
@@ -9,6 +10,7 @@ export function QuantityStepper({
   max = 99,
   step = 1,
   size = "medium",
+  loading = false,
 }: {
   value: number;
   onChange: (n: number) => void;
@@ -16,7 +18,9 @@ export function QuantityStepper({
   max?: number;
   step?: number;
   size?: "small" | "medium";
+  loading?: boolean;
 }) {
+  const { lang } = useLocale();
   const btnSize = size === "small" ? "small" : "medium";
 
   return (
@@ -34,17 +38,42 @@ export function QuantityStepper({
     >
       <IconButton
         size={btnSize}
-        aria-label="הפחתה"
-        disabled={value <= min}
+        aria-label={lang === "en" ? "Decrease quantity" : "הפחתה"}
+        disabled={value <= min || loading}
         onClick={() => onChange(Math.max(min, value - step))}
       >
         <RemoveIcon fontSize="small" />
       </IconButton>
-      <Typography sx={{ minWidth: 28, textAlign: "center", fontWeight: 700 }}>{value}</Typography>
+      <Typography
+        aria-live="polite"
+        aria-atomic="true"
+        sx={{
+          minWidth: 28,
+          textAlign: "center",
+          fontWeight: 700,
+          position: "relative",
+          opacity: loading ? 0.35 : 1,
+          transition: "opacity .2s ease",
+        }}
+      >
+        {value}
+        {loading && (
+          <CircularProgress
+            size={12}
+            thickness={5}
+            sx={{
+              position: "absolute",
+              inset: 0,
+              margin: "auto",
+              color: "text.primary",
+            }}
+          />
+        )}
+      </Typography>
       <IconButton
         size={btnSize}
-        aria-label="הוספה"
-        disabled={value >= max}
+        aria-label={lang === "en" ? "Increase quantity" : "הוספה"}
+        disabled={value >= max || loading}
         onClick={() => onChange(Math.min(max, value + step))}
       >
         <AddIcon fontSize="small" />
