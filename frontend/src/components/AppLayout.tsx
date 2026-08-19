@@ -1,8 +1,10 @@
 import { Box } from "@mui/material";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Outlet, useLocation, useSearchParams } from "react-router-dom";
+import { AccessibilityWidget } from "./AccessibilityWidget";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
+import { SkipLink } from "./SkipLink";
 import { LocaleContext, buildLocale } from "../i18n/useLocale";
 import { langFromPath } from "../i18n/locale";
 import { useCart } from "../lib/cart";
@@ -28,18 +30,30 @@ export function AppLayout() {
     hydrateCart();
   }, [hydrateCart]);
 
+  const prevPath = useRef(pathname + search);
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "auto";
+    }
+  }, []);
+  useEffect(() => {
+    const current = pathname + search;
+    if (current !== prevPath.current) {
+      window.scrollTo(0, 0);
+      prevPath.current = current;
+    }
   }, [pathname, search]);
 
   return (
     <LocaleContext.Provider value={locale}>
+      <SkipLink />
       <Box
-        className={store ? "store-shell" : undefined}
+        className={`a11y-zoom-scope${store ? " store-shell" : ""}`}
         sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
       >
         <Header />
         <Box
+          id="main-content"
           component="main"
           sx={{
             flex: 1,
@@ -50,6 +64,7 @@ export function AppLayout() {
         </Box>
         <Footer />
       </Box>
+      <AccessibilityWidget />
     </LocaleContext.Provider>
   );
 }
