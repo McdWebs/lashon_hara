@@ -19,6 +19,9 @@ type CityAutocompleteProps = {
   size?: "small" | "medium";
   value: string | null;
   onChange: (value: string | null) => void;
+  onBlur?: () => void;
+  error?: boolean;
+  helperText?: string;
 };
 
 export function CityAutocomplete({
@@ -28,6 +31,9 @@ export function CityAutocomplete({
   size,
   value,
   onChange,
+  onBlur,
+  error,
+  helperText,
 }: CityAutocompleteProps) {
   const { lang } = useLocale();
   const selected = ISRAELI_LOCALITIES.find((locality) => locality.he === value) ?? null;
@@ -39,12 +45,13 @@ export function CityAutocomplete({
         options={ISRAELI_LOCALITIES}
         value={selected}
         onChange={(_, option) => onChange(option?.he ?? null)}
+        onBlur={onBlur}
         getOptionLabel={(option) => getLocalityLabel(option, lang)}
         filterOptions={filterLocalities}
         isOptionEqualToValue={(a, b) => a.he === b.he}
         noOptionsText={lang === "en" ? "No matches" : "לא נמצאו תוצאות"}
         renderInput={(params) => (
-          <TextField {...params} label={label} required={required} size={size} />
+          <TextField {...params} label={label} required={required} size={size} error={error} helperText={helperText} />
         )}
       />
     </>
