@@ -1,7 +1,7 @@
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
 import { AppBar, Box, Button, IconButton, Link, Modal, Stack, Toolbar, useTheme } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link as RouterLink, NavLink, useLocation } from "react-router-dom";
 import { AccountButton } from "./AccountButton";
 import { CartButton } from "./CartButton";
@@ -88,6 +88,7 @@ export function Header() {
 function ExplanatoryHeader() {
   const [open, setOpen] = useState(false);
   const [menuMounted, setMenuMounted] = useState(false);
+  const firstMenuLinkRef = useRef<HTMLAnchorElement>(null);
   const scrolled = useScrolledPastHero();
   const theme = useTheme();
   const { loc, t } = useLocale();
@@ -110,6 +111,12 @@ function ExplanatoryHeader() {
       return;
     }
     const id = window.setTimeout(() => setMenuMounted(false), MENU_ANIM_MS);
+    return () => window.clearTimeout(id);
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const id = window.setTimeout(() => firstMenuLinkRef.current?.focus(), 60);
     return () => window.clearTimeout(id);
   }, [open]);
 
@@ -410,6 +417,7 @@ function ExplanatoryHeader() {
               {mobileMenuNavItems.map((item, i) => (
                 <Link
                   key={item.to}
+                  ref={i === 0 ? firstMenuLinkRef : undefined}
                   component={RouterLink}
                   to={item.to}
                   underline="none"
