@@ -1,6 +1,6 @@
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
-import { Box, Dialog, IconButton, InputBase, Link, Stack, Typography } from "@mui/material";
+import { Box, Dialog, IconButton, InputBase, Link, Skeleton, Stack, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useDeferredValue, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
@@ -8,6 +8,26 @@ import { useLocale } from "../i18n/useLocale";
 import { fetchProducts } from "../lib/catalog";
 import { formatIls } from "../lib/site";
 import { STORE_COPY, STORE_MAX_WIDTH } from "../lib/storeUi";
+
+function SearchResultSkeleton() {
+  return (
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: "82px 1fr auto",
+        gap: 2,
+        alignItems: "center",
+        py: 2,
+        borderBottom: "1px solid rgba(17,17,17,.12)",
+      }}
+      aria-hidden
+    >
+      <Skeleton variant="rectangular" width={82} height={96} sx={{ bgcolor: "#eee9e0" }} />
+      <Skeleton width="70%" height={20} />
+      <Skeleton width={54} height={18} />
+    </Box>
+  );
+}
 
 export function StoreSearch({
   open,
@@ -86,16 +106,24 @@ export function StoreSearch({
             />
           </Stack>
           {query.length < 2 && (
-            <Typography sx={{ mt: 2, color: "rgba(17,17,17,.5)", fontSize: 14 }}>
+            <Typography sx={{ mt: 2, color: "rgba(17,17,17,.65)", fontSize: 14 }}>
               {copy.searchHint}
             </Typography>
           )}
 
-          {query.length >= 2 && results.data && results.data.items.length === 0 && (
+          {query.length >= 2 && results.isFetching && (
+            <Box sx={{ mt: { xs: 4, md: 6 } }}>
+              {Array.from({ length: 4 }, (_, i) => (
+                <SearchResultSkeleton key={i} />
+              ))}
+            </Box>
+          )}
+
+          {query.length >= 2 && !results.isFetching && results.data && results.data.items.length === 0 && (
             <Typography sx={{ mt: 6, fontSize: 18 }}>{copy.noResults}</Typography>
           )}
 
-          {results.data && results.data.items.length > 0 && (
+          {!results.isFetching && results.data && results.data.items.length > 0 && (
             <Box
               sx={{
                 display: "grid",

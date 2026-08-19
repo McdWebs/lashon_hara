@@ -55,21 +55,24 @@ export function LoadingButton({
 
 export function ProductCardSkeleton() {
   return (
-    <Box sx={{ height: "100%" }}>
-      <Skeleton variant="rectangular" sx={{ aspectRatio: "1 / 1", width: "100%" }} />
-      <Box sx={{ pt: 1.75 }}>
-        <Skeleton width="90%" height={20} />
-        <Skeleton width="40%" height={22} sx={{ mt: 1 }} />
+    <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <Box sx={{ overflow: "hidden", bgcolor: "#eee9e0", aspectRatio: "4 / 5", position: "relative" }}>
+        <Skeleton variant="rectangular" sx={{ width: "100%", height: "100%", bgcolor: "#eee9e0" }} animation="wave" />
+      </Box>
+      <Box sx={{ pt: { xs: 1.25, md: 1.6 }, pb: 1 }}>
+        <Skeleton width="90%" height={16} sx={{ mb: 0.5 }} animation="wave" />
+        <Skeleton width="60%" height={16} animation="wave" />
+        <Skeleton width="30%" height={14} sx={{ mt: 0.55 }} animation="wave" />
       </Box>
     </Box>
   );
 }
 
-export function ProductGridSkeleton({ count = 8 }: { count?: number }) {
+export function ProductGridSkeleton({ count = 8, columns = 3 }: { count?: number; columns?: 3 | 4 }) {
   return (
-    <Grid container spacing={{ xs: 2, md: 3.5 }} aria-hidden>
+    <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }} aria-hidden>
       {Array.from({ length: count }, (_, i) => (
-        <Grid key={i} size={{ xs: 6, sm: 6, md: 4 }}>
+        <Grid key={i} size={{ xs: 6, sm: 6, md: columns === 4 ? 3 : 4 }}>
           <ProductCardSkeleton />
         </Grid>
       ))}
@@ -83,7 +86,7 @@ export function ProductPageSkeleton() {
       <Box sx={{ maxWidth: 1120, mx: "auto", px: { xs: 2, sm: 3 } }}>
         <Stack direction={{ xs: "column", md: "row" }} spacing={4}>
           <Box sx={{ flex: { md: "0 0 420px" } }}>
-            <Skeleton variant="rounded" sx={{ width: "100%", aspectRatio: "1 / 1" }} />
+            <Skeleton variant="rounded" sx={{ width: "100%", aspectRatio: { xs: "4 / 5", md: "4 / 5.15" }, bgcolor: "#eee9e0" }} />
             <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
               {[0, 1, 2].map((i) => (
                 <Skeleton key={i} variant="rounded" width={72} height={72} />

@@ -8,6 +8,7 @@ import {
   MenuItem,
   Pagination,
   Select,
+  Skeleton,
   Stack,
   Typography,
 } from "@mui/material";
@@ -266,6 +267,7 @@ function FeaturedEdit({
           <Box
             component="img"
             src={STORE_FEATURED_IMAGE}
+            loading="lazy"
             alt={
               lang === "en"
                 ? "Fabric and metal bracelets from the collection"
@@ -444,6 +446,7 @@ function StorySection() {
         <Box
           component="img"
           src={STORE_EDITORIAL_IMAGES[1].src}
+          loading="lazy"
           alt={STORE_EDITORIAL_IMAGES[1].alt[lang]}
           sx={{
             width: "100%",
@@ -618,18 +621,28 @@ function CollectionPage({ category }: { category: string }) {
               color={!category ? "secondary" : undefined}
               sx={{ flexShrink: 0 }}
             />
-            {sortedCategories.map((cat) => (
-              <Chip
-                key={cat.id}
-                label={cat.name}
-                clickable
-                component={RouterLink}
-                to={loc(categoryHref(params, String(cat.id)))}
-                variant={category === String(cat.id) ? "filled" : "outlined"}
-                color={category === String(cat.id) ? "secondary" : undefined}
-                sx={{ flexShrink: 0 }}
-              />
-            ))}
+            {categoriesQuery.isLoading
+              ? Array.from({ length: 8 }, (_, i) => (
+                  <Skeleton
+                    key={i}
+                    variant="rounded"
+                    width={64 + (i % 3) * 20}
+                    height={32}
+                    sx={{ flexShrink: 0, borderRadius: 999 }}
+                  />
+                ))
+              : sortedCategories.map((cat) => (
+                  <Chip
+                    key={cat.id}
+                    label={cat.name}
+                    clickable
+                    component={RouterLink}
+                    to={loc(categoryHref(params, String(cat.id)))}
+                    variant={category === String(cat.id) ? "filled" : "outlined"}
+                    color={category === String(cat.id) ? "secondary" : undefined}
+                    sx={{ flexShrink: 0 }}
+                  />
+                ))}
           </Stack>
 
           <Stack
@@ -645,7 +658,7 @@ function CollectionPage({ category }: { category: string }) {
             <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
               {query.data
                 ? `${query.data.total} ${lang === "en" ? "products" : "מוצרים"}`
-                : " "}
+                : <Skeleton width={70} sx={{ display: "inline-block", fontSize: 13 }} animation="wave" />}
             </Typography>
             <FormControl size="small" sx={{ minWidth: 190 }}>
               <Select
@@ -661,7 +674,7 @@ function CollectionPage({ category }: { category: string }) {
             </FormControl>
           </Stack>
 
-          {query.isLoading && <ProductGridSkeleton count={12} />}
+          {query.isLoading && <ProductGridSkeleton count={12} columns={4} />}
           {query.isError && (
             <ErrorState
               message={
