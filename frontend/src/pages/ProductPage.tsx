@@ -15,7 +15,7 @@ import { ProductOrderNotice } from "../components/ProductOrderNotice";
 import { QuantityStepper } from "../components/QuantityStepper";
 import { SchoolsOrderForm } from "../components/SchoolsOrderForm";
 import { ShippingStrip } from "../components/ShippingStrip";
-import { ErrorState, ProductGridSkeleton, ProductPageSkeleton } from "../components/States";
+import { ErrorState, LoadingButton, ProductGridSkeleton, ProductPageSkeleton } from "../components/States";
 import { PageHeader, Section } from "../components/Section";
 import { SchoolOrderProcessContent } from "../content/schoolOrderProcessHe";
 import { track } from "../lib/analytics";
@@ -38,6 +38,7 @@ export function ProductPage() {
   const [snackOpen, setSnackOpen] = useState(false);
   const [snackError, setSnackError] = useState(false);
   const [snackMessage, setSnackMessage] = useState("");
+  const [adding, setAdding] = useState(false);
 
   const query = useQuery({
     queryKey: ["product", id],
@@ -91,6 +92,7 @@ export function ProductPage() {
       setSnackOpen(true);
       return;
     }
+    setAdding(true);
     try {
       await addItem(p.id, qty);
       track("product_added_to_cart", { id: p.id, quantity: qty });
@@ -107,6 +109,8 @@ export function ProductPage() {
             : "לא הצלחנו להוסיף לסל. נסו שוב.",
       );
       setSnackOpen(true);
+    } finally {
+      setAdding(false);
     }
   }
 
@@ -142,14 +146,15 @@ export function ProductPage() {
           max={orderRules.max}
           step={orderRules.step}
         />
-        <Button
+        <LoadingButton
           variant="contained"
           size="large"
           onClick={handleAddToCart}
+          loading={adding}
           sx={{ flex: { xs: 1, sm: "none" }, minWidth: 160 }}
         >
           {lang === "en" ? "Add to cart" : "הוספה לסל"}
-        </Button>
+        </LoadingButton>
       </Stack>
     </Stack>
   );
@@ -317,9 +322,9 @@ export function ProductPage() {
               step={orderRules.step}
               size="small"
             />
-            <Button variant="contained" fullWidth onClick={handleAddToCart}>
+            <LoadingButton variant="contained" fullWidth onClick={handleAddToCart} loading={adding}>
               {lang === "en" ? "Add to cart" : "הוספה לסל"}
-            </Button>
+            </LoadingButton>
           </Stack>
         </Box>
       )}

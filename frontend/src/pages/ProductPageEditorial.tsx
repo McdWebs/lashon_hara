@@ -8,7 +8,7 @@ import { Link as RouterLink, useParams } from "react-router-dom";
 import { ProductGrid } from "../components/ProductGrid";
 import { ProductOrderNotice } from "../components/ProductOrderNotice";
 import { QuantityStepper } from "../components/QuantityStepper";
-import { ErrorState, ProductGridSkeleton, ProductPageSkeleton } from "../components/States";
+import { ErrorState, LoadingButton, ProductGridSkeleton, ProductPageSkeleton } from "../components/States";
 import { VariationPicker } from "../components/VariationPicker";
 import { useLocale } from "../i18n/useLocale";
 import { track } from "../lib/analytics";
@@ -21,6 +21,8 @@ import {
 } from "../lib/productOrderRules";
 import { formatIls, SCHOOLS_PRODUCT_ID } from "../lib/site";
 import { STORE_MAX_WIDTH } from "../lib/storeUi";
+
+const BRACELET_CATEGORY_IDS = new Set([20, 35, 135, 166, 282]);
 import { ProductPage } from "./ProductPage";
 
 function DetailRow({
@@ -113,6 +115,7 @@ export function ProductPageEditorial() {
   if (query.data.id === SCHOOLS_PRODUCT_ID) return <ProductPage />;
 
   const product = query.data;
+  const isBracelet = product.categories.some((c) => BRACELET_CATEGORY_IDS.has(c.id));
   const orderRules = getProductOrderRules(product);
   const images = product.images;
   const image = images[imageIndex] ?? images[0];
@@ -161,12 +164,11 @@ export function ProductPageEditorial() {
       <Box sx={{ bgcolor: "#f8f6f1", pb: { xs: 10, md: 13 } }}>
         <Box sx={{ maxWidth: STORE_MAX_WIDTH, mx: "auto", px: { xs: 0, md: 3.5 } }}>
           <Button
-            component={RouterLink}
-            to={loc("/shop")}
+            onClick={() => window.history.back()}
             startIcon={<ArrowBackIcon sx={{ transform: lang === "he" ? "rotate(180deg)" : "none" }} />}
             sx={{ display: { xs: "none", md: "inline-flex" }, color: "inherit", px: 0, my: 3, fontSize: 12 }}
           >
-            {lang === "en" ? "Back to shop" : "חזרה לחנות"}
+            {lang === "en" ? "Back" : "חזרה"}
           </Button>
 
           <Box
@@ -177,34 +179,11 @@ export function ProductPageEditorial() {
               alignItems: "start",
             }}
           >
-            <Box sx={{ display: { md: "grid" }, gridTemplateColumns: images.length > 1 ? "78px 1fr" : "1fr", gap: 1.5 }}>
-              {images.length > 1 && (
-                <Stack sx={{ display: { xs: "none", md: "flex" }, gap: 1.25 }}>
-                  {images.map((thumb, index) => (
-                    <Box
-                      key={thumb.src}
-                      component="button"
-                      type="button"
-                      onClick={() => setImageIndex(index)}
-                      aria-label={`${lang === "en" ? "View image" : "הצגת תמונה"} ${index + 1}`}
-                      sx={{
-                        p: 0,
-                        border: "1px solid",
-                        borderColor: imageIndex === index ? "#111" : "transparent",
-                        bgcolor: "#eee9e0",
-                        cursor: "pointer",
-                        aspectRatio: "4 / 5",
-                      }}
-                    >
-                      <Box component="img" src={thumb.thumbnail || thumb.src} alt="" sx={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                    </Box>
-                  ))}
-                </Stack>
-              )}
+            <Box>
               <Box
                 sx={{
                   bgcolor: "#eee9e0",
-                  aspectRatio: { xs: "4 / 5", md: "4 / 5.15" },
+                  aspectRatio: { xs: "4 / 5", md: "4 / 3.2" },
                   overflow: "hidden",
                 }}
               >
@@ -221,10 +200,9 @@ export function ProductPageEditorial() {
                 <Stack
                   direction="row"
                   sx={{
-                    display: { xs: "flex", md: "none" },
-                    gap: 0.75,
-                    px: 2,
-                    pt: 1.25,
+                    gap: { xs: 0.75, md: 1 },
+                    px: { xs: 2, md: 0 },
+                    pt: { xs: 1.25, md: 1.5 },
                     overflowX: "auto",
                   }}
                 >
@@ -234,13 +212,16 @@ export function ProductPageEditorial() {
                       component="button"
                       type="button"
                       onClick={() => setImageIndex(index)}
+                      aria-label={`${lang === "en" ? "View image" : "הצגת תמונה"} ${index + 1}`}
                       sx={{
                         p: 0,
-                        width: 64,
-                        flex: "0 0 64px",
-                        border: "1px solid",
+                        width: { xs: 64, md: 72 },
+                        flex: { xs: "0 0 64px", md: "0 0 72px" },
+                        border: "2px solid",
                         borderColor: imageIndex === index ? "#111" : "transparent",
                         bgcolor: "#eee9e0",
+                        cursor: "pointer",
+                        transition: "border-color .2s ease",
                       }}
                     >
                       <Box component="img" src={thumb.thumbnail || thumb.src} alt="" sx={{ width: "100%", aspectRatio: "4 / 5", objectFit: "cover", display: "block" }} />
@@ -251,7 +232,7 @@ export function ProductPageEditorial() {
             </Box>
 
             <Box sx={{ px: { xs: 2.5, md: 0 }, pt: { xs: 4, md: 3 }, position: { md: "sticky" }, top: { md: 132 } }}>
-              <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(17,17,17,.5)" }}>
+              <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(17,17,17,.65)" }}>
                 {product.categories[0]?.name ?? (lang === "en" ? "The collection" : "הקולקציה")}
               </Typography>
               <Typography
@@ -305,12 +286,13 @@ export function ProductPageEditorial() {
                   max={orderRules.max}
                   step={orderRules.step}
                 />
-                <Button
+                <LoadingButton
                   variant="contained"
                   color="secondary"
                   size="large"
                   onClick={addToCart}
-                  disabled={adding || !canAddToCart}
+                  loading={adding}
+                  disabled={!canAddToCart}
                   sx={{ flex: 1, minHeight: 50 }}
                 >
                   {isVariable && !canAddToCart
@@ -320,7 +302,7 @@ export function ProductPageEditorial() {
                     : lang === "en"
                       ? "Add to cart"
                       : "הוספה לסל"}
-                </Button>
+                </LoadingButton>
               </Stack>
 
               <Stack direction="row" spacing={1} sx={{ mt: 2.5, alignItems: "center", color: "rgba(17,17,17,.66)" }}>
@@ -344,6 +326,50 @@ export function ProductPageEditorial() {
                     ? "Every piece carries a simple choice into everyday life: to speak differently."
                     : "כל פריט מכניס לחיי היום־יום בחירה פשוטה: לדבר אחרת."}
                 </DetailRow>
+                {isBracelet && (
+                  <DetailRow title={lang === "en" ? "Size guide" : "טבלת מידות"}>
+                    <Box
+                      component="table"
+                      sx={{
+                        width: "100%",
+                        borderCollapse: "collapse",
+                        fontSize: 14,
+                        "& th, & td": {
+                          border: "1px solid rgba(17,17,17,.14)",
+                          px: 2,
+                          py: 1.2,
+                          textAlign: lang === "he" ? "right" : "left",
+                        },
+                        "& th": { fontWeight: 600, bgcolor: "rgba(17,17,17,.04)" },
+                      }}
+                    >
+                      <thead>
+                        <tr>
+                          <th>{lang === "en" ? "Size" : "מידה"}</th>
+                          <th>{lang === "en" ? "Circumference" : "היקף"}</th>
+                          <th>{lang === "en" ? "Suitable for" : "מתאים ל"}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>S</td>
+                          <td>{lang === "en" ? "~16 cm" : "~16 ס״מ"}</td>
+                          <td>{lang === "en" ? "Children / petite wrist" : "ילדים / יד קטנה"}</td>
+                        </tr>
+                        <tr>
+                          <td>M</td>
+                          <td>{lang === "en" ? "~19 cm" : "~19 ס״מ"}</td>
+                          <td>{lang === "en" ? "Regular men's wrist" : "יד רגילה של גבר"}</td>
+                        </tr>
+                        <tr>
+                          <td>L</td>
+                          <td>{lang === "en" ? "~21 cm" : "~21 ס״מ"}</td>
+                          <td>{lang === "en" ? "Large wrist" : "יד גדולה"}</td>
+                        </tr>
+                      </tbody>
+                    </Box>
+                  </DetailRow>
+                )}
               </Box>
             </Box>
           </Box>
@@ -359,7 +385,7 @@ export function ProductPageEditorial() {
             <Typography sx={{ fontFamily: '"Secular One", Heebo, sans-serif', fontSize: { xs: 34, md: 48 }, mb: 4 }}>
               {lang === "en" ? "You may also like" : "אולי תאהבו גם"}
             </Typography>
-            {related.isLoading ? <ProductGridSkeleton count={4} /> : related.data && <ProductGrid products={related.data.items} columns={4} />}
+            {related.isLoading ? <ProductGridSkeleton count={4} columns={4} /> : related.data && <ProductGrid products={related.data.items} columns={4} />}
           </Box>
         </Box>
       )}
@@ -382,12 +408,13 @@ export function ProductPageEditorial() {
           <Typography sx={{ fontSize: 14, fontWeight: 600, minWidth: 70 }}>
             {formatIls(product.prices.price, unit)}
           </Typography>
-          <Button
+          <LoadingButton
             fullWidth
             variant="contained"
             color="secondary"
             onClick={addToCart}
-            disabled={adding || !canAddToCart}
+            loading={adding}
+            disabled={!canAddToCart}
           >
             {isVariable && !canAddToCart
               ? lang === "en"
@@ -396,7 +423,7 @@ export function ProductPageEditorial() {
               : lang === "en"
                 ? "Add to cart"
                 : "הוספה לסל"}
-          </Button>
+          </LoadingButton>
         </Stack>
       </Box>
 

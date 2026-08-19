@@ -1,6 +1,6 @@
 import CheckIcon from "@mui/icons-material/Check";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import { Box, Typography } from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useLocale } from "../i18n/useLocale";
@@ -29,6 +29,7 @@ export function ProductCard({
   const copy = STORE_COPY[lang];
   const addItem = useCart((state) => state.addItem);
   const [added, setAdded] = useState(false);
+  const [adding, setAdding] = useState(false);
   const addedTimer = useRef<number>(0);
   const img = imageOverride?.src ?? product.images[0]?.src ?? product.images[0]?.thumbnail;
   const imgAlt = imageOverride?.alt ?? product.images[0]?.alt ?? product.name;
@@ -51,6 +52,7 @@ export function ProductCard({
       navigate(productTo);
       return;
     }
+    setAdding(true);
     try {
       await addItem(product.id, orderRules.min);
       track("product_added_to_cart", { id: product.id, quantity: orderRules.min, source: "quick_add" });
@@ -59,6 +61,8 @@ export function ProductCard({
       addedTimer.current = window.setTimeout(() => setAdded(false), 1800);
     } catch {
       /* leave the button as-is so the shopper can try again */
+    } finally {
+      setAdding(false);
     }
   }
 
@@ -71,11 +75,11 @@ export function ProductCard({
         color: "inherit",
         "&:hover .product-card-img": { transform: "scale(1.025)" },
         "&:hover .product-card-hover-img": { opacity: 1 },
-        "&:hover .product-card-quick-add": {
+        "&:hover .product-card-quick-add, &:focus-within .product-card-quick-add": {
           opacity: 1,
           transform: "translateX(-50%) translateY(0)",
         },
-        "&:hover .product-card-quick-fade": { opacity: 1 },
+        "&:hover .product-card-quick-fade, &:focus-within .product-card-quick-fade": { opacity: 1 },
       }}
     >
       <Box
@@ -101,6 +105,7 @@ export function ProductCard({
             className="product-card-img"
             component="img"
             src={img}
+            loading="lazy"
             alt={imgAlt}
             sx={{
               width: "100%",
@@ -115,6 +120,7 @@ export function ProductCard({
               className="product-card-hover-img"
               component="img"
               src={hoverImg}
+              loading="lazy"
               alt=""
               aria-hidden
               sx={{
@@ -190,6 +196,7 @@ export function ProductCard({
           component="button"
           type="button"
           onClick={handleQuickAdd}
+          disabled={adding}
           aria-label={added ? copy.addedToCart : copy.addToCart}
           sx={{
             appearance: "none",
@@ -238,7 +245,13 @@ export function ProductCard({
             "& .MuiSvgIcon-root": { fontSize: 16 },
           }}
         >
-          {added ? <CheckIcon /> : <ShoppingBagOutlinedIcon />}
+          {adding ? (
+            <CircularProgress size={14} color="inherit" />
+          ) : added ? (
+            <CheckIcon />
+          ) : (
+            <ShoppingBagOutlinedIcon />
+          )}
           {added ? copy.addedToCart : copy.addToCart}
         </Box>
       </Box>
