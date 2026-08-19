@@ -24,7 +24,7 @@ const sectionTitle = {
   mb: { xs: 1.25, md: 1 },
   fontSize: 12,
   letterSpacing: 1,
-  opacity: 0.45,
+  opacity: 0.65,
   textTransform: "uppercase",
 } as const;
 

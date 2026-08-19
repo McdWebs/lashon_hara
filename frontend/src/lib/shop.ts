@@ -86,7 +86,7 @@ export function sortCategoriesForChips<T extends { id: number }>(categories: T[]
 
 export const STORE_NAV_CATEGORIES = [
   { category: "146", labelKey: "navApparel" as const },
-  { category: "20", labelKey: "navBracelets" as const },
+  { category: "35", labelKey: "navBracelets" as const },
   { category: "18", labelKey: "navAccessories" as const },
 ] as const;
 

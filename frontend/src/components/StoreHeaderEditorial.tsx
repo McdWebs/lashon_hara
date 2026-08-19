@@ -25,7 +25,7 @@ const logoImgSx = {
 
 const categories = [
   { category: "146", he: "לבוש", en: "Apparel" },
-  { category: "20", he: "צמידים", en: "Bracelets" },
+  { category: "35", he: "צמידים", en: "Bracelets" },
   { category: "18", he: "אביזרים", en: "Accessories" },
 ] as const;
 

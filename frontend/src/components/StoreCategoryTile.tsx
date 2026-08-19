@@ -29,6 +29,7 @@ function TileImage({
         className="category-tile-img"
         component="img"
         src={tile.image}
+        loading="lazy"
         alt={alt}
         sx={{
           width: "100%",
@@ -45,6 +46,7 @@ function TileImage({
           className="category-tile-hover-img"
           component="img"
           src={tile.hoverImage}
+          loading="lazy"
           alt=""
           aria-hidden
           sx={{
@@ -141,7 +143,7 @@ function HeroTile({ tile, to }: { tile: StoreCategoryTile; to: string }) {
             sx={{
               mt: 0.35,
               fontSize: 10,
-              color: "rgba(17,17,17,.5)",
+              color: "rgba(17,17,17,.65)",
               lineHeight: 1.3,
               whiteSpace: "nowrap",
               overflow: "hidden",
@@ -196,7 +198,7 @@ function InsetTile({ tile, to }: { tile: StoreCategoryTile; to: string }) {
             sx={{
               mt: 0.35,
               fontSize: 10,
-              color: "rgba(17,17,17,.55)",
+              color: "rgba(17,17,17,.65)",
               lineHeight: 1.35,
               display: "-webkit-box",
               WebkitLineClamp: 2,

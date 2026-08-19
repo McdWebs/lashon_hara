@@ -116,7 +116,7 @@ export function StoreFooterEditorial() {
             alignItems: { xs: "flex-start", sm: "center" },
           }}
         >
-          <Typography sx={{ fontSize: 11, color: "rgba(17,17,17,.52)" }}>
+          <Typography sx={{ fontSize: 11, color: "rgba(17,17,17,.65)", marginInlineStart: { md: 10 } }}>
             © {new Date().getFullYear()} {SITE.name}
           </Typography>
           <Stack direction="row" spacing={1.5}>

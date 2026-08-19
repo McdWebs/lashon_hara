@@ -37,7 +37,7 @@ export function VariationPicker({
   return (
     <Stack direction="row" sx={{ gap: 1.5, flexWrap: "wrap", mt: 2.5 }}>
       {attributes.map((attr) => (
-        <FormControl key={attr.id} size="small" sx={{ minWidth: 140 }}>
+        <FormControl key={attr.id} size="small" sx={{ minWidth: 220 }}>
           <InputLabel id={`variation-attr-${attr.id}`}>{attr.name}</InputLabel>
           <Select
             labelId={`variation-attr-${attr.id}`}
