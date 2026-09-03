@@ -178,13 +178,9 @@ function faqSections(loc: (path: string) => string): FaqSection[] {
           q: "איך מזמינים בכמויות גדולות או בהדפסה אישית?",
           a: (
             <>
-              לסיטונאות, הצעות מחיר והדפסות מותאמות —{" "}
-              <Link component={RouterLink} to={loc("/wholesale")}>
-                סיטונאות
-              </Link>
-              ,{" "}
-              <Link component={RouterLink} to={loc("/request-a-quote")}>
-                הצעת מחיר
+              להזמנות לקבוצה ולהדפסות מותאמות —{" "}
+              <Link component={RouterLink} to={loc("/organizations")}>
+                הזמנה לקבוצה
               </Link>{" "}
               או{" "}
               <Link component={RouterLink} to={loc("/custom")}>

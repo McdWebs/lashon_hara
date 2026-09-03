@@ -66,19 +66,11 @@ export function SchoolsPage() {
           >
             חלוקת צמידים לבתי ספר
           </Button>
-          <Button
-            component={RouterLink}
-            to={loc("/wholesale")}
-            variant="outlined"
-          >
-            סיטונאות
+          <Button component={RouterLink} to={loc("/organizations")} variant="outlined">
+            הזמנה לקבוצה
           </Button>
-          <Button
-            component={RouterLink}
-            to={loc("/request-a-quote")}
-            variant="outlined"
-          >
-            הצעת מחיר
+          <Button component={RouterLink} to={loc("/custom")} variant="outlined">
+            מוצרים לאירוע
           </Button>
         </Stack>
         <Typography color="text.secondary" sx={{ mb: 3 }}>
@@ -143,15 +135,15 @@ export function SchoolsPage() {
           צריכים כמות גדולה?
         </Typography>
         <Typography color="text.secondary" sx={{ mb: 2 }}>
-          סיטונאות והזמנות לקבוצה — בלי לעבור בקופה הרגילה אם התהליך אצלכם אחר.
+          הזמנות לקבוצה ולאירוע — בלי לעבור בקופה הרגילה אם התהליך אצלכם אחר.
         </Typography>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
           <Button
             component={RouterLink}
-            to={loc("/wholesale")}
+            to={loc("/organizations")}
             variant="outlined"
           >
-            סיטונאות
+            הזמנה לקבוצה
           </Button>
           <Button component={RouterLink} to={loc("/custom")} variant="outlined">
             מוצרים לאירוע

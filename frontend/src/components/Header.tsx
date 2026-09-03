@@ -126,8 +126,6 @@ function ExplanatoryHeader() {
     { to: loc("/message"), label: t("navMessage") },
     { to: loc("/join"), label: t("navJoin") },
     { to: loc("/schools"), label: t("navSchools") },
-    { to: loc("/wholesale"), label: t("navWholesale") },
-    { to: loc("/request-a-quote"), label: t("navQuote") },
     ...(FEATURES.accountPage ? [{ to: loc("/my-account"), label: t("navAccount") }] : []),
   ];
 
@@ -240,6 +238,7 @@ function ExplanatoryHeader() {
             sx={{
               ...logoImgSx,
               height: { xs: 52, sm: 72 },
+              maxWidth: { xs: "88vw", sm: 560 },
             }}
           />
         </Box>
@@ -270,7 +269,7 @@ function ExplanatoryHeader() {
               alignItems: "center",
               flexShrink: 0,
               overflow: "hidden",
-              maxWidth: overHero ? 0 : 280,
+              maxWidth: overHero ? 0 : 340,
               opacity: overHero ? 0 : 1,
               visibility: overHero ? "hidden" : "visible",
               pointerEvents: overHero ? "none" : "auto",

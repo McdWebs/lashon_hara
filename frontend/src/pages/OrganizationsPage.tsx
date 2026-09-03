@@ -6,21 +6,13 @@ import { LoadingButton } from "../components/States";
 import { useLocale } from "../i18n/useLocale";
 import { submitForm } from "../lib/forms";
 
-type OrgVariant = "default" | "wholesale" | "quote" | "custom";
+type OrgVariant = "default" | "custom";
 
 const copy: Record<OrgVariant, { title: string; intro: string }> = {
   default: {
     title: "הזמנה לקבוצה / בית ספר / ארגון",
     intro:
-      "הזמנות לקבוצות, סיטונאות ומוצרים בהדפסה אישית. מלאו את הטופס ונחזור עם הצעת מחיר.",
-  },
-  wholesale: {
-    title: "סיטונאות",
-    intro: "הזמנות בכמויות לבתי ספר, ארגונים וחברות. נחזור אליכם עם מחירים ולוחות זמנים.",
-  },
-  quote: {
-    title: "בקשת הצעת מחיר",
-    intro: "פרטו את הארגון, המוצרים והכמויות — נשלח הצעת מחיר מותאמת.",
+      "הזמנות לקבוצות ומוצרים בהדפסה אישית. מלאו את הטופס ונחזור אליכם.",
   },
   custom: {
     title: "מוצרים לאירוע / הדפסה אישית",
@@ -62,22 +54,6 @@ export function OrganizationsPage({ variant = "default" }: { variant?: OrgVarian
           </Button>
           <Button
             component={RouterLink}
-            to={loc("/wholesale")}
-            variant={variant === "wholesale" ? "contained" : "outlined"}
-            size="small"
-          >
-            {t("navWholesale")}
-          </Button>
-          <Button
-            component={RouterLink}
-            to={loc("/request-a-quote")}
-            variant={variant === "quote" ? "contained" : "outlined"}
-            size="small"
-          >
-            {t("navQuote")}
-          </Button>
-          <Button
-            component={RouterLink}
             to={loc("/custom")}
             variant={variant === "custom" ? "contained" : "outlined"}
             size="small"
@@ -91,7 +67,7 @@ export function OrganizationsPage({ variant = "default" }: { variant?: OrgVarian
           </Alert>
         ) : (
           <Stack component="form" spacing={2} sx={{ maxWidth: 520 }} onSubmit={onSubmit}>
-            <Typography variant="h3">בקשת הצעת מחיר</Typography>
+            <Typography variant="h3">בקשת הזמנה</Typography>
             <TextField required name="organization" label="ארגון / בית ספר" />
             <TextField required name="name" label="איש קשר" />
             <TextField required name="phone" label="טלפון" />

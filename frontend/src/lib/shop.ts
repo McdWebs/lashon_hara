@@ -49,10 +49,10 @@ export const SHOP_USE_CASES: ShopUseCase[] = [
   },
   {
     kind: "link",
-    to: "/wholesale",
+    to: "/organizations",
     icon: GroupsOutlinedIcon,
     label: { he: "לאירוע / קבוצה", en: "Event / group" },
-    body: { he: "הזמנות בכמויות — סיטונאות והצעת מחיר", en: "Bulk orders — wholesale and quotes" },
+    body: { he: "הזמנות לקבוצות ואירועים", en: "Group and event orders" },
   },
   {
     kind: "anchor",
@@ -100,8 +100,4 @@ export const SHOP_COPY = {
   bundles: { he: "סטים וחבילות", en: "Sets & kits" },
   allProducts: { he: "כל המוצרים", en: "All products" },
   clearFilter: { he: "הצג הכול", en: "Show all" },
-  b2bLinks: {
-    he: "סיטונאות · הצעת מחיר · לאירוע · צמידים לבתי ספר",
-    en: "Wholesale · Quote · Events · School bracelets",
-  },
 } as const;

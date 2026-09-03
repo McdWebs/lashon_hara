@@ -74,8 +74,8 @@ function sitePages() {
         element={FEATURES.accountPage ? <AccountPage /> : <LocaleRedirect to="/" />}
       />
       <Route path="terms" element={<TermsPage />} />
-      <Route path="wholesale" element={<OrganizationsPage variant="wholesale" />} />
-      <Route path="request-a-quote" element={<OrganizationsPage variant="quote" />} />
+      <Route path="wholesale" element={<LocaleRedirect to="/organizations" />} />
+      <Route path="request-a-quote" element={<LocaleRedirect to="/organizations" />} />
       <Route path="custom" element={<OrganizationsPage variant="custom" />} />
       <Route path="product/schools" element={<LocaleRedirect to={`/shop/product/${SCHOOLS_PRODUCT_ID}`} />} />
       <Route path="organizations" element={<OrganizationsPage />} />

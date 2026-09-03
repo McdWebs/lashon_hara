@@ -20,12 +20,13 @@ const footLink = {
 } as const;
 
 const sectionTitle = {
-  fontWeight: 700,
-  mb: { xs: 1.25, md: 1 },
-  fontSize: 12,
-  letterSpacing: 1,
-  opacity: 0.65,
+  fontWeight: 800,
+  mb: { xs: 1.5, md: 1.25 },
+  fontSize: { xs: 13, md: 14 },
+  letterSpacing: "0.08em",
   textTransform: "uppercase",
+  color: "text.primary",
+  lineHeight: 1.3,
 } as const;
 
 export function Footer() {
@@ -48,8 +49,6 @@ function ExplanatoryFooter() {
   const shop = [
     { to: loc("/cart"), label: t("navCart") },
     { to: loc("/checkout"), label: t("navCheckout") },
-    { to: loc("/wholesale"), label: t("navWholesale") },
-    { to: loc("/request-a-quote"), label: t("navQuote") },
     { to: loc("/custom"), label: t("navCustom") },
     ...(FEATURES.accountPage ? [{ to: loc("/my-account"), label: t("navAccount") }] : []),
   ];
@@ -107,7 +106,7 @@ function ExplanatoryFooter() {
             }}
           >
             <Box sx={{ gridColumn: { xs: "1 / -1", sm: "auto" } }}>
-              <Typography sx={sectionTitle}>{he ? "להצטרף" : "Join in"}</Typography>
+              <Typography component="h2" sx={sectionTitle}>{he ? "להצטרף" : "Join in"}</Typography>
             </Box>
             {move.map((item) => (
               <Link key={item.to} component={RouterLink} to={item.to} underline="none" sx={footLink}>
@@ -124,7 +123,7 @@ function ExplanatoryFooter() {
             }}
           >
             <Box sx={{ gridColumn: { xs: "1 / -1", sm: "auto" } }}>
-              <Typography sx={sectionTitle}>{he ? "חנות והזמנות" : "Shop & orders"}</Typography>
+              <Typography component="h2" sx={sectionTitle}>{he ? "חנות והזמנות" : "Shop & orders"}</Typography>
             </Box>
             {shop.map((item) => (
               <Link key={item.to} component={RouterLink} to={item.to} underline="none" sx={footLink}>
@@ -144,7 +143,7 @@ function ExplanatoryFooter() {
             }}
           >
             <Box sx={{ gridColumn: { xs: "1 / -1", sm: "auto" } }}>
-              <Typography sx={sectionTitle}>{he ? "עוד" : "More"}</Typography>
+              <Typography component="h2" sx={sectionTitle}>{he ? "עוד" : "More"}</Typography>
             </Box>
             {more.map((item) => (
               <Link key={item.to} component={RouterLink} to={item.to} underline="none" sx={footLink}>
@@ -163,11 +162,11 @@ function ExplanatoryFooter() {
             display: "flex",
             flexDirection: { xs: "column", sm: "row" },
             gap: 2,
-            justifyContent: { sm: "flex-end" },
-            alignItems: { xs: "center", sm: "center" },
+            justifyContent: { sm: "flex-start" },
+            alignItems: { xs: "flex-start", sm: "center" },
           }}
         >
-          <Stack direction="row" spacing={1.5} sx={{ flexWrap: "wrap", justifyContent: "center" }}>
+          <Stack direction="row" spacing={1.5} sx={{ flexWrap: "wrap", justifyContent: "flex-start" }}>
             <Link href={waLink()} underline="none" sx={{ ...footLink, py: 0, display: "none" }}>
               WhatsApp
             </Link>
