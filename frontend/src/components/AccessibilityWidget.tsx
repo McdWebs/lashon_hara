@@ -86,8 +86,8 @@ export function AccessibilityWidget() {
         aria-label={t("a11yMenuLabel")}
         sx={{
           position: "fixed",
-          insetBlockEnd: { xs: 88, sm: 16 },
-          insetInlineStart: 16,
+          insetBlockEnd: { xs: 24, sm: 16 },
+          insetInlineEnd: 16,
           zIndex: 1300,
           bgcolor: "#111",
           color: "#fff",
