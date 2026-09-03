@@ -264,7 +264,7 @@ export function HomePage() {
         <Box
           component="img"
           src={MEDIA.bracelets}
-          alt={lang === "en" ? "Silicone bracelets with the slogan" : "צמידי סיליקון עם המשפט"}
+          alt={lang === "en" ? "Hands forming a heart with bracelets" : "ידיים יוצרות לב עם צמידים"}
           sx={{ width: "100%", height: { xs: 280, md: "100%" }, minHeight: { md: 420 }, objectFit: "cover" }}
         />
         <Box sx={{ px: { xs: 3, md: 8 }, py: { xs: 6, md: 8 }, display: "flex", flexDirection: "column", justifyContent: "center" }}>

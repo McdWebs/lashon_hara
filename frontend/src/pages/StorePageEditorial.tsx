@@ -148,21 +148,44 @@ function StoreHero() {
           >
             {copy.heroTitle}
           </Typography>
-          <Button
-            component={RouterLink}
-            to={loc("/shop?category=146")}
-            variant="contained"
-            sx={{
-              mt: 3.5,
-              bgcolor: "#fff",
-              color: "#111",
-              px: 3.5,
-              minHeight: 48,
-              "&:hover": { bgcolor: "#f1eee7" },
-            }}
+          <Stack
+            direction="row"
+            spacing={1.5}
+            useFlexGap
+            sx={{ mt: 3.5, flexWrap: "wrap" }}
           >
-            {copy.heroCta}
-          </Button>
+            <Button
+              component={RouterLink}
+              to={loc("/shop?category=146")}
+              variant="contained"
+              sx={{
+                bgcolor: "#fff",
+                color: "#111",
+                px: 3.5,
+                minHeight: 48,
+                "&:hover": { bgcolor: "#f1eee7" },
+              }}
+            >
+              {copy.heroCta}
+            </Button>
+            <Button
+              component={RouterLink}
+              to={loc("/movement")}
+              variant="outlined"
+              sx={{
+                color: "#fff",
+                borderColor: "rgba(255,255,255,.55)",
+                px: 3.5,
+                minHeight: 48,
+                "&:hover": {
+                  borderColor: "#fff",
+                  bgcolor: "rgba(255,255,255,.08)",
+                },
+              }}
+            >
+              {copy.heroCtaSecondary}
+            </Button>
+          </Stack>
         </Box>
       </Box>
     </Box>
@@ -450,9 +473,10 @@ function StorySection() {
           alt={STORE_EDITORIAL_IMAGES[1].alt[lang]}
           sx={{
             width: "100%",
-            height: "100%",
-            minHeight: { xs: 450, md: 700 },
+            height: { xs: 450, md: "100%" },
+            minHeight: { md: 700 },
             objectFit: "cover",
+            objectPosition: "center",
             display: "block",
           }}
         />

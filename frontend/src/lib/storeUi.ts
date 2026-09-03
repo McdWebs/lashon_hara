@@ -1,7 +1,7 @@
 export const STORE_MAX_WIDTH = 1320;
 
-export const STORE_HERO_IMAGE = "/images/metal_bracelet/3_color_bracelets.jpeg";
-export const STORE_FEATURED_IMAGE = "/images/fabric_bracelet/all_bracelet.jpeg";
+export const STORE_HERO_IMAGE = "/images/fabric_bracelet/all_bracelet.jpeg";
+export const STORE_FEATURED_IMAGE = "/images/store_images/celeb.jpg";
 
 export type StoreCategoryTileVariant = "overlay" | "hero" | "inset" | "band";
 
@@ -65,8 +65,8 @@ export const STORE_EDITORIAL_IMAGES = [
     alt: { he: "צמיד מתכת שחור עם המסר", en: "Black metal bracelet with the message" },
   },
   {
-    src: "/images/metal_bracelet/gold_color_bracelet.png",
-    alt: { he: "צמיד מתכת בגוון זהב עם חריטה צבעונית", en: "Gold-tone metal bracelet with colored engraving" },
+    src: "/images/metal_bracelet/3_color_bracelets.jpeg",
+    alt: { he: "צמידי מתכת בגווני זהב, רוז גולד וכסף עם חריטה", en: "Gold, rose gold, and silver metal bracelets with engraving" },
   },
   {
     src: "/images/metal_bracelet/thin_gold_bracelet.png",
@@ -135,9 +135,10 @@ export const STORE_COPY = {
   he: {
     announcement: "משלוח חינם בהזמנות מעל ₪250",
     heroEyebrow: "המהדורה החדשה",
-    heroTitle: "מילים שבוחרים ללבוש.",
+    heroTitle: "מילים שבוחרים לענוד.",
     heroBody: "פריטים שנכנסים לחיים, ומזכירים בכל יום איך בחרנו לדבר.",
     heroCta: "לקולקציה",
+    heroCtaSecondary: "לתנועה",
     categoriesEyebrow: "לבחור לפי",
     categoriesTitle: "מה לובשים היום?",
     allCategories: "לכל המוצרים",
@@ -188,6 +189,7 @@ export const STORE_COPY = {
     heroTitle: "Words worth wearing.",
     heroBody: "Objects that become part of daily life—and a reminder of how we choose to speak.",
     heroCta: "Shop the collection",
+    heroCtaSecondary: "The movement",
     categoriesEyebrow: "Shop by",
     categoriesTitle: "What are you wearing today?",
     allCategories: "All products",
