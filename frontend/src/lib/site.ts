@@ -26,6 +26,7 @@ export const SITE = {
   supportHours: "09:00–18:00, שישה ימים בשבוע",
   facebook: "https://www.facebook.com/Lashon.Hara.Lo.Medaber.Elai/",
   instagram: "https://www.instagram.com/lashonhara/",
+  whatsappCommunity: "https://chat.whatsapp.com/Ka0X1qWviB2D9InXrd8ZdM",
 } as const;
 
 /** Toggle unfinished or seasonal UI without deleting routes/components. */
@@ -38,7 +39,7 @@ export function joinCommitmentUrl() {
 }
 
 export const SHARE_INVITE =
-  "גם אני חתמתי. גם את/ה?" as const;
+  "גם אני חתמתי. ואת/ה?" as const;
 
 /** WooCommerce product: חלוקת צמידים לבתי ספר */
 export const SCHOOLS_PRODUCT_ID = 355;

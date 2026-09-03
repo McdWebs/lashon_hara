@@ -1,5 +1,5 @@
+import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
-import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { track } from "../lib/analytics";
@@ -8,38 +8,36 @@ import {
   downloadCanvas,
   drawShareCard,
   shareCardText,
-  type ShareCardFormat,
 } from "../lib/shareCardCanvas";
-
-const WHATSAPP_APP_URL = "https://wa.me/";
 
 type Props = {
   firstName: string;
   signerNumber?: number;
 };
 
-const FORMATS: { key: ShareCardFormat; label: string; w: number; h: number; filename: string }[] = [
-  { key: "story", label: "סטורי (9:16)", w: 1080, h: 1920, filename: "lashon-hara-commitment-story.png" },
-  { key: "square", label: "ריבוע (1:1)", w: 1080, h: 1080, filename: "lashon-hara-commitment.png" },
-];
+const STORY = {
+  w: 1080,
+  h: 1920,
+  filename: "lashon-hara-commitment-story.png",
+} as const;
 
 export function ShareCard({ firstName, signerNumber }: Props) {
-  const [format, setFormat] = useState<ShareCardFormat>("story");
   const [ready, setReady] = useState(false);
   const [shareHint, setShareHint] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const spec = FORMATS.find((f) => f.key === format) ?? FORMATS[0];
+  const hintTimer = useRef<number | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     setReady(false);
-    canvas.width = spec.w;
-    canvas.height = spec.h;
+    canvas.width = STORY.w;
+    canvas.height = STORY.h;
 
     let cancelled = false;
-    drawShareCard(canvas, { firstName, signerNumber, format })
+    drawShareCard(canvas, { firstName, signerNumber, format: "story" })
       .then(() => {
         if (!cancelled) setReady(true);
       })
@@ -50,127 +48,165 @@ export function ShareCard({ firstName, signerNumber }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [firstName, signerNumber, format, spec.w, spec.h]);
+  }, [firstName, signerNumber]);
 
-  function download() {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    track("commitment_share_clicked", { channel: "download", format });
-    downloadCanvas(canvas, spec.filename);
+  useEffect(() => {
+    return () => {
+      if (hintTimer.current != null) window.clearTimeout(hintTimer.current);
+    };
+  }, []);
+
+  function showHint(message: string, ms = 6000) {
+    if (hintTimer.current != null) window.clearTimeout(hintTimer.current);
+    setShareHint(message);
+    hintTimer.current = window.setTimeout(() => setShareHint(null), ms);
   }
 
-  async function shareWhatsApp() {
+  function download(channel: "download" | "share_fallback" = "download") {
     const canvas = canvasRef.current;
-    if (!canvas || !ready) return;
-
-    track("commitment_share_clicked", { channel: "whatsapp", format });
-
-    const text = shareCardText();
-
-    try {
-      const blob = await canvasToBlob(canvas);
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          "image/png": blob,
-          "text/plain": new Blob([text], { type: "text/plain" }),
-        }),
-      ]);
-      setShareHint("התמונה והטקסט הועתקו — בחרו צ'אט והדביקו");
-    } catch {
-      setShareHint("לא ניתן להעתיק מהדפדפן הזה. נסו מהטלפון.");
-      window.setTimeout(() => setShareHint(null), 4000);
-      return;
-    }
-
-    window.open(WHATSAPP_APP_URL, "_blank", "noopener,noreferrer");
-    window.setTimeout(() => setShareHint(null), 5000);
+    if (!canvas) return;
+    track("commitment_share_clicked", { channel, format: "story" });
+    downloadCanvas(canvas, STORY.filename);
   }
 
   async function shareImage() {
     const canvas = canvasRef.current;
-    if (!canvas || !ready) return;
+    if (!canvas || !ready || busy) return;
 
-    if (!navigator.share) {
-      setShareHint("שיתוף לא נתמך בדפדפן זה. נסו מהטלפון, או הורידו את התמונה.");
-      window.setTimeout(() => setShareHint(null), 4000);
-      return;
-    }
+    setBusy(true);
+    try {
+      const blob = await canvasToBlob(canvas);
+      const file = new File([blob], STORY.filename, { type: "image/png" });
+      const text = shareCardText();
+      const title = "לשון הרע לא מדבר אליי";
 
-    const blob = await canvasToBlob(canvas);
-    const file = new File([blob], spec.filename, { type: "image/png" });
-    const text = shareCardText();
-    const title = "לשון הרע לא מדבר אליי";
-    const sharePayloads: ShareData[] = [
-      { files: [file], text, title },
-      { files: [file], title },
-      { files: [file] },
-    ];
+      if (typeof navigator.share === "function") {
+        const sharePayloads: ShareData[] = [
+          { files: [file], text, title },
+          { files: [file], title },
+          { files: [file] },
+          { text, title },
+        ];
 
-    for (const payload of sharePayloads) {
-      if (navigator.canShare?.(payload) === false) continue;
+        for (const payload of sharePayloads) {
+          if (navigator.canShare?.(payload) === false) continue;
 
-      try {
-        track("commitment_share_clicked", { channel: "native", format });
-        await navigator.share(payload);
-        return;
-      } catch (err) {
-        if (err instanceof DOMException && err.name === "AbortError") return;
+          try {
+            track("commitment_share_clicked", {
+              channel: "native",
+              format: "story",
+              withFiles: Boolean(payload.files?.length),
+            });
+            await navigator.share(payload);
+            showHint("אם בחרתם Instagram — פתחו סטורי והדביקו/הוסיפו את התמונה.", 5000);
+            return;
+          } catch (err) {
+            if (err instanceof DOMException && err.name === "AbortError") return;
+          }
+        }
       }
-    }
 
-    setShareHint("לא ניתן לשתף את התמונה מהדפדפן הזה. נסו מהטלפון, או הורידו את התמונה.");
-    window.setTimeout(() => setShareHint(null), 4000);
+      download("share_fallback");
+      showHint(
+        "הורדנו את הכרטיס. WhatsApp: שלחו את הקובץ לצ'אט. Instagram: הוסיפו לסטורי מהגלריה.",
+        8000,
+      );
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
-    <Stack spacing={2} sx={{ maxWidth: 420, mx: "auto" }}>
-      <Stack direction="row" spacing={1}>
-        {FORMATS.map((f) => (
-          <Button
-            key={f.key}
-            size="small"
-            variant={format === f.key ? "contained" : "outlined"}
-            onClick={() => setFormat(f.key)}
-            sx={{ flex: 1 }}
+    <Box
+      sx={{
+        height: "100%",
+        p: { xs: 2.5, md: 3 },
+        borderRadius: 2,
+        border: "1px solid",
+        borderColor: "divider",
+        bgcolor: "background.paper",
+      }}
+    >
+      <Stack spacing={2} sx={{ height: "100%" }}>
+        <Box>
+          <Typography
+            sx={{
+              fontFamily: '"Secular One", Heebo, sans-serif',
+              fontSize: { xs: "1.15rem", md: "1.3rem" },
+              lineHeight: 1.25,
+            }}
           >
-            {f.label}
+            כרטיס לסטורי
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            p: { xs: 1.5, md: 2 },
+            borderRadius: 2,
+            bgcolor: "#F4F1EA",
+            backgroundImage:
+              "radial-gradient(circle at 50% 0%, rgba(237,27,36,0.10) 0%, transparent 55%)",
+            minHeight: { xs: 360, md: 420 },
+          }}
+        >
+          <Box
+            component="canvas"
+            ref={canvasRef}
+            width={STORY.w}
+            height={STORY.h}
+            sx={{
+              width: "100%",
+              maxWidth: { xs: 300, md: 340 },
+              height: "auto",
+              borderRadius: 1.5,
+              opacity: ready ? 1 : 0.35,
+              transition: "opacity 0.2s ease",
+              boxShadow: "0 16px 40px rgba(0,0,0,0.35)",
+            }}
+            aria-label="כרטיס שיתוף לסטורי"
+          />
+        </Box>
+
+        {shareHint ? (
+          <Typography
+            sx={{
+              fontSize: "0.82rem",
+              textAlign: "center",
+              color: "primary.main",
+              fontWeight: 700,
+              lineHeight: 1.55,
+            }}
+          >
+            {shareHint}
+          </Typography>
+        ) : null}
+
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25}>
+          <Button
+            variant="contained"
+            startIcon={<ShareOutlinedIcon />}
+            onClick={() => void shareImage()}
+            fullWidth
+            disabled={!ready || busy}
+          >
+            {busy ? "פותחים שיתוף..." : "שיתוף"}
           </Button>
-        ))}
+          <Button
+            variant="outlined"
+            startIcon={<DownloadOutlinedIcon />}
+            onClick={() => download("download")}
+            fullWidth
+            disabled={!ready || busy}
+          >
+            הורדה
+          </Button>
+        </Stack>
       </Stack>
-
-      <Box
-        component="canvas"
-        ref={canvasRef}
-        width={spec.w}
-        height={spec.h}
-        sx={{
-          width: "100%",
-          height: "auto",
-          borderRadius: 2,
-          bgcolor: "#111",
-          opacity: ready ? 1 : 0.4,
-          transition: "opacity 0.2s ease",
-          maxHeight: format === "story" ? 560 : 420,
-          objectFit: "contain",
-        }}
-        aria-label="כרטיס שיתוף"
-      />
-
-      <Typography color="text.secondary" sx={{ fontSize: "0.85rem", textAlign: "center" }}>
-        {shareHint ?? "גם אני חתמתי. גם את/ה? — סרקו את הקוד או שלחו לחבר/ה."}
-      </Typography>
-
-      <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
-        <Button variant="contained" startIcon={<WhatsAppIcon />} onClick={shareWhatsApp} fullWidth>
-          WhatsApp
-        </Button>
-        <Button variant="outlined" startIcon={<ShareOutlinedIcon />} onClick={shareImage} fullWidth>
-          שיתוף
-        </Button>
-        <Button variant="outlined" onClick={download} fullWidth>
-          הורדה
-        </Button>
-      </Stack>
-    </Stack>
+    </Box>
   );
 }
