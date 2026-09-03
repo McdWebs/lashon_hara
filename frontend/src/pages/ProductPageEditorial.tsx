@@ -4,7 +4,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import { Alert, Box, Button, Collapse, Snackbar, Stack, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Link as RouterLink, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { ProductGrid } from "../components/ProductGrid";
 import { ProductOrderNotice } from "../components/ProductOrderNotice";
 import { QuantityStepper } from "../components/QuantityStepper";
@@ -69,7 +69,7 @@ function DetailRow({
 
 export function ProductPageEditorial() {
   const { id } = useParams();
-  const { lang, loc } = useLocale();
+  const { lang } = useLocale();
   const addItem = useCart((state) => state.addItem);
   const [quantity, setQuantity] = useState(1);
   const [imageIndex, setImageIndex] = useState(0);

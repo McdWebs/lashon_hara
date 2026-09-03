@@ -89,7 +89,9 @@ function StoreHero() {
     <Box
       component="section"
       sx={{
-        minHeight: { xs: "92svh", md: "100svh" },
+        // Fill the phone/desktop viewport so the next section only appears after scroll.
+        height: { xs: "100dvh", md: "100svh" },
+        minHeight: { xs: "100svh", md: "100svh" },
         bgcolor: "#161616",
         color: "#fff",
         position: "relative",
