@@ -1014,3 +1014,18 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
 .sheet-b { flex-direction: column; align-items: stretch; gap: 4px; }
 .sheet-b .btn { flex: none; width: 100%; }
 .sheet-b .tag-clear { align-self: center; height: 44px; color: var(--ink); }
+
+/* Shop hero on phones: a compact title with the red bar beside it, the shipping line under it */
+.page-collection .shipnote-hero { display: none; }
+@media (max-width: 900px) {
+  .page-collection .phead { padding: 18px 0 8px; }
+  .page-collection .phead .ttl { flex-direction: row; align-items: center; gap: 10px; }
+  .page-collection .phead .ttl .bar { width: 5px; height: 34px; flex: none; }
+  .page-collection .ttl.big .ttl-h { font-size: 54px; }
+  .page-collection .intro { margin-top: 6px; }
+  .page-collection .intro-hi, .page-collection .intro-brand { display: none; }
+  .page-collection .intro-why { margin: 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
+  .page-collection .shop-top .shipnote { display: none; }
+  .page-collection .shipnote-hero { display: block; order: 0; width: auto; margin: 10px 0 0; padding: 0; background: none; font-size: 13px; line-height: 1.45; color: var(--ink2); }
+  .page-collection .shop-top { padding-block: 10px 14px; }
+}

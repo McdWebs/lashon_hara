@@ -188,6 +188,8 @@ export function CollectionPage() {
             <span className="intro-brand">{introBrand}</span>
             <p className="intro-why">{introWhy}</p>
           </div>
+          {/* On phones the shipping line sits right under the title, where it is read first. */}
+          <p className="shipnote shipnote-hero">{SHIPPING_NOTE}</p>
         </div>
       </section>
 
