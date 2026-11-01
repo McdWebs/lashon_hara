@@ -11,6 +11,7 @@ export type CartItem = {
   currencyMinorUnit: number;
   image?: string;
   quantity: number;
+  options: string[];
 };
 
 function mapItem(item: WcCartItem): CartItem {
@@ -23,6 +24,7 @@ function mapItem(item: WcCartItem): CartItem {
     currencyMinorUnit: item.prices.currency_minor_unit,
     image: item.images[0]?.thumbnail || item.images[0]?.src,
     quantity: item.quantity,
+    options: (item.variation ?? []).map((v) => `${v.attribute}: ${decodeHtmlEntities(v.value)}`),
   };
 }
 

@@ -32,8 +32,10 @@ export type WcProduct = {
   name: string;
   permalink: string;
   type: string;
+  is_in_stock?: boolean;
+  is_purchasable?: boolean;
   prices: WcPrices;
-  images: Array<{ src: string; alt: string; thumbnail: string }>;
+  images: Array<{ src: string; alt: string; thumbnail: string; srcset?: string }>;
   categories: Array<{ id: number; name: string; slug: string }>;
   short_description?: string;
   description?: string;
@@ -61,9 +63,9 @@ export type CatalogPage = {
   totalPages: number;
 };
 
-const wcOrigin = (import.meta.env.VITE_WC_STORE_ORIGIN ?? "").replace(/\/$/, "");
-const useWcDirect = import.meta.env.PROD && Boolean(wcOrigin);
-const base = useWcDirect ? `${wcOrigin}/wp-json/wc/store/v1` : "/api/catalog";
+// Always go through our API: it answers from a warm cache (and the CDN in front of it) instead of the live store.
+const useWcDirect = false;
+const base = "/api/catalog";
 
 async function readCatalogPage(res: Response): Promise<CatalogPage> {
   const data = await res.json();
