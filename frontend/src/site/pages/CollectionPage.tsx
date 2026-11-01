@@ -3,11 +3,9 @@ import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { t, Link } from "../i18n";
-import { useCart } from "../../lib/cart";
 import { fetchProducts } from "../../lib/catalog";
 import { copy } from "../copy";
-import { FREE_SHIPPING_MINOR } from "./CartPage";
-import { CardsSkeleton, Icon, ShopCard, Title, moneyLabel, usePageTitle } from "../ui";
+import { CardsSkeleton, Icon, ShopCard, Title, usePageTitle } from "../ui";
 
 const PER_PAGE = 12;
 
@@ -60,49 +58,6 @@ function FilterIcon() {
       <circle cx="16" cy="7" r="2" />
       <circle cx="8" cy="17" r="2" />
     </svg>
-  );
-}
-
-/** Docks the bag at the bottom of the shop: what is in it, how close free shipping is, and the way to the cart. */
-function ShopCartBar() {
-  const items = useCart((s) => s.items);
-  const pendingAdds = useCart((s) => s.pendingAdds);
-  const unit = useCart((s) => s.currencyMinorUnit);
-  const [away, setAway] = useState(false);
-
-  // Slides out of the way while scrolling down, back as soon as the visitor scrolls up.
-  useEffect(() => {
-    let last = window.scrollY;
-    const onScroll = () => {
-      const y = window.scrollY;
-      if (Math.abs(y - last) < 8) return;
-      setAway(y > last && y > 240);
-      last = y;
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const count = items.reduce((sum, item) => sum + item.quantity, 0) + pendingAdds;
-  if (count === 0) return null;
-
-  const subtotal = items.reduce((sum, item) => sum + Number(item.lineTotal), 0);
-  const threshold = FREE_SHIPPING_MINOR * 10 ** (unit - 2);
-  const left = threshold - subtotal;
-
-  return (
-    <div className={`sbar${away ? " away" : ""}`} role="region" aria-label={t("סיכום הסל")}>
-      <div className="sbar-in">
-        <div className="sbar-ship">
-          <span>{left > 0 ? t("עוד {left} למשלוח חינם לנקודות האיסוף", { left: moneyLabel(left, unit) }) : t("משלוח חינם לנקודות האיסוף")}</span>
-          <span className="sbar-bar"><span style={{ transform: `scaleX(${Math.min(1, subtotal / threshold)})` }} /></span>
-        </div>
-        <div className="sbar-row">
-          <span><b>{t("{n} פריטים", { n: count })}</b> · {moneyLabel(subtotal, unit)}</span>
-          <Link className="btn btn-red" to="/cart"><span>{t("לסל הקניות")}</span></Link>
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -349,7 +304,6 @@ export function CollectionPage() {
         </div>
       </Drawer>
 
-      <ShopCartBar />
     </div>
   );
 }
