@@ -102,10 +102,12 @@ function Hero() {
 
 function ProductCard({ product, index }: { product: WcProduct; index: number }) {
   const quickAdd = useQuickAdd();
-  const [state, setState] = useState<"idle" | "added" | "failed">("idle");
+  const [state, setState] = useState<"idle" | "busy" | "added" | "failed">("idle");
   const to = `/shop/product/${product.id}`;
 
   async function add() {
+    if (state === "busy") return;
+    setState("busy");
     try {
       await quickAdd(product);
       setState("added");
@@ -119,8 +121,8 @@ function ProductCard({ product, index }: { product: WcProduct; index: number }) 
     <article className="pc rv" style={{ "--d": `${(index % 4) * 0.07}s` } as React.CSSProperties}>
       <Link className="pc-m" to={to} tabIndex={-1} aria-hidden="true"><ProductImage product={product} /></Link>
       {canQuickAdd(product) ? (
-        <button className={`pc-add${state === "added" ? " ok" : ""}`} onClick={add} aria-label={t("הוספה לסל: {name}", { name: product.name })}>
-          <span>{state === "added" ? t("נוסף לסל") : state === "failed" ? t("לא הצלחנו, נסו שוב") : t("הוספה לסל")}</span>
+        <button className={`pc-add${state === "added" ? " ok" : state === "busy" ? " busy" : state === "failed" ? " bad" : ""}`} aria-busy={state === "busy"} onClick={add} aria-label={t("הוספה לסל: {name}", { name: product.name })}>
+          <span>{state === "busy" ? <i className="pc-spin" aria-hidden="true" /> : null}{state === "busy" ? t("מוסיפים…") : state === "added" ? t("נוסף לסל") : state === "failed" ? t("לא הצלחנו, נסו שוב") : t("הוספה לסל")}</span>
         </button>
       ) : null}
       <Link className="pc-n" to={to} dir="auto">{product.name}</Link>

@@ -252,6 +252,10 @@ form[data-form] { display: flex; flex-direction: column; gap: 16px; }
 .pc-add svg { display: none; }
 .pc:hover .pc-add span, .pc-add:focus-visible span { transform: none; }
 .pc-add.ok span { background: var(--ink); transform: none; }
+.pc-add.busy span, .pc-add.bad span { transform: none; }
+.pc-add.busy { cursor: progress; }
+.pc-add.busy span { gap: 8px; background: var(--ink); }
+.pc-spin { width: 14px; height: 14px; flex: none; border-radius: 999px; border: 2px solid rgba(255,255,255,.35); border-top-color: #FFFFFF; animation: lh-rot .8s linear infinite; }
 .pc-n { font-size: 15px; line-height: 1.4; color: var(--muted); text-decoration: none; }
 .pc-n:hover { color: var(--ink); }
 .pc-p { font-size: 17px; font-weight: 800; }
@@ -683,7 +687,7 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
 .page-collection .intro { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; row-gap: 2px; margin-top: 12px; max-width: 640px; }
 .page-collection .intro-hi { font-size: 14px; font-weight: 500; color: var(--muted); }
 .page-collection .intro-brand { font-size: 20px; font-weight: 800; line-height: 1.2; color: var(--ink); }
-.page-collection .intro-why { flex: 0 0 100%; margin: 4px 0 0; padding-inline-start: 10px; border-inline-start: 3px solid var(--red); font-size: 14px; line-height: 1.5; color: var(--ink2); }
+.page-collection .intro-why { flex: 0 0 100%; margin: 4px 0 0; font-size: 14px; line-height: 1.5; color: var(--ink2); }
 .page-collection .shipnote { margin: 0; font-size: 14px; font-weight: 700; line-height: 1.4; }
 @media (max-width: 900px) {
   .page-about .w-ph { position: static; }
