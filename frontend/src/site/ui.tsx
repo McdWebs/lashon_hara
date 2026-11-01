@@ -1,7 +1,8 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, type ReactNode } from "react";
 import { t, Link, siteLang } from "./i18n";
 import { useCart } from "../lib/cart";
-import type { WcProduct } from "../lib/catalog";
+import { fetchProduct, type WcProduct } from "../lib/catalog";
 import { getProductOrderRules } from "../lib/productOrderRules";
 import { track } from "../lib/analytics";
 
@@ -92,10 +93,20 @@ export function ProductImage({ product }: { product: WcProduct }) {
   return <img src={image.src} srcSet={image.srcset} sizes="(max-width: 900px) 50vw, 300px" alt={image.alt || product.name} loading="lazy" decoding="async" />;
 }
 
+/** Starts loading a product as the pointer or finger reaches its link, so the page opens already filled. */
+export function usePrefetchProduct() {
+  const queryClient = useQueryClient();
+  return (id: number) => {
+    void queryClient.prefetchQuery({ queryKey: ["product", String(id)], queryFn: () => fetchProduct(String(id)) });
+  };
+}
+
 /** Image, name and price only: the card the spec asks for. */
 export function ProductLinkCard({ product, style }: { product: WcProduct; style?: React.CSSProperties }) {
+  const prefetch = usePrefetchProduct();
+  const warm = () => prefetch(product.id);
   return (
-    <Link className="pc" to={`/shop/product/${product.id}`} style={style}>
+    <Link className="pc" to={`/shop/product/${product.id}`} style={style} onPointerEnter={warm} onFocus={warm} onTouchStart={warm}>
       <span className="pc-m"><ProductImage product={product} /></span>
       <span className="pc-n" dir="auto">{product.name}</span>
       <span className="pc-p">{priceLabel(product)}</span>

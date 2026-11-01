@@ -37,6 +37,61 @@ function fromWcCart(cart: WcCart) {
   };
 }
 
+/** Total of a line, from its unit price, so the page can update before the store answers. */
+function lineTotalFor(item: CartItem, quantity: number) {
+  return String(Number(item.price) * quantity);
+}
+
+/**
+ * The store takes a second or more per change, so the screen updates first and the changes are sent
+ * one at a time. Quick repeated taps on the same line collapse into one request with the final amount.
+ */
+const SETTLE_MS = 300;
+let chain: Promise<unknown> = Promise.resolve();
+let inFlight = 0;
+const pending = new Map<string, ReturnType<typeof setTimeout>>();
+
+function showQuantity(key: string, quantity: number) {
+  const { items } = useCart.getState();
+  const next = items.map((i) => (i.key === key ? { ...i, quantity, lineTotal: lineTotalFor(i, quantity) } : i));
+  useCart.setState({ items: next, error: null });
+}
+
+function queueMutation(key: string, send: () => Promise<WcCart>, quantity?: number): Promise<void> {
+  // A newer tap on this line replaces the one still waiting.
+  const waiting = pending.get(key);
+  if (waiting) clearTimeout(waiting);
+
+  return new Promise<void>((resolve, reject) => {
+    pending.set(
+      key,
+      setTimeout(() => {
+        pending.delete(key);
+        inFlight += 1;
+        chain = chain.then(async () => {
+          try {
+            const cart = await send();
+            // Only show the store's answer once nothing newer is waiting, or it would flicker back.
+            if (inFlight === 1 && pending.size === 0) useCart.setState(fromWcCart(cart));
+            resolve();
+          } catch (err) {
+            useCart.setState({ error: err instanceof Error ? err.message : "cart_error" });
+            // Put the screen back in line with what the store really holds.
+            try {
+              useCart.setState(fromWcCart(await cartApi.get()));
+            } catch {
+              /* keep the screen as it is */
+            }
+            reject(err);
+          } finally {
+            inFlight -= 1;
+          }
+        });
+      }, quantity === undefined ? 0 : SETTLE_MS),
+    );
+  });
+}
+
 type CartState = {
   items: CartItem[];
   totalPrice: string;
@@ -44,6 +99,8 @@ type CartState = {
   needsShipping: boolean;
   hydrated: boolean;
   loading: boolean;
+  /** Items being added right now, so the bag count can move before the store answers. */
+  pendingAdds: number;
   error: string | null;
   hydrate: () => Promise<void>;
   addItem: (id: number, quantity?: number) => Promise<void>;
@@ -59,6 +116,7 @@ export const useCart = create<CartState>((set, get) => ({
   needsShipping: false,
   hydrated: false,
   loading: false,
+  pendingAdds: 0,
   error: null,
 
   hydrate: async () => {
@@ -73,42 +131,27 @@ export const useCart = create<CartState>((set, get) => ({
   },
 
   addItem: async (id, quantity = 1) => {
-    set({ loading: true, error: null });
+    set({ loading: true, error: null, pendingAdds: get().pendingAdds + quantity });
     try {
+      // Let any cart changes still on their way finish first, so the store sees them in order.
+      await chain.catch(() => undefined);
       const cart = await cartApi.addItem(id, quantity);
-      set({ ...fromWcCart(cart), loading: false });
+      set({ ...fromWcCart(cart), loading: false, pendingAdds: Math.max(0, get().pendingAdds - quantity) });
     } catch (err) {
-      set({ loading: false, error: err instanceof Error ? err.message : "cart_error" });
+      set({ loading: false, pendingAdds: Math.max(0, get().pendingAdds - quantity), error: err instanceof Error ? err.message : "cart_error" });
       throw err;
     }
   },
 
-  setQuantity: async (key, quantity) => {
-    if (quantity < 1) {
-      await get().removeItem(key);
-      return;
-    }
-    const prevItems = get().items;
-    set({ items: prevItems.map((i) => (i.key === key ? { ...i, quantity } : i)), error: null });
-    try {
-      const cart = await cartApi.updateItem(key, quantity);
-      set({ ...fromWcCart(cart) });
-    } catch (err) {
-      set({ items: prevItems, error: err instanceof Error ? err.message : "cart_error" });
-      throw err;
-    }
+  setQuantity: (key, quantity) => {
+    if (quantity < 1) return get().removeItem(key);
+    showQuantity(key, quantity);
+    return queueMutation(key, () => cartApi.updateItem(key, quantity), quantity);
   },
 
-  removeItem: async (key) => {
-    const prevItems = get().items;
-    set({ items: prevItems.filter((i) => i.key !== key), error: null });
-    try {
-      const cart = await cartApi.removeItem(key);
-      set({ ...fromWcCart(cart) });
-    } catch (err) {
-      set({ items: prevItems, error: err instanceof Error ? err.message : "cart_error" });
-      throw err;
-    }
+  removeItem: (key) => {
+    set({ items: get().items.filter((i) => i.key !== key), error: null });
+    return queueMutation(key, () => cartApi.removeItem(key));
   },
 
   clear: async () => {

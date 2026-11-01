@@ -36,13 +36,24 @@ function remember(key: string, load: () => Promise<unknown>) {
 
 const EDGE_CACHE = "public, max-age=30, s-maxage=60, stale-while-revalidate=600";
 
-/** Queries the storefront asks for on first paint; kept hot so no visitor waits on the live store. */
+/** The shop's category tabs, as the storefront sends them: first page, default order. */
+const SHOP_CATEGORIES = ["", "20,166,282", "35,135", "146,19", "26", "48,29,31,18"];
+/** Sorts a visitor can pick on the full shop. */
+const SHOP_SORTS = ["orderby=date&order=desc", "orderby=popularity", "orderby=price&order=asc", "orderby=price&order=desc"];
+
+function shopQuery(parts: Record<string, string>) {
+  return new URLSearchParams(parts).toString();
+}
+
+/** Queries the storefront asks for on first paint or a click; kept hot so no visitor waits on the live store. */
 const WARM: Array<[string, () => Promise<unknown>]> = [
   ["categories", () => listCategories()],
   ...[
     "per_page=8&orderby=popularity",
     "per_page=8&orderby=date&order=desc",
     "per_page=24",
+    ...SHOP_CATEGORIES.map((category) => shopQuery({ ...(category ? { category } : {}), per_page: "12", page: "1" })),
+    ...SHOP_SORTS.map((sort) => `${sort}&per_page=12&page=1`),
   ].map((q): [string, () => Promise<unknown>] => [`list:${q}`, () => listProducts(new URLSearchParams(q))]),
 ];
 

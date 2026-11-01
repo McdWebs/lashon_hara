@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { t, Link, siteLang } from "../i18n";
 import { fetchProducts, type WcProduct } from "../../lib/catalog";
 import { copy } from "../copy";
-import { CardsSkeleton, Icon, ProductImage, QuoteMark, Title, canQuickAdd, priceLabel, usePageTitle, useQuickAdd } from "../ui";
+import { CardsSkeleton, Icon, ProductImage, QuoteMark, Title, canQuickAdd, priceLabel, usePageTitle, usePrefetchProduct, useQuickAdd } from "../ui";
 
 const SLIDES = [
   { photo: "omer", sig: "omer_sig", who: "עומר אדם", lines: ["שים לב", "מה אתה אומר"], side: "start" },
@@ -102,6 +102,8 @@ function Hero() {
 
 function ProductCard({ product, index }: { product: WcProduct; index: number }) {
   const quickAdd = useQuickAdd();
+  const prefetch = usePrefetchProduct();
+  const warm = () => prefetch(product.id);
   const [state, setState] = useState<"idle" | "busy" | "added" | "failed">("idle");
   const to = `/shop/product/${product.id}`;
 
@@ -119,13 +121,13 @@ function ProductCard({ product, index }: { product: WcProduct; index: number }) 
 
   return (
     <article className="pc rv" style={{ "--d": `${(index % 4) * 0.07}s` } as React.CSSProperties}>
-      <Link className="pc-m" to={to} tabIndex={-1} aria-hidden="true"><ProductImage product={product} /></Link>
+      <Link className="pc-m" to={to} tabIndex={-1} aria-hidden="true" onPointerEnter={warm} onTouchStart={warm}><ProductImage product={product} /></Link>
       {canQuickAdd(product) ? (
         <button className={`pc-add${state === "added" ? " ok" : state === "busy" ? " busy" : state === "failed" ? " bad" : ""}`} aria-busy={state === "busy"} onClick={add} aria-label={t("הוספה לסל: {name}", { name: product.name })}>
           <span>{state === "busy" ? <i className="pc-spin" aria-hidden="true" /> : null}{state === "busy" ? t("מוסיפים…") : state === "added" ? t("נוסף לסל") : state === "failed" ? t("לא הצלחנו, נסו שוב") : t("הוספה לסל")}</span>
         </button>
       ) : null}
-      <Link className="pc-n" to={to} dir="auto">{product.name}</Link>
+      <Link className="pc-n" to={to} dir="auto" onPointerEnter={warm} onFocus={warm} onTouchStart={warm}>{product.name}</Link>
       <span className="pc-p">{priceLabel(product)}</span>
     </article>
   );

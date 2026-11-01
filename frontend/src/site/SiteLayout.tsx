@@ -45,7 +45,7 @@ function LangSwitch({ className, short, onClick }: { className?: string; short?:
 function Nav() {
   const { pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
-  const count = useCart((s) => s.items.reduce((sum, item) => sum + item.quantity, 0));
+  const count = useCart((s) => s.items.reduce((sum, item) => sum + item.quantity, 0) + s.pendingAdds);
   const badge = useRef<HTMLSpanElement>(null);
   const lastCount = useRef(count);
 
