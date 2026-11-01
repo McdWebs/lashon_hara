@@ -12,6 +12,7 @@ import { useState } from "react";
 import { LoadingButton } from "./States";
 import { track } from "../lib/analytics";
 import { submitForm } from "../lib/forms";
+import { Turnstile, captchaEnabled } from "../site/Turnstile";
 
 const REQUIRED_FIELDS = [
   "name",
@@ -52,6 +53,8 @@ export function SchoolsOrderForm() {
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "ok">("idle");
   const [saved, setSaved] = useState(true);
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaReset, setCaptchaReset] = useState(0);
 
   function updateField(name: FieldName, value: string) {
     setValues((prev) => ({ ...prev, [name]: value }));
@@ -74,11 +77,16 @@ export function SchoolsOrderForm() {
       return;
     }
     track("school_contact_started", { source: "school_order_form" });
+    if (captchaEnabled && !captchaToken) return;
     setStatus("loading");
     const result = await submitForm("school_order", "/shop/product/schools", {
       ...values,
       gender,
-    });
+    }, captchaToken);
+    if (!result.ok) {
+      setCaptchaToken("");
+      setCaptchaReset((n) => n + 1);
+    }
     setSaved(result.saved);
     track("school_contact_completed", { saved: result.saved, source: "school_order_form" });
     setStatus("ok");
@@ -292,7 +300,11 @@ export function SchoolsOrderForm() {
         />
       </Box>
 
-      <LoadingButton type="submit" variant="contained" loading={status === "loading"}>
+      <Box sx={{ mb: 2 }}>
+        <Turnstile onToken={setCaptchaToken} resetKey={captchaReset} />
+      </Box>
+
+      <LoadingButton type="submit" variant="contained" loading={status === "loading"} disabled={captchaEnabled && !captchaToken}>
         שליחת בקשה
       </LoadingButton>
     </Box>

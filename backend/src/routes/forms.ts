@@ -1,6 +1,7 @@
 import { Router } from "express";
 import mongoose from "mongoose";
 import { Submission } from "../models/Submission.js";
+import { verifyCaptcha } from "../services/captcha.js";
 import { notifyInbox } from "../services/mail.js";
 import { commitmentPayload, submissionSchema } from "../utils/schemas.js";
 import { findCommitmentByEmail, normalizeCommitmentEmail } from "../utils/commitment.js";
@@ -25,6 +26,11 @@ formsRouter.post("/", async (req, res) => {
   const parsed = submissionSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: "invalid_payload", details: parsed.error.flatten() });
+    return;
+  }
+
+  if (!(await verifyCaptcha(parsed.data.captchaToken, req.ip))) {
+    res.status(403).json({ error: "captcha_failed" });
     return;
   }
 
@@ -61,7 +67,8 @@ formsRouter.post("/", async (req, res) => {
     };
   }
 
-  const doc = await Submission.create({ ...parsed.data, payload });
+  const { captchaToken: _captchaToken, ...submission } = parsed.data;
+  const doc = await Submission.create({ ...submission, payload });
   const body = JSON.stringify(payload, null, 2);
   await notifyInbox(`[${parsed.data.kind}] lashonhara.co.il`, body);
   res.status(201).json({ id: doc.id, ok: true });

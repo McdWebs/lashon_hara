@@ -1,9 +1,10 @@
 import { z } from "zod";
 
 export const submissionSchema = z.object({
-  kind: z.enum(["commitment", "school", "ambassador", "contact", "quote", "donate", "newsletter", "story"]),
+  kind: z.enum(["commitment", "school", "ambassador", "contact", "quote", "donate", "newsletter", "story", "school_order"]),
   sourcePath: z.string().max(200).optional(),
   payload: z.record(z.string(), z.unknown()),
+  captchaToken: z.string().max(4096).optional(),
 });
 
 export const commitmentPayload = z.object({

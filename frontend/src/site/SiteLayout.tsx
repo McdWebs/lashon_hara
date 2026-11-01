@@ -8,6 +8,7 @@ import { langFromPath, stripLocale, withLocale } from "../i18n/locale";
 import { LocaleContext, buildLocale } from "../i18n/useLocale";
 import { useCart } from "../lib/cart";
 import { SITE, waLink } from "../lib/site";
+import { CookieBanner } from "./CookieBanner";
 import { Icon } from "./ui";
 import "./site.css";
 
@@ -209,6 +210,7 @@ export function SiteLayout() {
           <Outlet />
         </main>
         <Footer />
+        <CookieBanner />
       </div>
       <AccessibilityWidget />
     </LocaleContext.Provider>

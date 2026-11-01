@@ -1,3 +1,5 @@
+import "./instrument.js";
+import * as Sentry from "@sentry/node";
 import compression from "compression";
 import cors from "cors";
 import express from "express";
@@ -12,6 +14,8 @@ import { healthRouter } from "./routes/health.js";
 import { statsRouter } from "./routes/stats.js";
 
 const app = express();
+// Behind Render's proxy: without this every visitor shares the proxy's IP.
+app.set("trust proxy", 1);
 app.use(compression());
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 app.use(cors({ origin: env.frontendOrigin, exposedHeaders: ["Cart-Token", "Nonce", "Nonce-Timestamp"] }));
@@ -23,6 +27,8 @@ app.use("/api/cart", cartRouter);
 app.use("/api/checkout", checkoutRouter);
 app.use("/api/forms", formsRouter);
 app.use("/api/stats", statsRouter);
+
+Sentry.setupExpressErrorHandler(app);
 
 await connectDb();
 

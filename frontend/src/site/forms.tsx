@@ -3,6 +3,7 @@ import { useCallback, useId, useRef, useState, type FormEvent, type ReactNode } 
 import { t, Link } from "./i18n";
 import { track, type AnalyticsEvent } from "../lib/analytics";
 import { submitForm } from "../lib/forms";
+import { Turnstile, captchaEnabled } from "./Turnstile";
 import { Icon, OkMark } from "./ui";
 
 export type FieldKind = "text" | "email" | "tel" | "num" | "check" | "choice";
@@ -51,6 +52,10 @@ export function useSiteForm(rules: Record<string, Rule>, options: Options = {}) 
   const [invalid, setInvalid] = useState(false);
   const sending = useRef(false);
   const honey = useRef<HTMLInputElement>(null);
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaReset, setCaptchaReset] = useState(0);
+  // Forms with their own `send` (checkout) are not spam targets and skip the check.
+  const needsCaptcha = captchaEnabled && !options.send;
   // Several forms can share a page, so ids are unique per form.
   const uid = useId();
 
@@ -99,6 +104,10 @@ export function useSiteForm(rules: Record<string, Rule>, options: Options = {}) 
       el?.focus({ preventScroll: true });
       return;
     }
+    if (needsCaptcha && !captchaToken) {
+      setFailed(t("יש להשלים את האימות לפני השליחה."));
+      return;
+    }
     sending.current = true;
     setBusy(true);
     setFailed(null);
@@ -111,8 +120,13 @@ export function useSiteForm(rules: Record<string, Rule>, options: Options = {}) 
         await options.send(values);
       } else {
         const payload = options.toPayload ? options.toPayload(values) : values;
-        const result = await submitForm(options.kind ?? "contact", window.location.pathname, payload);
-        if (!result.ok) throw new Error(t("השליחה לא הצליחה. מה שכתבתם נשמר — נסו שוב."));
+        const result = await submitForm(options.kind ?? "contact", window.location.pathname, payload, captchaToken);
+        if (!result.ok) {
+          // A token works once, so the next try needs a fresh one.
+          setCaptchaToken("");
+          setCaptchaReset((n) => n + 1);
+          throw new Error(result.error === "captcha_failed" ? t("אימות אנושי לא נטען. נסו לרענן את הדף.") : t("השליחה לא הצליחה. מה שכתבתם נשמר — נסו שוב."));
+        }
         const event = options.kind ? COMPLETED_EVENT[options.kind] : undefined;
         if (event) track(event);
         setDone(true);
@@ -126,7 +140,7 @@ export function useSiteForm(rules: Record<string, Rule>, options: Options = {}) 
     }
   };
 
-  return { values, set, field, reset, onSubmit, busy, done, failed, invalid, honey, setFailed };
+  return { values, set, field, reset, onSubmit, busy, done, failed, invalid, honey, setFailed, needsCaptcha, setCaptchaToken, captchaReset };
 }
 
 export type SiteForm = ReturnType<typeof useSiteForm>;
@@ -260,6 +274,7 @@ export function FormShell({ form, submitLabel, thanksTitle, thanksText, children
     <form noValidate onSubmit={form.onSubmit} data-form="1">
       {children}
       <input ref={form.honey} className="honey" type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" />
+      {form.needsCaptcha ? <Turnstile onToken={form.setCaptchaToken} resetKey={form.captchaReset} /> : null}
       {noConsent ? null : (
         <p className="consent">{t("בשליחת הטופס אתם מאשרים את")}{" "}<Link to="/terms">{t("מדיניות הפרטיות")}</Link>.</p>
       )}

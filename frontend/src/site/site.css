@@ -932,3 +932,11 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
   .lh[dir="ltr"] .page-about .cho-l { font-size: clamp(38px, 12.8vw, 68px); }
   .lh[dir="ltr"] .page-about .cho-a svg { width: 22px; height: 22px; margin-inline-start: 6px; }
 }
+
+/* Cookie notice */
+.lh .cookie { position: fixed; inset-inline: 16px; bottom: 16px; z-index: 1300; max-width: 720px; margin-inline: auto; padding: 22px 24px; display: flex; flex-direction: column; gap: 16px; background: #FFFFFF; color: var(--ink); border: 1px solid var(--line); box-shadow: 0 18px 50px rgba(13,13,13,.18); }
+.lh .cookie p { margin: 0; font-size: 15px; line-height: 1.7; }
+.lh .cookie p a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.lh .cookie-b { display: flex; flex-wrap: wrap; gap: 10px; }
+.lh .cookie-b .btn { height: 46px; padding: 0 24px; font-size: 15px; }
+@media (min-width: 720px) { .lh .cookie { flex-direction: row; align-items: center; justify-content: space-between; } .lh .cookie-b { flex: none; flex-wrap: nowrap; } }

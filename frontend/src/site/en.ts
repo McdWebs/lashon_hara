@@ -50,4 +50,6 @@ export const EN: Record<string, string> = {
   "צמידי מתכת ובד": "Metal and fabric bracelets", "מיון: ברירת מחדל": "Sort: default", "החדשים ביותר": "Newest", "מחיר: מהנמוך לגבוה": "Price: low to high", "מחיר: מהגבוה לנמוך": "Price: high to low", "לפי שם (א–ת)": "By name (A–Z)", "מחיר: הכול": "Price: all", "עד ₪50": "Up to ₪50", "₪50 – ₪100": "₪50 – ₪100", "₪100 – ₪200": "₪100 – ₪200", "מעל ₪200": "Over ₪200",
   "חיפוש מוצר…": "Search products…", "חיפוש מוצר": "Search products", "ניקוי החיפוש": "Clear search", "סינון לפי מחיר": "Filter by price", "מיון": "Sort", "איפוס הכול": "Clear all", "לא מצאנו תוצאות עבור “{q}”.": "No results for “{q}”.", "נסו מילה אחרת, או הסירו את הסינון.": "Try another word, or remove the filter.",
   "התקנון המלא זמין כרגע בעברית בלבד.": "The full terms are currently available in Hebrew only.",
+  "עוגיות": "Cookies", "אנחנו משתמשים בעוגיות לסטטיסטיקה אנונימית, כדי להבין איך משתמשים באתר ולשפר אותו.": "We use cookies for anonymous statistics, to understand how the site is used and improve it.", "מאשרים": "Accept", "לא, תודה": "No, thanks",
+  "אימות אנושי לא נטען. נסו לרענן את הדף.": "The human check didn't load. Try refreshing the page.", "יש להשלים את האימות לפני השליחה.": "Please complete the check before sending.",
 };
