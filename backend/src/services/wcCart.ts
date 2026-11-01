@@ -33,7 +33,9 @@ async function storeApiRequest<T>(
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 
-  const data = (await res.json()) as T;
+  // Woo answers some deletes with an empty 204.
+  const text = await res.text();
+  const data = (text ? JSON.parse(text) : null) as T;
   return {
     status: res.status,
     data,
@@ -58,8 +60,11 @@ export function updateItem(session: SessionHeaders, key: string, quantity: numbe
   return storeApiRequest("/cart/update-item", { method: "POST", body: { key, quantity }, ...session });
 }
 
-export function removeItem(session: SessionHeaders, key: string) {
-  return storeApiRequest(`/cart/items/${encodeURIComponent(key)}`, { method: "DELETE", ...session });
+export async function removeItem(session: SessionHeaders, key: string) {
+  const removed = await storeApiRequest(`/cart/items/${encodeURIComponent(key)}`, { method: "DELETE", ...session });
+  if (removed.data !== null) return removed;
+  // No body came back, and the storefront needs the updated cart.
+  return getCart({ cartToken: removed.cartToken ?? session.cartToken, nonce: removed.nonce ?? session.nonce });
 }
 
 export function clearCart(session: SessionHeaders) {
