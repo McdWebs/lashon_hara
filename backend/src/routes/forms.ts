@@ -7,6 +7,20 @@ import { findCommitmentByEmail, normalizeCommitmentEmail } from "../utils/commit
 
 export const formsRouter = Router();
 
+/** Dates schools asked for: shown as "requested" until the team confirms them. */
+formsRouter.get("/requested-dates", async (_req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    res.json({ dates: [] });
+    return;
+  }
+  const today = new Date().toISOString().slice(0, 10);
+  const dates = await Submission.distinct("payload.dateIso", {
+    kind: "school",
+    "payload.dateIso": { $gte: today },
+  });
+  res.json({ dates });
+});
+
 formsRouter.post("/", async (req, res) => {
   const parsed = submissionSchema.safeParse(req.body);
   if (!parsed.success) {

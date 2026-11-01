@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const submissionSchema = z.object({
-  kind: z.enum(["commitment", "school", "ambassador", "contact", "quote", "donate", "newsletter"]),
+  kind: z.enum(["commitment", "school", "ambassador", "contact", "quote", "donate", "newsletter", "story"]),
   sourcePath: z.string().max(200).optional(),
   payload: z.record(z.string(), z.unknown()),
 });
