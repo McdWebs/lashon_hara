@@ -104,7 +104,7 @@ export function MessageHeContent({ loc }: { loc: (path: string) => string }) {
       <Band tone="paper">
         <H2>מה זה לשון הרע?</H2>
         <Typography variant="h3" sx={{ fontSize: { xs: "1.2rem", md: "1.35rem" }, mb: 2, lineHeight: 1.4 }}>
-          דיבור שלילי שנאמר לאחר או על אחר.
+          דיבור שלילי או פוגעני שנאמר על אדם אחר.
         </Typography>
         <Tip>
           המבחן הפשוט: אם לא הייתם אומרים את זה בפני האדם — אל תגידו מאחורי גבו.

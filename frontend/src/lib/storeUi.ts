@@ -133,7 +133,7 @@ export const STORE_HOMEPAGE_PRODUCT_IDS = STORE_HOMEPAGE_PRODUCT_IMAGES.map((ite
 
 export const STORE_COPY = {
   he: {
-    announcement: "משלוח חינם בהזמנות מעל ₪250",
+    announcement: "משלוח חינם לנקודות האיסוף בהזמנות מעל ₪100",
     heroEyebrow: "המהדורה החדשה",
     heroTitle: "מילים שבוחרים לענוד.",
     heroBody: "פריטים שנכנסים לחיים, ומזכירים בכל יום איך בחרנו לדבר.",
@@ -184,7 +184,7 @@ export const STORE_COPY = {
     allCategoriesChip: "הכול",
   },
   en: {
-    announcement: "Free shipping on orders over ₪250",
+    announcement: "Free shipping to pickup points on orders over ₪100",
     heroEyebrow: "The new edition",
     heroTitle: "Words worth wearing.",
     heroBody: "Objects that become part of daily life—and a reminder of how we choose to speak.",
