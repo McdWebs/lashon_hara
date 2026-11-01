@@ -97,6 +97,6 @@ export const PROGRAMS: Program[] = [
   },
 ];
 
-export const SHOP_INTRO = "Welcome to the store of\n\"Lashon Hara Doesn't Speak to Me\" products\nSales on the site allow us to keep handing out products for free to schools and educational institutions.";
+export const SHOP_INTRO = "Welcome to the official store of\n\"Lashon Hara Doesn't Speak to Me\"\nSales on the site allow us to keep handing out products for free to schools and educational institutions.";
 
 export const SHIPPING_NOTE = "On orders over ₪100,\nfree shipping to pickup points across Israel";
