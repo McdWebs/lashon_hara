@@ -112,6 +112,7 @@ export function CollectionPage() {
   const items = query.data?.pages.flatMap((p) => p.items) ?? [];
   const total = query.data?.pages[0]?.total;
   const refreshing = query.isPlaceholderData;
+  const showSkeleton = query.isLoading || refreshing;
   const filtered = Boolean(q || price.key || sort.key || active.key !== "all");
   const narrowed = Boolean(q || price.key);
 
@@ -180,7 +181,11 @@ export function CollectionPage() {
       <div className="wrap shop">
         <div className="shop-top">
           <div className="meta">
-            <span className="cnt" aria-live="polite">{total !== undefined ? t("{n} פריטים", { n: total }) : ""}</span>
+            {showSkeleton ? (
+              <span className="skel cnt-skel" aria-hidden="true" />
+            ) : (
+              <span className="cnt" aria-live="polite">{total !== undefined ? t("{n} פריטים", { n: total }) : ""}</span>
+            )}
             {q ? (
               <button type="button" className="tag" onClick={() => setDraft("")}>
                 <span>“{q}”</span><Icon.close />
@@ -196,9 +201,10 @@ export function CollectionPage() {
           <p className="shipnote">{SHIPPING_NOTE}</p>
         </div>
 
-        <div className={`grid${refreshing ? " busy" : ""}`} aria-busy={query.isFetching}>
-          {query.isLoading ? <CardsSkeleton count={PER_PAGE} /> : null}
-          {items.map((p) => <ProductLinkCard key={p.id} product={p} />)}
+        <div className="grid" aria-busy={query.isFetching}>
+          {/* A new tab, sort, price or search shows placeholders at once instead of the old products fading. */}
+          {showSkeleton ? <CardsSkeleton count={PER_PAGE} /> : items.map((p) => <ProductLinkCard key={p.id} product={p} />)}
+          {query.isFetchingNextPage ? <CardsSkeleton count={4} /> : null}
         </div>
 
         {query.isError ? (

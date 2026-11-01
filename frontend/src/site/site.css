@@ -940,3 +940,5 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
 .lh .cookie-b { display: flex; flex-wrap: wrap; gap: 10px; }
 .lh .cookie-b .btn { height: 46px; padding: 0 24px; font-size: 15px; }
 @media (min-width: 720px) { .lh .cookie { flex-direction: row; align-items: center; justify-content: space-between; } .lh .cookie-b { flex: none; flex-wrap: nowrap; } }
+
+.page-collection .cnt-skel { display: inline-block; width: 72px; height: 14px; }
