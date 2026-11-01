@@ -52,4 +52,6 @@ export const EN: Record<string, string> = {
   "התקנון המלא זמין כרגע בעברית בלבד.": "The full terms are currently available in Hebrew only.",
   "עוגיות": "Cookies", "אנחנו משתמשים בעוגיות לסטטיסטיקה אנונימית, כדי להבין איך משתמשים באתר ולשפר אותו.": "We use cookies for anonymous statistics, to understand how the site is used and improve it.", "מאשרים": "Accept", "לא, תודה": "No, thanks",
   "אימות אנושי לא נטען. נסו לרענן את הדף.": "The human check didn't load. Try refreshing the page.", "יש להשלים את האימות לפני השליחה.": "Please complete the check before sending.",
+  "ברירת מחדל": "Default", "הצגת התוצאות": "Show results", "איפוס": "Reset", "סיכום הסל": "Bag summary", "לסל הקניות": "To the bag", "מחיר": "Price",
+  "סינון ומיון": "Filter and sort",
 };

@@ -1,10 +1,13 @@
+import { Drawer } from "@mui/material";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { t, Link } from "../i18n";
+import { useCart } from "../../lib/cart";
 import { fetchProducts } from "../../lib/catalog";
 import { copy } from "../copy";
-import { CardsSkeleton, Icon, ProductLinkCard, Title, usePageTitle } from "../ui";
+import { FREE_SHIPPING_MINOR } from "./CartPage";
+import { CardsSkeleton, Icon, ShopCard, Title, moneyLabel, usePageTitle } from "../ui";
 
 const PER_PAGE = 12;
 
@@ -50,6 +53,59 @@ function SearchIcon() {
   );
 }
 
+function FilterIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+      <path d="M4 7h10M18 7h2M4 17h2M10 17h10" />
+      <circle cx="16" cy="7" r="2" />
+      <circle cx="8" cy="17" r="2" />
+    </svg>
+  );
+}
+
+/** Docks the bag at the bottom of the shop: what is in it, how close free shipping is, and the way to the cart. */
+function ShopCartBar() {
+  const items = useCart((s) => s.items);
+  const pendingAdds = useCart((s) => s.pendingAdds);
+  const unit = useCart((s) => s.currencyMinorUnit);
+  const [away, setAway] = useState(false);
+
+  // Slides out of the way while scrolling down, back as soon as the visitor scrolls up.
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (Math.abs(y - last) < 8) return;
+      setAway(y > last && y > 240);
+      last = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const count = items.reduce((sum, item) => sum + item.quantity, 0) + pendingAdds;
+  if (count === 0) return null;
+
+  const subtotal = items.reduce((sum, item) => sum + Number(item.lineTotal), 0);
+  const threshold = FREE_SHIPPING_MINOR * 10 ** (unit - 2);
+  const left = threshold - subtotal;
+
+  return (
+    <div className={`sbar${away ? " away" : ""}`} role="region" aria-label={t("סיכום הסל")}>
+      <div className="sbar-in">
+        <div className="sbar-ship">
+          <span>{left > 0 ? t("עוד {left} למשלוח חינם לנקודות האיסוף", { left: moneyLabel(left, unit) }) : t("משלוח חינם לנקודות האיסוף")}</span>
+          <span className="sbar-bar"><span style={{ transform: `scaleX(${Math.min(1, subtotal / threshold)})` }} /></span>
+        </div>
+        <div className="sbar-row">
+          <span><b>{t("{n} פריטים", { n: count })}</b> · {moneyLabel(subtotal, unit)}</span>
+          <Link className="btn btn-red" to="/cart"><span>{t("לסל הקניות")}</span></Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function CollectionPage() {
   usePageTitle(t("הקולקציה"));
   const { SHIPPING_NOTE, SHOP_INTRO } = copy();
@@ -64,6 +120,7 @@ export function CollectionPage() {
   const q = (params.get("q") ?? "").trim();
 
   const [draft, setDraft] = useState(q);
+  const [sheet, setSheet] = useState(false);
   const typing = useRef(false);
 
   function update(next: Record<string, string>, replace = false) {
@@ -153,6 +210,11 @@ export function CollectionPage() {
             ) : null}
           </label>
 
+          <button type="button" className="tfilter" aria-label={t("סינון ומיון")} onClick={() => setSheet(true)}>
+            <FilterIcon />
+            {price.key || sort.key ? <span className="tfilter-dot" aria-hidden="true" /> : null}
+          </button>
+
           <div className="chips" role="group" aria-label={t("קולקציות")}>
             {COLLECTIONS.filter((c) => !c.hidden || c.key === active.key).map((c) => (
               <button
@@ -203,7 +265,7 @@ export function CollectionPage() {
 
         <div className="grid" aria-busy={query.isFetching}>
           {/* A new tab, sort, price or search shows placeholders at once instead of the old products fading. */}
-          {showSkeleton ? <CardsSkeleton count={PER_PAGE} /> : items.map((p) => <ProductLinkCard key={p.id} product={p} />)}
+          {showSkeleton ? <CardsSkeleton count={PER_PAGE} /> : items.map((p) => <ShopCard key={p.id} product={p} />)}
           {query.isFetchingNextPage ? <CardsSkeleton count={4} /> : null}
         </div>
 
@@ -240,6 +302,52 @@ export function CollectionPage() {
           <Link className="bizl" to="/custom"><span><b>{t("מוצרים לאירוע בהדפסה אישית")}</b><span>{t("כיפה עם הלוגו והדפסה שתבחרו")}</span></span><Icon.ext /></Link>
         </div>
       </div>
+
+      <Drawer
+        anchor="bottom"
+        open={sheet}
+        onClose={() => setSheet(false)}
+        disablePortal
+        slotProps={{ paper: { className: "sheet-paper", role: "dialog", "aria-label": t("סינון ומיון") } }}
+      >
+        <span className="sheet-grip" aria-hidden="true" />
+        <div className="sheet-h">
+          <h2 className="disp">{t("סינון ומיון")}</h2>
+          <button type="button" className="iconbtn" onClick={() => setSheet(false)} aria-label={t("סגירה")}><Icon.close /></button>
+        </div>
+        <fieldset className="sheet-f">
+          <legend>{t("מיון")}</legend>
+          {SORTS.map((s) => (
+            <label className={`sopt${sort.key === s.key ? " on" : ""}`} key={s.key}>
+              <input type="radio" name="sort" checked={sort.key === s.key} onChange={() => update({ sort: s.key })} />
+              <span>{s.key === "" ? t("ברירת מחדל") : t(s.label)}</span>
+              <span className="sopt-r" aria-hidden="true" />
+            </label>
+          ))}
+        </fieldset>
+        <fieldset className="sheet-f">
+          <legend>{t("מחיר")}</legend>
+          <div className="sheet-p">
+            {PRICES.map((p) => (
+              <button
+                key={p.key}
+                type="button"
+                className={`chip${price.key === p.key ? " on" : ""}`}
+                aria-pressed={price.key === p.key}
+                onClick={() => update({ price: p.key })}
+              >
+                {p.key === "" ? t("הכול") : t(p.label)}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+        <div className="sheet-b">
+          <button type="button" className="btn btn-red" onClick={() => setSheet(false)}><span>{t("הצגת התוצאות")}</span></button>
+          <button type="button" className="tag-clear" onClick={() => update({ sort: "", price: "" })}>{t("איפוס")}</button>
+        </div>
+      </Drawer>
+
+      <ShopCartBar />
     </div>
   );
 }

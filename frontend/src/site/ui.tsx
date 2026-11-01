@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { t, Link, siteLang } from "./i18n";
 import { useCart } from "../lib/cart";
 import { fetchProduct, type WcProduct } from "../lib/catalog";
@@ -124,6 +124,47 @@ export function useQuickAdd() {
     await addItem(product.id, 1);
     track("product_added_to_cart", { id: product.id, quantity: 1 });
   };
+}
+
+/** Shop card: the product link plus a round add-to-bag button on the photo for products that need no choices. */
+export function ShopCard({ product }: { product: WcProduct }) {
+  const quickAdd = useQuickAdd();
+  const prefetch = usePrefetchProduct();
+  const [state, setState] = useState<"idle" | "busy" | "added" | "failed">("idle");
+  const timer = useRef<number>(0);
+  const to = `/shop/product/${product.id}`;
+  const warm = () => prefetch(product.id);
+
+  useEffect(() => () => window.clearTimeout(timer.current), []);
+
+  async function add() {
+    if (state === "busy") return;
+    setState("busy");
+    try {
+      await quickAdd(product);
+      setState("added");
+    } catch {
+      setState("failed");
+    }
+    timer.current = window.setTimeout(() => setState("idle"), 1600);
+  }
+
+  const label = state === "added" ? t("נוסף לסל") : state === "failed" ? t("לא הצלחנו, נסו שוב") : t("הוספה לסל: {name}", { name: product.name });
+
+  return (
+    <article className="pc pcw">
+      <div className="pcw-m">
+        <Link className="pc-m" to={to} tabIndex={-1} aria-hidden="true" onPointerEnter={warm} onTouchStart={warm}><ProductImage product={product} /></Link>
+        {canQuickAdd(product) ? (
+          <button type="button" className={`pc-q${state === "idle" ? "" : ` ${state}`}`} aria-busy={state === "busy"} aria-label={label} onClick={add}>
+            {state === "busy" ? <i className="pc-spin" aria-hidden="true" /> : state === "added" ? <Icon.ok /> : <Icon.plus />}
+          </button>
+        ) : null}
+      </div>
+      <Link className="pc-n" to={to} dir="auto" onPointerEnter={warm} onFocus={warm} onTouchStart={warm}>{product.name}</Link>
+      <span className="pc-p">{priceLabel(product)}</span>
+    </article>
+  );
 }
 
 export function CardsSkeleton({ count = 8 }: { count?: number }) {
