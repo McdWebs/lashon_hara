@@ -14,6 +14,7 @@ export const env = {
   nodeEnv: process.env.NODE_ENV ?? "development",
   frontendOrigin: process.env.FRONTEND_ORIGIN ?? "http://localhost:5173",
   mongodbUri: process.env.MONGODB_URI ?? "",
+  catalogPurgeSecret: process.env.CATALOG_PURGE_SECRET ?? "",
   contactInbox: process.env.CONTACT_INBOX ?? "",
   whatsappNumber: process.env.WHATSAPP_NUMBER ?? "972543644512",
   supportHours: process.env.SUPPORT_HOURS ?? "09:00-18:00, six days a week",
