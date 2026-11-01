@@ -1,9 +1,10 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import { t, Link } from "../i18n";
 import { Panel } from "../forms";
 import { fetchProducts } from "../../lib/catalog";
-import { SHIPPING_NOTE, SHOP_INTRO } from "../about";
+import { copy } from "../copy";
 import { CardsSkeleton, Icon, ProductLinkCard, Title, usePageTitle } from "../ui";
 
 const PER_PAGE = 12;
@@ -25,7 +26,7 @@ const COLLECTIONS: Collection[] = [
 ];
 
 export function CollectionPage() {
-  usePageTitle("הקולקציה");
+  usePageTitle(t("הקולקציה"));
   const [params, setParams] = useSearchParams();
   const [drawer, setDrawer] = useState(false);
   const active = COLLECTIONS.find((c) => c.key === params.get("collection")) ?? COLLECTIONS[0];
@@ -50,7 +51,7 @@ export function CollectionPage() {
     <div className="cols">
       {COLLECTIONS.filter((c) => !c.hidden).map((c) => (
         <button key={c.key} className={`col${active.key === c.key ? " on" : ""}`} aria-pressed={active.key === c.key} onClick={() => pick(c.key)}>
-          <span>{c.label}</span>
+          <span>{t(c.label)}</span>
         </button>
       ))}
     </div>
@@ -60,7 +61,7 @@ export function CollectionPage() {
     <div className="page-collection">
       <section className="phead">
         <div className="wrap">
-          <Title big lead={SHOP_INTRO}>הקולקציה</Title>
+          <Title big lead={copy().SHOP_INTRO}>{t("הקולקציה")}</Title>
         </div>
       </section>
 
@@ -69,11 +70,11 @@ export function CollectionPage() {
           <div>
             <div className="shop-top">
               <button className="btn btn-ink colbtn" onClick={() => setDrawer(true)}>
-                <span>קולקציות</span>
-                <span className="colbtn-v">{active.label}</span>
+                <span>{t("קולקציות")}</span>
+                <span className="colbtn-v">{t(active.label)}</span>
               </button>
-              <p className="shipnote">{SHIPPING_NOTE}</p>
-              <span className="cnt" aria-live="polite">{total !== undefined ? `${total} פריטים` : ""}</span>
+              <p className="shipnote">{copy().SHIPPING_NOTE}</p>
+              <span className="cnt" aria-live="polite">{total !== undefined ? t("{n} פריטים", { n: total }) : ""}</span>
             </div>
 
             <div className="grid">
@@ -83,41 +84,41 @@ export function CollectionPage() {
 
             {query.isError ? (
               <div className="state" role="alert">
-                <h2>לא הצלחנו לטעון את המוצרים.</h2>
-                <button className="btn btn-line" onClick={() => query.refetch()}><span>נסו שוב</span></button>
+                <h2>{t("לא הצלחנו לטעון את המוצרים.")}</h2>
+                <button className="btn btn-line" onClick={() => query.refetch()}><span>{t("נסו שוב")}</span></button>
               </div>
             ) : null}
 
             {query.isSuccess && items.length === 0 ? (
               <div className="empty">
                 <span className="bar" aria-hidden="true" />
-                <h2>אין עדיין פריטים בקולקציה הזאת.</h2>
-                <Link className="btn btn-line" to="/shop"><span>לכל המוצרים</span><Icon.arrow /></Link>
+                <h2>{t("אין עדיין פריטים בקולקציה הזאת.")}</h2>
+                <Link className="btn btn-line" to="/shop"><span>{t("לכל המוצרים")}</span><Icon.arrow /></Link>
               </div>
             ) : null}
 
             {query.hasNextPage ? (
               <div style={{ display: "flex", justifyContent: "center", paddingTop: 40 }}>
                 <button className="btn btn-line" disabled={query.isFetchingNextPage} onClick={() => query.fetchNextPage()}>
-                  <span>{query.isFetchingNextPage ? "טוענים…" : "עוד מוצרים"}</span>
+                  <span>{query.isFetchingNextPage ? t("טוענים…") : t("עוד מוצרים")}</span>
                 </button>
               </div>
             ) : null}
 
             <div className="biz">
-              <h2 className="biz-h">הזמנות לעסקים</h2>
-              <Link className="bizl" to="/custom"><span><b>מוצרים לאירוע בהדפסה אישית</b><span>כיפה עם הלוגו והדפסה שתבחרו</span></span><Icon.ext /></Link>
+              <h2 className="biz-h">{t("הזמנות לעסקים")}</h2>
+              <Link className="bizl" to="/custom"><span><b>{t("מוצרים לאירוע בהדפסה אישית")}</b><span>{t("כיפה עם הלוגו והדפסה שתבחרו")}</span></span><Icon.ext /></Link>
             </div>
           </div>
 
-          <aside className="side" aria-label="קולקציות">
-            <span className="side-h">קולקציות</span>
+          <aside className="side" aria-label={t("קולקציות")}>
+            <span className="side-h">{t("קולקציות")}</span>
             {list}
           </aside>
         </div>
       </div>
 
-      <Panel open={drawer} onClose={() => setDrawer(false)} title="קולקציות">
+      <Panel open={drawer} onClose={() => setDrawer(false)} title={t("קולקציות")}>
         <div className="cols-m">{list}</div>
       </Panel>
     </div>

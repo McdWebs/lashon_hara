@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { t, Link, siteLang } from "../i18n";
 import { fetchProducts, type WcProduct } from "../../lib/catalog";
-import { FOUNDER_LEAD, FOUNDER_WHY } from "../about";
+import { copy } from "../copy";
 import { CardsSkeleton, Icon, ProductImage, QuoteMark, Title, canQuickAdd, priceLabel, usePageTitle, useQuickAdd } from "../ui";
 
 const SLIDES = [
@@ -19,6 +19,13 @@ const TILES = [
 ] as const;
 
 const HOLD_MS = 6500;
+
+/** The two-line quotes, line by line. */
+const QUOTE_EN: Record<string, string> = { "שים לב": "Watch", "מה אתה אומר": "what you say", "נוצר לשונו": "Guard your tongue,", "שומר נפשו": "guard your soul" };
+
+function EN_QUOTE(line: string) {
+  return siteLang() === "en" ? QUOTE_EN[line] : line;
+}
 
 function Hero() {
   const reduced = useRef(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false);
@@ -49,8 +56,8 @@ function Hero() {
   return (
     <section
       className="hero"
-      aria-roledescription="קרוסלה"
-      aria-label="מה אומרים השגרירים"
+      aria-roledescription={t("קרוסלה")}
+      aria-label={t("מה אומרים השגרירים")}
       onMouseEnter={() => setHeld(true)}
       onMouseLeave={() => setHeld(false)}
       onFocus={() => setHeld(true)}
@@ -61,31 +68,31 @@ function Hero() {
           key={s.photo}
           className={`slide side-${s.side}${i === cur ? " on" : ""}${i === prev ? " out" : ""}`}
           role="group"
-          aria-roledescription="שקופית"
-          aria-label={`${i + 1} מתוך ${SLIDES.length}: ${s.who}`}
+          aria-roledescription={t("שקופית")}
+          aria-label={t("{n} מתוך {total}: {who}", { n: i + 1, total: SLIDES.length, who: t(s.who) })}
           aria-hidden={i !== cur}
         >
           <div className="s-photo">
-            <img src={`/images/site/${s.photo}.jpg`} alt={`${s.who} בקפוצ׳ון של לשון הרע לא מדבר אליי`} />
+            <img src={`/images/site/${s.photo}.jpg`} alt={t("{who} בקפוצ׳ון של לשון הרע לא מדבר אליי", { who: t(s.who) })} />
           </div>
           <figure className="s-quote">
             <QuoteMark />
             <blockquote className="disp">
               {s.lines.map((line, k) => (
-                <span key={line} className={`ql ql${k + 1}`}><span>{line}</span></span>
+                <span key={line} className={`ql ql${k + 1}`}><span>{EN_QUOTE(line)}</span></span>
               ))}
             </blockquote>
-            <figcaption><img className="sig" src={`/images/site/${s.sig}.jpg`} alt={s.who} /></figcaption>
+            <figcaption><img className="sig" src={`/images/site/${s.sig}.jpg`} alt={t(s.who)} /></figcaption>
           </figure>
         </div>
       ))}
       <div className="hctl">
         <div className="dots">
           {SLIDES.map((s, i) => (
-            <button key={s.photo} className={`dot${i === cur ? " on" : ""}`} aria-label={`שקופית ${i + 1}`} aria-current={i === cur || undefined} onClick={() => go(i)} />
+            <button key={s.photo} className={`dot${i === cur ? " on" : ""}`} aria-label={t("שקופית {n}", { n: i + 1 })} aria-current={i === cur || undefined} onClick={() => go(i)} />
           ))}
         </div>
-        <button className={`hpause${stopped ? " paused" : ""}`} aria-label={stopped ? "הפעלת ההחלפה" : "עצירת ההחלפה"} onClick={() => setStopped((v) => !v)}>
+        <button className={`hpause${stopped ? " paused" : ""}`} aria-label={stopped ? t("הפעלת ההחלפה") : t("עצירת ההחלפה")} onClick={() => setStopped((v) => !v)}>
           <Icon.pause />
         </button>
       </div>
@@ -112,18 +119,18 @@ function ProductCard({ product, index }: { product: WcProduct; index: number }) 
     <article className="pc rv" style={{ "--d": `${(index % 4) * 0.07}s` } as React.CSSProperties}>
       <Link className="pc-m" to={to} tabIndex={-1} aria-hidden="true"><ProductImage product={product} /></Link>
       {canQuickAdd(product) ? (
-        <button className={`pc-add${state === "added" ? " ok" : ""}`} onClick={add} aria-label={`הוספה לסל: ${product.name}`}>
-          <span>{state === "added" ? "נוסף לסל" : state === "failed" ? "לא הצלחנו, נסו שוב" : "הוספה לסל"}</span>
+        <button className={`pc-add${state === "added" ? " ok" : ""}`} onClick={add} aria-label={t("הוספה לסל: {name}", { name: product.name })}>
+          <span>{state === "added" ? t("נוסף לסל") : state === "failed" ? t("לא הצלחנו, נסו שוב") : t("הוספה לסל")}</span>
         </button>
       ) : null}
-      <Link className="pc-n" to={to}>{product.name}</Link>
+      <Link className="pc-n" to={to} dir="auto">{product.name}</Link>
       <span className="pc-p">{priceLabel(product)}</span>
     </article>
   );
 }
 
 export function HomePage() {
-  usePageTitle("דף הבית");
+  usePageTitle(t("דף הבית"));
   const latest = useQuery({
     queryKey: ["site-home-latest"],
     queryFn: () => fetchProducts("per_page=8&orderby=date&order=desc"),
@@ -133,38 +140,38 @@ export function HomePage() {
     <div className="page-home">
       <Hero />
 
-      <section className="cats" aria-label="קטגוריות בחנות">
-        {TILES.map((t) => (
-          <Link key={t.img} className="cat" to={`/shop?collection=${t.collection}`}>
-            <img src={`/images/site/${t.img}.jpg`} alt="" />
-            <span className="sr">{t.label}</span>
+      <section className="cats" aria-label={t("קטגוריות בחנות")}>
+        {TILES.map((tile) => (
+          <Link key={tile.img} className="cat" to={`/shop?collection=${tile.collection}`}>
+            <img src={`/images/site/${tile.img}.jpg`} alt="" />
+            <span className="sr">{t(tile.label)}</span>
           </Link>
         ))}
       </section>
 
       <section className="story">
         <div className="wrap story-in">
-          <div className="story-ph rv"><img src="/images/site/founder.jpg" alt="מייסד המיזם" /></div>
+          <div className="story-ph rv"><img src="/images/site/founder.jpg" alt={t("מייסד המיזם")} /></div>
           <div className="story-tx rv" style={{ "--d": ".1s" } as React.CSSProperties}>
-            <h2 className="story-h">הסיפור של<br />לשון הרע לא מדבר אליי</h2>
+            <h2 className="story-h">{t("הסיפור של")}<br />{t("לשון הרע לא מדבר אליי")}</h2>
             <span className="bar" aria-hidden="true" />
-            <p>{FOUNDER_LEAD}</p>
-            <p>{FOUNDER_WHY}</p>
-            <Link className="link" to="/who-we-are"><span>לסיפור המלא</span><Icon.arrow /></Link>
+            <p>{copy().FOUNDER_LEAD}</p>
+            <p>{copy().FOUNDER_WHY}</p>
+            <Link className="link" to="/who-we-are"><span>{t("לסיפור המלא")}</span><Icon.arrow /></Link>
           </div>
         </div>
       </section>
 
       <section className="newc">
         <div className="wrap">
-          <Title as="h2">הקולקציה החדשה</Title>
+          <Title as="h2">{t("הקולקציה החדשה")}</Title>
           <div className="pgrid">
             {latest.isLoading ? <CardsSkeleton /> : null}
             {latest.data?.items.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
           </div>
-          {latest.isError ? <p className="lead" role="alert">לא הצלחנו לטעון את המוצרים. נסו לרענן את העמוד.</p> : null}
+          {latest.isError ? <p className="lead" role="alert">{t("לא הצלחנו לטעון את המוצרים. נסו לרענן את העמוד.")}</p> : null}
           <div style={{ display: "flex", justifyContent: "center", paddingTop: 44 }}>
-            <Link className="btn btn-line" to="/shop"><span>לכל הקולקציה</span><Icon.arrow /></Link>
+            <Link className="btn btn-line" to="/shop"><span>{t("לכל הקולקציה")}</span><Icon.arrow /></Link>
           </div>
         </div>
       </section>

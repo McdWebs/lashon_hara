@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import { t, Link } from "../i18n";
 import { track } from "../../lib/analytics";
 import { useCart } from "../../lib/cart";
 import { getOrder } from "../../lib/cartSession";
@@ -24,7 +25,7 @@ function stashedOrder(): { id: string; key?: string } | null {
 }
 
 export function ConfirmationPage() {
-  usePageTitle("אישור הזמנה");
+  usePageTitle(t("אישור הזמנה"));
   const [params] = useSearchParams();
   const clearCart = useCart((s) => s.clear);
   const [status, setStatus] = useState<Status>("checking");
@@ -81,30 +82,30 @@ export function ConfirmationPage() {
           <div className="ok-a" role="status">
             {status === "checking" ? (
               <>
-                <h1 className="ok-h disp"><span className="o1">רגע</span><span className="o2">אחד…</span></h1>
-                <p className="lead">מאשרים את התשלום.</p>
+                <h1 className="ok-h disp"><span className="o1">{t("רגע")}</span><span className="o2">{t("אחד…")}</span></h1>
+                <p className="lead">{t("מאשרים את התשלום.")}</p>
               </>
             ) : null}
             {status === "paid" ? (
               <>
                 <OkMark big />
-                <h1 className="ok-h disp"><span className="o1">תודה</span><span className="o2">רבה!</span></h1>
-                <p className="lead">ההזמנה{orderId ? ` מספר ${orderId}` : ""} נקלטה בהצלחה. נעדכן אתכם לגבי המשלוח. אישור נשלח גם למייל.</p>
-                <Link className="btn btn-red" to="/shop"><span>להמשך קנייה</span><Icon.arrow /></Link>
+                <h1 className="ok-h disp"><span className="o1">{t("תודה")}</span><span className="o2">{t("רבה!")}</span></h1>
+                <p className="lead">{orderId ? t("הזמנה מספר {id} נקלטה בהצלחה. נעדכן אתכם לגבי המשלוח. אישור נשלח גם למייל.", { id: orderId }) : t("ההזמנה נקלטה בהצלחה. נעדכן אתכם לגבי המשלוח. אישור נשלח גם למייל.")}</p>
+                <Link className="btn btn-red" to="/shop"><span>{t("להמשך קנייה")}</span><Icon.arrow /></Link>
               </>
             ) : null}
             {status === "pending" ? (
               <>
-                <h1 className="ok-h disp"><span className="o1">עדיין</span><span className="o2">מאשרים…</span></h1>
-                <p className="lead">אישור התשלום לוקח קצת יותר זמן מהרגיל. אם זה לא מתעדכן בקרוב, צרו קשר ונבדוק.</p>
-                <Link className="btn btn-ink" to="/join?panel=contact"><span>צרו קשר</span><Icon.arrow /></Link>
+                <h1 className="ok-h disp"><span className="o1">{t("עדיין")}</span><span className="o2">{t("מאשרים…")}</span></h1>
+                <p className="lead">{t("אישור התשלום לוקח קצת יותר זמן מהרגיל. אם זה לא מתעדכן בקרוב, צרו קשר ונבדוק.")}</p>
+                <Link className="btn btn-ink" to="/join?panel=contact"><span>{t("צרו קשר")}</span><Icon.arrow /></Link>
               </>
             ) : null}
             {status === "failed" ? (
               <>
-                <h1 style={{ margin: 0, fontSize: 40, fontWeight: 800 }}>לא הצלחנו לאתר את ההזמנה</h1>
-                <p className="lead">אם השלמתם תשלום, אל דאגה — צרו קשר עם הפרטים שלכם ונסדר את זה.</p>
-                <Link className="btn btn-ink" to="/join?panel=contact"><span>צרו קשר</span><Icon.arrow /></Link>
+                <h1 style={{ margin: 0, fontSize: 40, fontWeight: 800 }}>{t("לא הצלחנו לאתר את ההזמנה")}</h1>
+                <p className="lead">{t("אם השלמתם תשלום, אל דאגה — צרו קשר עם הפרטים שלכם ונסדר את זה.")}</p>
+                <Link className="btn btn-ink" to="/join?panel=contact"><span>{t("צרו קשר")}</span><Icon.arrow /></Link>
               </>
             ) : null}
           </div>

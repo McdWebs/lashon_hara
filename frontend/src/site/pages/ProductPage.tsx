@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { t, Link, siteLang } from "../i18n";
 import { track } from "../../lib/analytics";
 import { useCart } from "../../lib/cart";
 import { fetchProduct, fetchRelatedProducts, type WcProduct } from "../../lib/catalog";
@@ -89,7 +90,7 @@ function ProductDetail({ product }: { product: WcProduct }) {
       setState("done");
       setTimeout(() => setState("idle"), 2000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "לא הצלחנו להוסיף לסל. נסו שוב.");
+      setError(err instanceof Error ? err.message : t("לא הצלחנו להוסיף לסל. נסו שוב."));
       setState("idle");
     }
   }
@@ -99,13 +100,13 @@ function ProductDetail({ product }: { product: WcProduct }) {
   return (
     <>
       <div className="wrap crumbs">
-        <Link to="/shop">הקולקציה</Link>
+        <Link to="/shop">{t("הקולקציה")}</Link>
       </div>
 
       <section className="wrap prod">
         <div className="gal">
           <div className="gmain">
-            {product.images.length === 0 ? <span className="ph" style={{ position: "absolute", inset: 0 }}>תמונה בקרוב</span> : null}
+            {product.images.length === 0 ? <span className="ph" style={{ position: "absolute", inset: 0 }}>{t("תמונה בקרוב")}</span> : null}
             {product.images.map((image, i) => (
               <img key={image.src} className={`gm${i === imageIndex ? " on" : ""}`} src={image.src} alt={image.alt || product.name} />
             ))}
@@ -113,7 +114,7 @@ function ProductDetail({ product }: { product: WcProduct }) {
           {product.images.length > 1 ? (
             <div className="gts">
               {product.images.map((image, i) => (
-                <button key={image.src} className={`gt${i === imageIndex ? " on" : ""}`} aria-label={`תמונה ${i + 1}`} onClick={() => setImageIndex(i)}>
+                <button key={image.src} className={`gt${i === imageIndex ? " on" : ""}`} aria-label={t("תמונה {n}", { n: i + 1 })} onClick={() => setImageIndex(i)}>
                   <img src={image.thumbnail || image.src} alt="" />
                 </button>
               ))}
@@ -123,12 +124,12 @@ function ProductDetail({ product }: { product: WcProduct }) {
 
         <div className="info">
           <span className="bar" aria-hidden="true" />
-          <h1 className="info-h">{product.name}</h1>
+          <h1 className="info-h" dir="auto">{product.name}</h1>
           <span className="info-p">{priceLabel(product)}</span>
 
           {attributes.map((attr) => (
             <div className="opt" key={attr.id}>
-              <span className="flabel">{attr.name}</span>
+              <span className="flabel" dir="auto">{attr.name}</span>
               <div className={`seg${missing && !selected[attr.name] ? " bad" : ""}`} role="radiogroup" aria-label={attr.name}>
                 {attr.terms.map((term) => {
                   const available = isAvailable(attr.name, term.slug);
@@ -152,39 +153,39 @@ function ProductDetail({ product }: { product: WcProduct }) {
                   );
                 })}
               </div>
-              {missing && !selected[attr.name] ? <span className="err on" role="alert">יש לבחור {attr.name}</span> : null}
+              {missing && !selected[attr.name] ? <span className="err on" role="alert">{t("יש לבחור {name}", { name: attr.name })}</span> : null}
             </div>
           ))}
 
-          {hasOrderConstraints(rules) ? <p className="ship" style={{ fontWeight: 700, color: "var(--ink)" }}>{formatOrderRulesNotice(rules, "he")}</p> : null}
+          {hasOrderConstraints(rules) ? <p className="ship" style={{ fontWeight: 700, color: "var(--ink)" }}>{formatOrderRulesNotice(rules, siteLang())}</p> : null}
 
           <div className="buy-row">
             <div className="qty">
-              <button aria-label="הפחתת כמות" onClick={() => setQuantity((q) => clampOrderQuantity(q - rules.step, rules))}><Icon.minus /></button>
+              <button aria-label={t("הפחתת כמות")} onClick={() => setQuantity((q) => clampOrderQuantity(q - rules.step, rules))}><Icon.minus /></button>
               <span aria-live="polite">{quantity}</span>
-              <button aria-label="הוספת כמות" onClick={() => setQuantity((q) => clampOrderQuantity(q + rules.step, rules))}><Icon.plus /></button>
+              <button aria-label={t("הוספת כמות")} onClick={() => setQuantity((q) => clampOrderQuantity(q + rules.step, rules))}><Icon.plus /></button>
             </div>
             <button className={`btn btn-red addbtn${state === "done" ? " done" : ""}`} disabled={soldOut} aria-busy={state === "busy"} onClick={add}>
               <span className="al">
-                <span className="a1">{soldOut ? "אזל מהמלאי" : state === "busy" ? "מוסיפים…" : "הוספה לסל"}</span>
-                <span className="a2">נוסף לסל ✓</span>
+                <span className="a1">{soldOut ? t("אזל מהמלאי") : state === "busy" ? t("מוסיפים…") : t("הוספה לסל")}</span>
+                <span className="a2">{t("נוסף לסל ✓")}</span>
               </span>
             </button>
           </div>
           {error ? <p className="ferr on" role="alert">{error}</p> : null}
-          <p className="ship">משלוח לכל הארץ · שירות אישי ב־WhatsApp</p>
+          <p className="ship">{t("משלוח לכל הארץ · שירות אישי ב־WhatsApp")}</p>
 
           <div className="accs">
-            {description ? <Accordion title="פרטי המוצר" open><div className="acc-html" dangerouslySetInnerHTML={{ __html: description }} /></Accordion> : null}
-            <Accordion title="משלוחים ושירות"><p>אנחנו שולחים לכל הארץ. לזמני אספקה, הזמנות בכמות או כל שאלה אחרת — הצוות שלנו זמין ב-WhatsApp.</p></Accordion>
-            <Accordion title="למה זה חשוב"><p>כל פריט מכניס לחיי היום־יום בחירה פשוטה: לדבר אחרת.</p></Accordion>
+            {description ? <Accordion title={t("פרטי המוצר")} open><div className="acc-html" dir="auto" dangerouslySetInnerHTML={{ __html: description }} /></Accordion> : null}
+            <Accordion title={t("משלוחים ושירות")}><p>{t("אנחנו שולחים לכל הארץ. לזמני אספקה, הזמנות בכמות או כל שאלה אחרת — הצוות שלנו זמין ב-WhatsApp.")}</p></Accordion>
+            <Accordion title={t("למה זה חשוב")}><p>{t("כל פריט מכניס לחיי היום־יום בחירה פשוטה: לדבר אחרת.")}</p></Accordion>
           </div>
         </div>
       </section>
 
       {related.isLoading || (related.data?.items.length ?? 0) > 0 ? (
         <section className="wrap rel">
-          <Title as="h2">מאותה קולקציה</Title>
+          <Title as="h2">{t("מאותה קולקציה")}</Title>
           <div className="grid">
             {related.isLoading ? <CardsSkeleton count={4} /> : null}
             {related.data?.items.map((p) => <ProductLinkCard key={p.id} product={p} />)}
@@ -198,7 +199,7 @@ function ProductDetail({ product }: { product: WcProduct }) {
 export function ProductPage() {
   const { id } = useParams();
   const query = useQuery({ queryKey: ["product", id], queryFn: () => fetchProduct(id ?? ""), enabled: Boolean(id) });
-  usePageTitle(query.data?.name ?? "מוצר");
+  usePageTitle(query.data?.name ?? t("מוצר"));
 
   if (query.data?.id === SCHOOLS_PRODUCT_ID) return <SchoolsProductPage />;
 
@@ -216,8 +217,8 @@ export function ProductPage() {
       ) : null}
       {query.isError ? (
         <div className="wrap state" role="alert">
-          <h2>המוצר לא נמצא.</h2>
-          <Link className="btn btn-line" to="/shop"><span>לכל הקולקציה</span><Icon.arrow /></Link>
+          <h2>{t("המוצר לא נמצא.")}</h2>
+          <Link className="btn btn-line" to="/shop"><span>{t("לכל הקולקציה")}</span><Icon.arrow /></Link>
         </div>
       ) : null}
       {query.data ? <ProductDetail key={query.data.id} product={query.data} /> : null}

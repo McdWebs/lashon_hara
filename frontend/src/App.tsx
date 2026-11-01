@@ -3,37 +3,25 @@ import { CacheProvider } from "@emotion/react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
 import { AppLayout } from "./components/AppLayout";
 import { LocaleRedirect } from "./components/LocaleRedirect";
 import { langFromPath } from "./i18n/locale";
 import { SCHOOLS_PRODUCT_ID, FEATURES } from "./lib/site";
-import { AboutPage } from "./pages/AboutPage";
-import { ActivitiesPage } from "./pages/ActivitiesPage";
 import { AmbassadorsPage } from "./pages/AmbassadorsPage";
 import { CommitmentPage } from "./pages/CommitmentPage";
-import { ContactPage } from "./pages/ContactPage";
 import { HomePage } from "./pages/HomePage";
-import { JoinPage } from "./pages/JoinPage";
 import { MapPage } from "./pages/MapPage";
 import { MessagePage } from "./pages/MessagePage";
 import { OrganizationsPage } from "./pages/OrganizationsPage";
-import { ProductPageEditorial } from "./pages/ProductPageEditorial";
 import { QuizPage } from "./pages/QuizPage";
 import { ResourcesPage } from "./pages/ResourcesPage";
-import { SchoolsPage } from "./pages/SchoolsPage";
-import { StorePageEditorial } from "./pages/StorePageEditorial";
 import { StoriesPage } from "./pages/StoriesPage";
 import { StoryDetailPage } from "./pages/StoryDetailPage";
-import { DonatePage } from "./pages/DonatePage";
-import { FaqPage, MagazinePage, NotFoundPage } from "./pages/SimplePages";
+import { FaqPage, MagazinePage } from "./pages/SimplePages";
 import { AccountPage } from "./pages/CommercePages";
-import { CheckoutPageEditorial } from "./pages/CheckoutPageEditorial";
-import { OrderConfirmationPage } from "./pages/OrderConfirmationPage";
-import { CartPageEditorial } from "./pages/StoreCommerceEditorial";
-import { TermsPage } from "./pages/TermsPage";
 import { SiteLayout } from "./site/SiteLayout";
 import { AboutPage as SiteAboutPage } from "./site/pages/AboutPage";
 import { ActivityPage as SiteActivityPage } from "./site/pages/ActivityPage";
@@ -58,53 +46,7 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 60_000, retry: 1 } },
 });
 
-function sitePages() {
-  return (
-    <>
-      <Route index element={<StorePageEditorial />} />
-      <Route path="movement" element={<HomePage />} />
-      <Route path="message" element={<MessagePage />} />
-      <Route path="message/quiz" element={<QuizPage />} />
-      <Route path="about" element={<AboutPage />} />
-      <Route path="about-us" element={<LocaleRedirect to="/about" />} />
-      <Route path="activities" element={<ActivitiesPage />} />
-      <Route path="our-activity" element={<LocaleRedirect to="/activities" />} />
-      <Route path="join" element={<JoinPage />} />
-      <Route path="join-us" element={<LocaleRedirect to="/join" />} />
-      <Route path="join/commitment" element={<CommitmentPage />} />
-      <Route path="join/ambassadors" element={<AmbassadorsPage />} />
-      <Route path="schools" element={<SchoolsPage />} />
-      <Route path="stories" element={<StoriesPage />} />
-      <Route path="stories/:slug" element={<StoryDetailPage />} />
-      <Route path="resources" element={<ResourcesPage />} />
-      <Route path="magazine" element={<MagazinePage />} />
-      <Route path="shop" element={<StorePageEditorial />} />
-      <Route path="shop-m" element={<LocaleRedirect to="/" />} />
-      <Route path="shop/product/:id" element={<ProductPageEditorial />} />
-      <Route path="cart" element={<CartPageEditorial />} />
-      <Route path="checkout" element={<CheckoutPageEditorial />} />
-      <Route path="order-confirmation" element={<OrderConfirmationPage />} />
-      <Route
-        path="my-account"
-        element={FEATURES.accountPage ? <AccountPage /> : <LocaleRedirect to="/" />}
-      />
-      <Route path="terms" element={<TermsPage />} />
-      <Route path="wholesale" element={<LocaleRedirect to="/organizations" />} />
-      <Route path="request-a-quote" element={<LocaleRedirect to="/organizations" />} />
-      <Route path="custom" element={<OrganizationsPage variant="custom" />} />
-      <Route path="product/schools" element={<LocaleRedirect to={`/shop/product/${SCHOOLS_PRODUCT_ID}`} />} />
-      <Route path="organizations" element={<OrganizationsPage />} />
-      <Route path="donate" element={<DonatePage />} />
-      <Route path="contact" element={<ContactPage />} />
-      <Route path="contact-us" element={<LocaleRedirect to="/contact" />} />
-      <Route path="faq" element={<FaqPage />} />
-      <Route path="map" element={<MapPage />} />
-      <Route path="*" element={<NotFoundPage />} />
-    </>
-  );
-}
-
-/** The new four-door site (Hebrew). Pages outside its map stay on the old layout for now, so no link breaks. */
+/** The new four-door site, in Hebrew and under /en in English. Pages outside its map stay on the old layout for now, so no link breaks. */
 function newSitePages() {
   return (
     <Route element={<SiteLayout />}>
@@ -120,15 +62,15 @@ function newSitePages() {
       <Route path="join" element={<SiteJoinPage />} />
       <Route path="terms" element={<SiteTermsPage />} />
       <Route path="accessibility" element={<SiteAccessibilityPage />} />
-      <Route path="about" element={<Navigate to="/who-we-are" replace />} />
-      <Route path="about-us" element={<Navigate to="/who-we-are" replace />} />
-      <Route path="activities" element={<Navigate to="/activity" replace />} />
-      <Route path="our-activity" element={<Navigate to="/activity" replace />} />
-      <Route path="schools" element={<Navigate to="/activity" replace />} />
-      <Route path="donate" element={<Navigate to="/join#donate" replace />} />
-      <Route path="contact" element={<Navigate to="/join?panel=contact" replace />} />
-      <Route path="contact-us" element={<Navigate to="/join?panel=contact" replace />} />
-      <Route path="join-us" element={<Navigate to="/join" replace />} />
+      <Route path="about" element={<LocaleRedirect to="/who-we-are" />} />
+      <Route path="about-us" element={<LocaleRedirect to="/who-we-are" />} />
+      <Route path="activities" element={<LocaleRedirect to="/activity" />} />
+      <Route path="our-activity" element={<LocaleRedirect to="/activity" />} />
+      <Route path="schools" element={<LocaleRedirect to="/activity" />} />
+      <Route path="donate" element={<LocaleRedirect to="/join#donate" />} />
+      <Route path="contact" element={<LocaleRedirect to="/join?panel=contact" />} />
+      <Route path="contact-us" element={<LocaleRedirect to="/join?panel=contact" />} />
+      <Route path="join-us" element={<LocaleRedirect to="/join" />} />
       <Route path="*" element={<SiteNotFoundPage />} />
     </Route>
   );
@@ -171,8 +113,9 @@ function ThemedTree() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Routes>
-          <Route path="/en" element={<AppLayout />}>
-            {sitePages()}
+          <Route path="/en">
+            {newSitePages()}
+            {legacyPages()}
           </Route>
           {newSitePages()}
           {legacyPages()}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { t, Link } from "../i18n";
 import { useCart, type CartItem } from "../../lib/cart";
 import { Icon, Title, moneyLabel, usePageTitle } from "../ui";
 
@@ -20,17 +20,17 @@ function Line({ item }: { item: CartItem }) {
           {item.image ? <img src={item.image} alt="" /> : null}
         </Link>
         <div className="cl-b">
-          <Link className="cl-n" to={`/shop/product/${item.id}`}>{item.name}</Link>
-          <span className="cl-o">{[...item.options, `${moneyLabel(item.price, item.currencyMinorUnit)} ליחידה`].join(" · ")}</span>
+          <Link className="cl-n" to={`/shop/product/${item.id}`} dir="auto">{item.name}</Link>
+          <span className="cl-o" dir="auto">{[...item.options, t("{price} ליחידה", { price: moneyLabel(item.price, item.currencyMinorUnit) })].join(" · ")}</span>
           <div className="cl-r">
             <div className="qty">
-              <button aria-label={`הפחתת כמות: ${item.name}`} onClick={() => run(setQuantity(item.key, item.quantity - 1))}><Icon.minus /></button>
+              <button aria-label={t("הפחתת כמות: {name}", { name: item.name })} onClick={() => run(setQuantity(item.key, item.quantity - 1))}><Icon.minus /></button>
               <span aria-live="polite">{item.quantity}</span>
-              <button aria-label={`הוספת כמות: ${item.name}`} onClick={() => run(setQuantity(item.key, item.quantity + 1))}><Icon.plus /></button>
+              <button aria-label={t("הוספת כמות: {name}", { name: item.name })} onClick={() => run(setQuantity(item.key, item.quantity + 1))}><Icon.plus /></button>
             </div>
-            <button className="rm" onClick={() => run(removeItem(item.key))}>הסרה</button>
+            <button className="rm" onClick={() => run(removeItem(item.key))}>{t("הסרה")}</button>
           </div>
-          {error ? <span className="err on" role="alert">לא הצלחנו לעדכן. נסו שוב.</span> : null}
+          {error ? <span className="err on" role="alert">{t("לא הצלחנו לעדכן. נסו שוב.")}</span> : null}
         </div>
         <span className="cl-t">{moneyLabel(item.lineTotal, item.currencyMinorUnit)}</span>
       </div>
@@ -39,7 +39,7 @@ function Line({ item }: { item: CartItem }) {
 }
 
 export function CartPage() {
-  usePageTitle("סל קניות");
+  usePageTitle(t("סל קניות"));
   const items = useCart((s) => s.items);
   const hydrated = useCart((s) => s.hydrated);
   const unit = useCart((s) => s.currencyMinorUnit);
@@ -49,7 +49,7 @@ export function CartPage() {
 
   return (
     <div className="page-cart">
-      <section className="phead"><div className="wrap"><Title big>סל קניות</Title></div></section>
+      <section className="phead"><div className="wrap"><Title big>{t("סל קניות")}</Title></div></section>
 
       {!hydrated ? (
         <div className="wrap cart" aria-hidden="true">
@@ -58,25 +58,25 @@ export function CartPage() {
         </div>
       ) : items.length === 0 ? (
         <div className="wrap empty">
-          <h2>הסל ריק</h2>
-          <p>עברו בחנות והוסיפו מוצרים שמפיצים את המסר.</p>
-          <Link className="btn btn-ink" to="/shop"><span>לחנות</span><Icon.arrow /></Link>
+          <h2>{t("הסל ריק")}</h2>
+          <p>{t("עברו בחנות והוסיפו מוצרים שמפיצים את המסר.")}</p>
+          <Link className="btn btn-ink" to="/shop"><span>{t("לחנות")}</span><Icon.arrow /></Link>
         </div>
       ) : (
         <div className="wrap cart">
           <div>
             <div className="ship">
-              <span>{left > 0 ? `עוד ${moneyLabel(left, unit)} למשלוח חינם לנקודות האיסוף` : "משלוח חינם לנקודות האיסוף"}</span>
+              <span>{left > 0 ? t("עוד {left} למשלוח חינם לנקודות האיסוף", { left: moneyLabel(left, unit) }) : t("משלוח חינם לנקודות האיסוף")}</span>
               <span className="shipbar"><span style={{ transform: `scaleX(${Math.min(1, subtotal / threshold)})` }} /></span>
             </div>
             <ul className="cls">{items.map((item) => <Line key={item.key} item={item} />)}</ul>
           </div>
           <aside className="sum">
-            <h2>סיכום הזמנה</h2>
-            <div className="sr"><span>סכום ביניים</span><b>{moneyLabel(subtotal, unit)}</b></div>
-            <div className="sr"><span>משלוח</span><span>יחושב בקופה</span></div>
-            <Link className="btn btn-red" to="/checkout" style={{ width: "100%" }}><span>להמשך לקופה</span><Icon.arrow /></Link>
-            <Link className="link" to="/shop" style={{ alignSelf: "center" }}><span>המשך קנייה</span></Link>
+            <h2>{t("סיכום הזמנה")}</h2>
+            <div className="sr"><span>{t("סכום ביניים")}</span><b>{moneyLabel(subtotal, unit)}</b></div>
+            <div className="sr"><span>{t("משלוח")}</span><span>{t("יחושב בקופה")}</span></div>
+            <Link className="btn btn-red" to="/checkout" style={{ width: "100%" }}><span>{t("להמשך לקופה")}</span><Icon.arrow /></Link>
+            <Link className="link" to="/shop" style={{ alignSelf: "center" }}><span>{t("המשך קנייה")}</span></Link>
           </aside>
         </div>
       )}

@@ -1,9 +1,9 @@
-import { Link } from "react-router-dom";
+import { t, Link, siteLang } from "../i18n";
 import { TERMS_TITLE, TermsHeContent } from "../../content/termsHe";
 import { Icon, Title, usePageTitle } from "../ui";
 
 export function NotFoundPage() {
-  usePageTitle("הדף לא נמצא");
+  usePageTitle(t("הדף לא נמצא"));
   return (
     <div className="page-notfound">
       <section className="nf">
@@ -11,9 +11,9 @@ export function NotFoundPage() {
           <span className="nf-n disp" aria-hidden="true">404</span>
           <div className="nf-t">
             <span className="bar" aria-hidden="true" />
-            <h1>הדף לא נמצא.</h1>
-            <p className="lead">אולי הקישור השתנה. אפשר להתחיל מעמוד הבית.</p>
-            <Link className="btn btn-red" to="/"><span>לעמוד הבית</span><Icon.arrow /></Link>
+            <h1>{t("הדף לא נמצא.")}</h1>
+            <p className="lead">{t("אולי הקישור השתנה. אפשר להתחיל מעמוד הבית.")}</p>
+            <Link className="btn btn-red" to="/"><span>{t("לעמוד הבית")}</span><Icon.arrow /></Link>
           </div>
         </div>
       </section>
@@ -22,23 +22,24 @@ export function NotFoundPage() {
 }
 
 export function TermsPage() {
-  usePageTitle("תקנון ומדיניות פרטיות");
+  usePageTitle(t("תקנון ומדיניות פרטיות"));
   return (
     <section className="legal">
       <div className="wrap">
-        <Title>{TERMS_TITLE}</Title>
-        <div className="legal-body"><TermsHeContent /></div>
+        <Title>{siteLang() === "en" ? t("תקנון ומדיניות פרטיות") : TERMS_TITLE}</Title>
+        {siteLang() === "en" ? <p className="lead">{t("התקנון המלא זמין כרגע בעברית בלבד.")}</p> : null}
+        <div className="legal-body" dir="rtl" lang="he"><TermsHeContent /></div>
       </div>
     </section>
   );
 }
 
 export function AccessibilityPage() {
-  usePageTitle("הצהרת נגישות");
+  usePageTitle(t("הצהרת נגישות"));
   return (
     <section className="legal">
       <div className="wrap">
-        <Title lead="[הצהרת הנגישות ופרטי איש הקשר — טקסט מהצוות]">הצהרת נגישות</Title>
+        <Title lead={t("[הצהרת הנגישות ופרטי איש הקשר — טקסט מהצוות]")}>{t("הצהרת נגישות")}</Title>
       </div>
     </section>
   );

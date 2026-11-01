@@ -1,9 +1,11 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { dateLocale, siteLang, t, Link, Navigate } from "../i18n";
 import { Field, FormShell, Panel, Reveal, Toggle, useSiteForm } from "../forms";
-import { PROGRAMS, type Program } from "../about";
+import type { Program } from "../about";
+import { copy } from "../copy";
 import { Icon, Title, usePageTitle } from "../ui";
 
 /** From the team's text update. Should move to the admin (see spec). */
@@ -15,6 +17,7 @@ const TAKEN_DATES = new Set<string>();
 const MONTHS_AHEAD = 3;
 const CLOSED_WEEKDAYS = new Set([5, 6]); // Friday, Saturday. Open decision in the spec.
 const WEEKDAYS = ["א", "ב", "ג", "ד", "ה", "ו", "ש"];
+const WEEKDAYS_EN = ["S", "M", "T", "W", "T", "F", "S"];
 
 type Reel = { kind: "video" | "photo"; src?: string; poster?: string; caption?: string };
 type WorldConfig = { key: string; name: string; line: string; live: string; image: string; banner?: string; reels?: Reel[] };
@@ -52,7 +55,7 @@ function isoDate(d: Date) {
 }
 
 function dayLabel(d: Date) {
-  return d.toLocaleDateString("he-IL", { day: "numeric", month: "long", year: "numeric" });
+  return d.toLocaleDateString(dateLocale(), { day: "numeric", month: "long", year: "numeric" });
 }
 
 type DayState = "free" | "taken" | "requested" | "past" | "closed";
@@ -106,7 +109,7 @@ function Lecture({ program, selected, onSelect }: { program: Program; selected: 
         {program.body.map((text) => <p key={text}>{text}</p>)}
       </div>
       <button className="lec-more" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
-        <span>{open ? "סגירה" : "קראו עוד"}</span>
+        <span>{open ? t("סגירה") : t("קראו עוד")}</span>
         <Icon.plus />
       </button>
       <ul className="lec-n">
@@ -114,7 +117,7 @@ function Lecture({ program, selected, onSelect }: { program: Program; selected: 
       </ul>
       <button className="lec-pick" aria-pressed={selected} onClick={onSelect}>
         {selected ? <Icon.ok /> : null}
-        <span>{selected ? "ההרצאה שבחרתם" : "בחירת ההרצאה הזאת"}</span>
+        <span>{selected ? t("ההרצאה שבחרתם") : t("בחירת ההרצאה הזאת")}</span>
       </button>
     </article>
   );
@@ -134,32 +137,32 @@ function Calendar({ today, requested, onPick, lecture, picked }: { today: Date; 
 
   return (
     <div className={`cal${lecture ? "" : " locked"}`}>
-      <h3 className="step disp"><span>2</span>בוחרים תאריך</h3>
+      <h3 className="step disp"><span>2</span>{t("בוחרים תאריך")}</h3>
       <dl className="cal-sum" aria-live="polite">
         <div>
-          <dt>הרצאה</dt>
-          <dd>{lecture ?? "קודם בוחרים הרצאה"}</dd>
+          <dt>{t("הרצאה")}</dt>
+          <dd>{lecture ?? t("קודם בוחרים הרצאה")}</dd>
         </div>
         {lecture && pickedIso && dayState(picked!, today, requested) === "free" ? (
           <div>
-            <dt>מועד</dt>
+            <dt>{t("מועד")}</dt>
             <dd>{dayLabel(picked!)}</dd>
           </div>
         ) : null}
       </dl>
       <div className="cal-h">
-        <span className="mon-n disp" aria-live="polite">{first.toLocaleDateString("he-IL", { month: "long", year: "numeric" })}</span>
+        <span className="mon-n disp" aria-live="polite">{first.toLocaleDateString(dateLocale(), { month: "long", year: "numeric" })}</span>
         <div className="cal-nav">
-          <button className="iconbtn dark" disabled={offset === 0} aria-label="החודש הקודם" onClick={() => setOffset((o) => o - 1)}><Icon.prev /></button>
-          <button className="iconbtn dark" disabled={offset === MONTHS_AHEAD} aria-label="החודש הבא" onClick={() => setOffset((o) => o + 1)}><Icon.next /></button>
+          <button className="iconbtn dark" disabled={offset === 0} aria-label={t("החודש הקודם")} onClick={() => setOffset((o) => o - 1)}><Icon.prev /></button>
+          <button className="iconbtn dark" disabled={offset === MONTHS_AHEAD} aria-label={t("החודש הבא")} onClick={() => setOffset((o) => o + 1)}><Icon.next /></button>
         </div>
       </div>
       <div className="cgrid">
-        {WEEKDAYS.map((w) => <span className="dn" key={w} aria-hidden="true">{w}</span>)}
+        {(siteLang() === "en" ? WEEKDAYS_EN : WEEKDAYS).map((w, i) => <span className="dn" key={i} aria-hidden="true">{w}</span>)}
         {Array.from({ length: first.getDay() }, (_, i) => <span className="cd out" key={`o${i}`} aria-hidden="true" />)}
         {days.map((d) => {
           const state = dayState(d, today, requested);
-          const label = `${dayLabel(d)}, ${STATE_LABEL[state]}`;
+          const label = `${dayLabel(d)}, ${t(STATE_LABEL[state])}`;
           if (state === "free") {
             return <button key={d.getDate()} type="button" className={`cd free${isoDate(d) === pickedIso ? " pick" : ""}`} aria-label={label} aria-pressed={isoDate(d) === pickedIso} disabled={!lecture} onClick={() => onPick(d)}>{d.getDate()}</button>;
           }
@@ -167,10 +170,10 @@ function Calendar({ today, requested, onPick, lecture, picked }: { today: Date; 
         })}
       </div>
       <div className="legend">
-        <span><i className="lg free" />פנוי</span>
-        <span><i className="lg pick" />הבחירה שלכם</span>
-        <span><i className="lg req" />התבקש</span>
-        <span><i className="lg taken" />תפוס</span>
+        <span><i className="lg free" />{t("פנוי")}</span>
+        <span><i className="lg pick" />{t("הבחירה שלכם")}</span>
+        <span><i className="lg req" />{t("התבקש")}</span>
+        <span><i className="lg taken" />{t("תפוס")}</span>
       </div>
     </div>
   );
@@ -200,27 +203,27 @@ function SchoolForm({ date, lecture, onSent }: { date: Date; lecture: string; on
     },
   );
   return (
-    <FormShell form={form} submitLabel="שליחת הבקשה" thanksTitle="תודה! הבקשה נשלחה." thanksText="נחזור אליכם לאישור המועד. עד אז התאריך יופיע לאחרים כ״התבקש״. שלחנו אישור גם למייל.">
-      <Field f={form.field("lecture")} label="ההרצאה שבחרתם" readOnly />
-      <Field f={form.field("date")} label="התאריך שבחרתם" readOnly />
+    <FormShell form={form} submitLabel={t("שליחת הבקשה")} thanksTitle={t("תודה! הבקשה נשלחה.")} thanksText={t("נחזור אליכם לאישור המועד. עד אז התאריך יופיע לאחרים כ״התבקש״. שלחנו אישור גם למייל.")}>
+      <Field f={form.field("lecture")} label={t("ההרצאה שבחרתם")} readOnly />
+      <Field f={form.field("date")} label={t("התאריך שבחרתם")} readOnly />
       <div className="two">
-        <Field f={form.field("school")} label="שם בית הספר" />
-        <Field f={form.field("city")} label="עיר" auto="address-level2" />
+        <Field f={form.field("school")} label={t("שם בית הספר")} />
+        <Field f={form.field("city")} label={t("עיר")} auto="address-level2" />
       </div>
       <div className="two">
-        <Field f={form.field("contactName")} label="שם איש/אשת הקשר" auto="name" />
-        <Field f={form.field("role")} label="תפקיד" />
+        <Field f={form.field("contactName")} label={t("שם איש/אשת הקשר")} auto="name" />
+        <Field f={form.field("role")} label={t("תפקיד")} />
       </div>
       <div className="two">
-        <Field f={form.field("phone")} label="טלפון" type="tel" mode="tel" auto="tel" dir="ltr" />
-        <Field f={form.field("email")} label="כתובת מייל" type="email" mode="email" auto="email" dir="ltr" />
+        <Field f={form.field("phone")} label={t("טלפון")} type="tel" mode="tel" auto="tel" dir="ltr" />
+        <Field f={form.field("email")} label={t("כתובת מייל")} type="email" mode="email" auto="email" dir="ltr" />
       </div>
-      <Field f={form.field("audience")} label="גיל הקהל וגודל הקבוצה" note="למשל: כיתות ז׳, כ־120 תלמידים" />
-      <Toggle f={form.field("freeBracelets")}>צמידים חינם לתלמידים</Toggle>
+      <Field f={form.field("audience")} label={t("גיל הקהל וגודל הקבוצה")} note={t("למשל: כיתות ז׳, כ־120 תלמידים")} />
+      <Toggle f={form.field("freeBracelets")}>{t("צמידים חינם לתלמידים")}</Toggle>
       <Reveal open={Boolean(form.values.freeBracelets)}>
-        <Field f={form.field("braceletCount")} label="כמה צמידים" mode="numeric" />
+        <Field f={form.field("braceletCount")} label={t("כמה צמידים")} mode="numeric" />
       </Reveal>
-      <Field f={form.field("notes")} label="הערות" rows={3} />
+      <Field f={form.field("notes")} label={t("הערות")} rows={3} />
     </FormShell>
   );
 }
@@ -230,11 +233,11 @@ function Banner({ world }: { world: WorldConfig }) {
     <div className="wb">
       <div className="wb-tx">
         <span className="bar" aria-hidden="true" />
-        <h2 className="wb-t disp">{world.name}</h2>
-        <p className="lead">{world.line}</p>
+        <h2 className="wb-t disp">{t(world.name)}</h2>
+        <p className="lead">{t(world.line)}</p>
       </div>
       <div className="wb-ph">
-        {world.banner ? <img src={world.banner} alt="" /> : <span className="ph" style={{ position: "absolute", inset: 0 }}>תמונה מהפעילות</span>}
+        {world.banner ? <img src={world.banner} alt="" /> : <span className="ph" style={{ position: "absolute", inset: 0 }}>{t("תמונה מהפעילות")}</span>}
       </div>
     </div>
   );
@@ -242,7 +245,7 @@ function Banner({ world }: { world: WorldConfig }) {
 
 function ReelMedia({ reel, index, playing, muted = true, onToggle, onProgress }: { reel: Reel; index: number; playing: boolean; muted?: boolean; onToggle?: () => void; onProgress?: (share: number) => void }) {
   const video = useRef<HTMLVideoElement>(null);
-  const name = `${reel.kind === "video" ? "סרטון" : "תמונה"} ${index + 1}`;
+  const name = `${t(reel.kind === "video" ? "סרטון" : "תמונה")} ${index + 1}`;
 
   useEffect(() => {
     const el = video.current;
@@ -338,8 +341,8 @@ function ReelViewer({ reels, start, onClose }: { reels: Reel[]; start: number; o
   }, [onClose]);
 
   return createPortal(
-    <div className="lh page-activity reelv" dir="rtl" role="dialog" aria-modal="true" aria-label="סרטונים ותמונות">
-      <button ref={close} className="iconbtn dark reelv-x" aria-label="סגירה" onClick={() => window.history.back()}><Icon.close /></button>
+    <div className="lh page-activity reelv" dir={siteLang() === "en" ? "ltr" : "rtl"} role="dialog" aria-modal="true" aria-label={t("סרטונים ותמונות")}>
+      <button ref={close} className="iconbtn dark reelv-x" aria-label={t("סגירה")} onClick={() => window.history.back()}><Icon.close /></button>
       <div className="rfeed" ref={feed}>
         {reels.map((reel, i) => {
           const playing = active === i && !paused;
@@ -357,14 +360,14 @@ function ReelViewer({ reels, start, onClose }: { reels: Reel[]; start: number; o
               <span className="rnum" dir="ltr" aria-hidden="true">{i + 1} / {reels.length}</span>
               {reel.kind === "video" ? (
                 <>
-                  <button className="rplay" aria-label="הפעלה" onClick={() => setPaused(false)}><Icon.play /></button>
-                  <button className="iconbtn dark rmute" aria-pressed={!muted} aria-label={muted ? "הפעלת הסאונד" : "כיבוי הסאונד"} onClick={() => setMuted((v) => !v)}>
+                  <button className="rplay" aria-label={t("הפעלה")} onClick={() => setPaused(false)}><Icon.play /></button>
+                  <button className="iconbtn dark rmute" aria-pressed={!muted} aria-label={muted ? t("הפעלת הסאונד") : t("כיבוי הסאונד")} onClick={() => setMuted((v) => !v)}>
                     {muted ? <Icon.mute /> : <Icon.sound />}
                   </button>
                   <span className="rprog" aria-hidden="true"><span ref={(el) => { bars.current[i] = el; }} /></span>
                 </>
               ) : null}
-              <span className="rcap">{reel.caption ?? "[כיתוב לסרטון]"}</span>
+              <span className="rcap">{reel.caption ?? t("[כיתוב לסרטון]")}</span>
             </div>
           );
         })}
@@ -381,7 +384,7 @@ function ReelGrid({ reels }: { reels: Reel[] }) {
     <>
       <div className="rgrid">
         {reels.map((r, i) => (
-          <button key={r.src ?? i} className="rt" aria-label={`פתיחת ${r.kind === "video" ? "סרטון" : "תמונה"} ${i + 1}`} onClick={() => setOpened(i)}>
+          <button key={r.src ?? i} className="rt" aria-label={t("פתיחת {what} {n}", { what: t(r.kind === "video" ? "סרטון" : "תמונה"), n: i + 1 })} onClick={() => setOpened(i)}>
             <ReelMedia reel={r} index={i} playing={false} />
             {r.kind === "video" ? <span className="rt-play" aria-hidden="true"><Icon.play /></span> : null}
           </button>
@@ -398,7 +401,7 @@ function Reels({ reels }: { reels: Reel[] }) {
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
   const bar = useRef<HTMLSpanElement>(null);
-  if (reels.length === 0) return <div className="state"><h2>עוד מעט יהיה כאן מה לראות.</h2></div>;
+  if (reels.length === 0) return <div className="state"><h2>{t("עוד מעט יהיה כאן מה לראות.")}</h2></div>;
   if (phone) return <ReelGrid reels={reels} />;
   const reel = reels[cur];
   return (
@@ -414,18 +417,18 @@ function Reels({ reels }: { reels: Reel[] }) {
           onProgress={(share) => { if (bar.current) bar.current.style.transform = `scaleX(${share})`; }}
         />
         <span className="rshade" />
-        {reel.kind === "video" ? <button className="rplay" aria-label="הפעלה" onClick={() => setPlaying(true)}><Icon.play /></button> : null}
+        {reel.kind === "video" ? <button className="rplay" aria-label={t("הפעלה")} onClick={() => setPlaying(true)}><Icon.play /></button> : null}
         {reel.kind === "video" ? (
-          <button className="iconbtn dark rmute" aria-pressed={!muted} aria-label={muted ? "הפעלת הסאונד" : "כיבוי הסאונד"} onClick={() => setMuted((v) => !v)}>
+          <button className="iconbtn dark rmute" aria-pressed={!muted} aria-label={muted ? t("הפעלת הסאונד") : t("כיבוי הסאונד")} onClick={() => setMuted((v) => !v)}>
             {muted ? <Icon.mute /> : <Icon.sound />}
           </button>
         ) : null}
-        <span className="rcap">{reel.caption ?? "[כיתוב לסרטון]"}</span>
+        <span className="rcap">{reel.caption ?? t("[כיתוב לסרטון]")}</span>
         {reel.kind === "video" ? <span className="rprog" aria-hidden="true"><span ref={bar} /></span> : null}
       </div>
       <div className="rgrid">
         {reels.map((r, i) => (
-          <button key={i} className={`rt${i === cur ? " on" : ""}`} aria-label={`${r.kind === "video" ? "סרטון" : "תמונה"} ${i + 1}`} onClick={() => { setCur(i); setPlaying(r.kind === "video"); }}>
+          <button key={i} className={`rt${i === cur ? " on" : ""}`} aria-label={`${t(r.kind === "video" ? "סרטון" : "תמונה")} ${i + 1}`} onClick={() => { setCur(i); setPlaying(r.kind === "video"); }}>
             <ReelMedia reel={r} index={i} playing={false} />
           </button>
         ))}
@@ -436,7 +439,7 @@ function Reels({ reels }: { reels: Reel[] }) {
 
 /** Each digit rolls up and settles on its value on load. The resting state is the real number, so no motion still reads right. */
 function RollingNumber({ value }: { value: number }) {
-  const text = value.toLocaleString("he-IL");
+  const text = value.toLocaleString(dateLocale());
   return (
     <span className="cn disp" role="img" aria-label={text}>
       <span className="roll" dir="ltr" aria-hidden="true">
@@ -456,7 +459,7 @@ function RollingNumber({ value }: { value: number }) {
 }
 
 export function ActivityPage() {
-  usePageTitle("הפעילות שלנו");
+  usePageTitle(t("הפעילות שלנו"));
   const { world: worldKey } = useParams();
   const queryClient = useQueryClient();
   const requestedFromServer = useRequestedDates();
@@ -488,27 +491,27 @@ export function ActivityPage() {
     <div className="page-activity">
       <section className="top">
         <div className="wrap top-in">
-          <Title big lead="העמותה מתמקדת בתחום החינוך ומפעילה תוכניות מקצועיות לילדים ובני נוער במסגרת גנים, בתי ספר, תיכונים ותנועות נוער.">הפעילות שלנו</Title>
+          <Title big lead={t("העמותה מתמקדת בתחום החינוך ומפעילה תוכניות מקצועיות לילדים ובני נוער במסגרת גנים, בתי ספר, תיכונים ותנועות נוער.")}>{t("הפעילות שלנו")}</Title>
           <div className="counter rv">
             {BRACELETS_HANDED_OUT === null ? <span className="cn disp">000,000</span> : <RollingNumber value={BRACELETS_HANDED_OUT} />}
-            <span className="cl">צמידים חולקו חינם{BRACELETS_HANDED_OUT === null ? <span className="muted"> · מספר לדוגמה</span> : null}</span>
+            <span className="cl">{t("צמידים חולקו חינם")}{BRACELETS_HANDED_OUT === null ? <span className="muted">{" "}{t("· מספר לדוגמה")}</span> : null}</span>
           </div>
         </div>
       </section>
 
-      <div className="wtiles" role="tablist" aria-label="העולמות">
+      <div className="wtiles" role="tablist" aria-label={t("העולמות")}>
         {WORLDS.map((w) => (
           <Link key={w.key} className={`wt${w.key === world.key ? " on" : ""}`} to={w.key === "schools" ? "/activity" : `/activity/${w.key}`} role="tab" aria-selected={w.key === world.key} preventScrollReset>
             <img src={w.image} alt="" />
             <span className="wt-in">
-              <span className="wt-n">{w.name}</span>
-              <span className="wt-l">{w.key === "schools" && next ? `המועד הפנוי הבא: ${next.toLocaleDateString("he-IL", { day: "numeric", month: "long" })}` : w.live}</span>
+              <span className="wt-n">{t(w.name)}</span>
+              <span className="wt-l">{w.key === "schools" && next ? t("המועד הפנוי הבא: {date}", { date: next.toLocaleDateString(dateLocale(), { day: "numeric", month: "long" }) }) : w.live ? t(w.live) : ""}</span>
             </span>
           </Link>
         ))}
       </div>
 
-      <section className="world in" key={world.key} role="tabpanel" aria-label={world.name}>
+      <section className="world in" key={world.key} role="tabpanel" aria-label={t(world.name)}>
         <div className="wrap">
           {world.reels ? (
             <>
@@ -518,10 +521,10 @@ export function ActivityPage() {
           ) : (
             <div className="book">
               <div className="book-l">
-                <p className="book-line">{world.line}</p>
-                <h3 className="step disp"><span>1</span>בוחרים הרצאה</h3>
+                <p className="book-line">{t(world.line)}</p>
+                <h3 className="step disp"><span>1</span>{t("בוחרים הרצאה")}</h3>
                 <div className={`lecs${lecture ? " has-pick" : ""}`}>
-                  {PROGRAMS.map((p) => (
+                  {copy().PROGRAMS.map((p) => (
                     <Lecture key={p.title} program={p} selected={lecture === lectureName(p)} onSelect={() => chooseLecture(lectureName(p))} />
                   ))}
                 </div>
@@ -534,7 +537,7 @@ export function ActivityPage() {
         </div>
       </section>
 
-      <Panel open={panelOpen} onClose={() => setPanelOpen(false)} title="בקשה לבית ספר">
+      <Panel open={panelOpen} onClose={() => setPanelOpen(false)} title={t("בקשה לבית ספר")}>
         {picked && lecture ? (
           <SchoolForm
             key={`${isoDate(picked)}-${lecture}`}

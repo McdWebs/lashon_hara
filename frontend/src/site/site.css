@@ -852,3 +852,35 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
 .page-activity .rt-play { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 999px; background: var(--red); color: #FFFFFF; display: flex; align-items: center; justify-content: center; pointer-events: none; }
 .page-activity .rt-play svg { width: 16px; height: 16px; }
 .page-activity .rt video { pointer-events: none; }
+
+/* ===== English: the same pages, mirrored ===== */
+.lh[dir="ltr"] .nl span::after { transform-origin: 100% 50%; }
+.lh[dir="ltr"] .nl:hover span::after, .lh[dir="ltr"] .nl.cur span::after { transform-origin: 0 50%; }
+.lh[dir="ltr"] .nbadge { left: auto; right: 2px; }
+.lh[dir="ltr"] .btn:hover svg { transform: translateX(5px); }
+.lh[dir="ltr"] .tg::after { right: auto; left: 3px; }
+.lh[dir="ltr"] .tgl input:checked + .tg::after { transform: translateX(20px); }
+.lh[dir="ltr"] .spin { left: auto; right: 20px; }
+.lh[dir="ltr"] .s-photo img { --fx: -60px; }
+.lh[dir="ltr"] .side-end .s-photo img { --fx: 60px; }
+.lh[dir="ltr"] .qmark { right: auto; left: -18px; transform-origin: 0 0; }
+.lh[dir="ltr"] .cat::after, .lh[dir="ltr"] .stab::after, .lh[dir="ltr"] .wt::after, .lh[dir="ltr"] .rprog span, .lh[dir="ltr"] .shipbar span, .lh[dir="ltr"] .cho-b del > span::after { transform-origin: 0 50%; }
+.lh[dir="ltr"] .tl { padding: 0 0 0 30px; }
+.lh[dir="ltr"] .tl::before, .lh[dir="ltr"] .tl.live::after { inset: 0 auto 0 0; }
+.lh[dir="ltr"] .tl-i::before { right: auto; left: -35.5px; }
+.lh[dir="ltr"] .tl.live .tl-i { transform: translateX(-14px); }
+.lh[dir="ltr"] .tl.live .tl-i.on { transform: none; }
+.lh[dir="ltr"] .col.on { box-shadow: inset 4px 0 0 var(--red); }
+.lh[dir="ltr"] .rmute { left: auto; right: 14px; }
+.lh[dir="ltr"] .reelv-x { right: auto; left: 14px; }
+.lh[dir="ltr"] .way-n { right: auto; left: 16px; }
+.lh[dir="ltr"] .si-q { left: auto; right: -8px; }
+.lh[dir="ltr"] .bub::after { clip-path: polygon(0 0, 100% 0, 0 100%); }
+.lh[dir="ltr"] .qs li:nth-child(even)::after { clip-path: polygon(0 0, 100% 0, 100% 100%); }
+.page-about .help-en { margin: 0; padding-inline-start: 22px; font-size: 16px; line-height: 1.85; }
+.page-about .help-en a { font-weight: 600; color: var(--ink); }
+@media (max-width: 900px) {
+  .lh[dir="ltr"] .qmark { left: -4px; }
+  .lh[dir="ltr"] .page-about .cho-l { font-size: clamp(38px, 12.8vw, 68px); }
+  .lh[dir="ltr"] .page-about .cho-a svg { width: 22px; height: 22px; margin-inline-start: 6px; }
+}

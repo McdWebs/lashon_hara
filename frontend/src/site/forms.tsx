@@ -1,6 +1,6 @@
 import { Drawer } from "@mui/material";
 import { useCallback, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { t, Link } from "./i18n";
 import { track, type AnalyticsEvent } from "../lib/analytics";
 import { submitForm } from "../lib/forms";
 import { Icon, OkMark } from "./ui";
@@ -24,12 +24,12 @@ export function isIsraeliPhone(value: string) {
 
 export function fieldError(value: string, rule: Rule): string {
   const v = value.trim();
-  if (rule.kind === "check") return rule.required && !v ? "יש לאשר כדי להמשיך" : "";
-  if (rule.kind === "choice") return rule.required && !v ? "יש לבחור אפשרות" : "";
-  if (!v) return rule.required ? REQUIRED : "";
-  if (rule.kind === "email" && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) return "יש להזין כתובת מייל תקינה";
-  if (rule.kind === "tel" && !isIsraeliPhone(v)) return "יש להזין מספר טלפון תקין";
-  if (rule.kind === "num" && !/^\d{1,5}$/.test(v)) return "יש להזין מספר";
+  if (rule.kind === "check") return rule.required && !v ? t("יש לאשר כדי להמשיך") : "";
+  if (rule.kind === "choice") return rule.required && !v ? t("יש לבחור אפשרות") : "";
+  if (!v) return rule.required ? t(REQUIRED) : "";
+  if (rule.kind === "email" && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) return t("יש להזין כתובת מייל תקינה");
+  if (rule.kind === "tel" && !isIsraeliPhone(v)) return t("יש להזין מספר טלפון תקין");
+  if (rule.kind === "num" && !/^\d{1,5}$/.test(v)) return t("יש להזין מספר");
   return "";
 }
 
@@ -112,14 +112,14 @@ export function useSiteForm(rules: Record<string, Rule>, options: Options = {}) 
       } else {
         const payload = options.toPayload ? options.toPayload(values) : values;
         const result = await submitForm(options.kind ?? "contact", window.location.pathname, payload);
-        if (!result.ok) throw new Error("השליחה לא הצליחה. מה שכתבתם נשמר — נסו שוב.");
+        if (!result.ok) throw new Error(t("השליחה לא הצליחה. מה שכתבתם נשמר — נסו שוב."));
         const event = options.kind ? COMPLETED_EVENT[options.kind] : undefined;
         if (event) track(event);
         setDone(true);
       }
       options.onSent?.(values);
     } catch (err) {
-      setFailed(err instanceof Error ? err.message : "משהו השתבש. נסו שוב.");
+      setFailed(err instanceof Error ? err.message : t("משהו השתבש. נסו שוב."));
     } finally {
       sending.current = false;
       setBusy(false);
@@ -232,7 +232,7 @@ export function Reveal({ open, children }: { open: boolean; children: ReactNode 
 export function SubmitButton({ busy, children }: { busy: boolean; children: ReactNode }) {
   return (
     <button type="submit" className={`btn btn-red sub${busy ? " busy" : ""}`} aria-busy={busy}>
-      <span className="sl"><span className="s1">{children}</span><span className="s2">שולחים…</span></span>
+      <span className="sl"><span className="s1">{children}</span><span className="s2">{t("שולחים…")}</span></span>
       <span className="spin" aria-hidden="true" />
     </button>
   );
@@ -261,9 +261,9 @@ export function FormShell({ form, submitLabel, thanksTitle, thanksText, children
       {children}
       <input ref={form.honey} className="honey" type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" />
       {noConsent ? null : (
-        <p className="consent">בשליחת הטופס אתם מאשרים את <Link to="/terms">מדיניות הפרטיות</Link>.</p>
+        <p className="consent">{t("בשליחת הטופס אתם מאשרים את")}{" "}<Link to="/terms">{t("מדיניות הפרטיות")}</Link>.</p>
       )}
-      {form.invalid ? <p className="ferr on" role="alert">נא לתקן את השדות המסומנים.</p> : null}
+      {form.invalid ? <p className="ferr on" role="alert">{t("נא לתקן את השדות המסומנים.")}</p> : null}
       {form.failed ? <p className="ferr on" role="alert">{form.failed}</p> : null}
       <SubmitButton busy={form.busy}>{submitLabel}</SubmitButton>
     </form>
@@ -281,7 +281,7 @@ export function Panel({ open, onClose, title, children }: { open: boolean; onClo
     >
       <div className="pnl-h">
         <h2>{title}</h2>
-        <button className="iconbtn" onClick={onClose} aria-label="סגירה"><Icon.close /></button>
+        <button className="iconbtn" onClick={onClose} aria-label={t("סגירה")}><Icon.close /></button>
       </div>
       <div className="pnl-b">{children}</div>
     </Drawer>

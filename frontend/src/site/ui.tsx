@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { t, Link, siteLang } from "./i18n";
 import { useCart } from "../lib/cart";
 import type { WcProduct } from "../lib/catalog";
 import { getProductOrderRules } from "../lib/productOrderRules";
@@ -13,11 +13,16 @@ function Svg({ size = 20, sw = 1.7, children }: { size?: number; sw?: number; ch
   );
 }
 
+/** Direction icons point the other way in English. */
+function mirror() {
+  return siteLang() === "en" ? "matrix(-1 0 0 1 24 0)" : undefined;
+}
+
 export const Icon = {
   bag: () => <Svg><path d="M5 8h14l-1 12H6L5 8z" /><path d="M9 8V6a3 3 0 0 1 6 0v2" /></Svg>,
-  arrow: () => <Svg size={18} sw={1.9}><path d="M19 12H5" /><path d="M11 6l-6 6 6 6" /></Svg>,
-  next: () => <Svg><path d="M15 6l-6 6 6 6" /></Svg>,
-  prev: () => <Svg><path d="M9 6l6 6-6 6" /></Svg>,
+  arrow: () => <Svg size={18} sw={1.9}><g transform={mirror()}><path d="M19 12H5" /><path d="M11 6l-6 6 6 6" /></g></Svg>,
+  next: () => <Svg><g transform={mirror()}><path d="M15 6l-6 6 6 6" /></g></Svg>,
+  prev: () => <Svg><g transform={mirror()}><path d="M9 6l6 6-6 6" /></g></Svg>,
   menu: () => <Svg><path d="M4 7h16" /><path d="M4 12h16" /><path d="M4 17h16" /></Svg>,
   close: () => <Svg><path d="M6 6l12 12" /><path d="M18 6L6 18" /></Svg>,
   plus: () => <Svg size={18} sw={1.9}><path d="M12 5v14" /><path d="M5 12h14" /></Svg>,
@@ -67,7 +72,7 @@ export function Title({ children, lead, big, as: Tag = "h1" }: { children: React
 
 export function usePageTitle(title: string) {
   useEffect(() => {
-    document.title = `${title} · לשון הרע לא מדבר אליי`;
+    document.title = `${title} · ${t("לשון הרע לא מדבר אליי")}`;
   }, [title]);
 }
 
@@ -82,7 +87,7 @@ export function moneyLabel(minor: string | number, minorUnit = 2) {
 
 export function ProductImage({ product }: { product: WcProduct }) {
   const image = product.images[0];
-  if (!image) return <span className="ph" style={{ position: "absolute", inset: 0 }}>תמונה בקרוב</span>;
+  if (!image) return <span className="ph" style={{ position: "absolute", inset: 0 }}>{t("תמונה בקרוב")}</span>;
   // Cards are small, so the browser picks a fitting size from srcset instead of the full-size src.
   return <img src={image.src} srcSet={image.srcset} sizes="(max-width: 900px) 50vw, 300px" alt={image.alt || product.name} loading="lazy" decoding="async" />;
 }
@@ -92,7 +97,7 @@ export function ProductLinkCard({ product, style }: { product: WcProduct; style?
   return (
     <Link className="pc" to={`/shop/product/${product.id}`} style={style}>
       <span className="pc-m"><ProductImage product={product} /></span>
-      <span className="pc-n">{product.name}</span>
+      <span className="pc-n" dir="auto">{product.name}</span>
       <span className="pc-p">{priceLabel(product)}</span>
     </Link>
   );
