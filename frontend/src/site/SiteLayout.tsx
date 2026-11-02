@@ -29,7 +29,9 @@ function doorIsCurrent(pathname: string, to: string) {
 function Logo() {
   return (
     <Link className="logo" to="/" aria-label={t("לשון הרע, לא מדבר אליי! — לעמוד הבית")}>
-      <img src="/images/site/logo.svg" alt="" width="1347" height="180" />
+      {siteLang() === "en"
+        ? <img src="/images/site/logo-en.svg" alt="" width="1635" height="134" />
+        : <img src="/images/site/logo.svg" alt="" width="1347" height="180" />}
     </Link>
   );
 }
@@ -38,7 +40,7 @@ function Logo() {
 function LangSwitch({ className, short, onClick }: { className?: string; short?: boolean; onClick?: () => void }) {
   const { pathname, search, hash } = useLocation();
   const other = siteLang() === "en" ? "he" : "en";
-  const label = other === "en" ? (short ? "EN" : "English") : (short ? "עב" : "עברית");
+  const label = other === "en" ? (short ? "EN" : "English") : (short ? "HE" : "עברית");
   return <RouterLink className={className} to={`${withLocale(pathname, other)}${search}${hash}`} lang={other} onClick={onClick}>{label}</RouterLink>;
 }
 
