@@ -62,7 +62,7 @@ body { margin: 0; background: #FFFFFF; }
 .link:hover span { background-size: 0 2px; background-position: 100% 100%; }
 /* section titles: short red bar, bold heading */
 .ttl { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
-.bar { display: block; width: 46px; height: 4px; background: var(--red); }
+.bar { display: none; width: 46px; height: 4px; background: var(--red); }
 .ttl-h { margin: 0; font-size: 36px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; }
 .ttl.big .ttl-h { font-family: 'Karantina', sans-serif; font-weight: 700; font-size: 96px; line-height: .86; letter-spacing: 0; }
 .lead { margin: 0; max-width: 640px; font-size: 18px; line-height: 1.65; color: var(--ink2); }
@@ -1001,7 +1001,7 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
 @media (max-width: 900px) {
   .page-collection .phead { padding: 18px 0 8px; }
   .page-collection .phead .ttl { flex-direction: row; align-items: center; gap: 10px; }
-  .page-collection .phead .ttl .bar { width: 5px; height: 34px; flex: none; }
+  .page-collection .phead .ttl .bar { display: block; width: 5px; height: 34px; flex: none; }
   .page-collection .ttl.big .ttl-h { font-size: 54px; }
   .page-collection .intro { margin-top: 6px; }
   .page-collection .intro-hi, .page-collection .intro-brand { display: none; }
