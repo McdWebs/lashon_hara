@@ -1,0 +1,6 @@
+Reference photos for the shop hero. Placeholders until the team supplies its own.
+All three are free to use under the Unsplash License (https://unsplash.com/license).
+
+ref-bracelets.jpg   Dillon Wanner       https://unsplash.com/photos/4Y-YVt-eCJo
+ref-portrait.jpg    maks_d              https://unsplash.com/photos/RAPzLkawBJQ
+ref-wristband.jpg   Outcast India       https://unsplash.com/photos/7PUjuUtHCoo

@@ -180,9 +180,9 @@ export function CollectionPage() {
             {searchOpen ? null : <p className="chero-p">{introWhy}</p>}
           </div>
           <div className="chero-art" aria-hidden="true">
-            <span><img src="/images/shop/hero-gold.jpg" alt="" width="204" height="255" /></span>
-            <span><img src="/images/shop/hero-shirt.jpg" alt="" width="204" height="255" style={{ objectPosition: "50% 20%" }} /></span>
-            <span><img src="/images/shop/hero-fabric.jpg" alt="" width="204" height="255" /></span>
+            <span><img src="/images/shop/ref-bracelets.jpg" alt="" width="204" height="255" /></span>
+            <span><img src="/images/shop/ref-portrait.jpg" alt="" width="204" height="255" /></span>
+            <span><img src="/images/shop/ref-wristband.jpg" alt="" width="204" height="255" /></span>
           </div>
         </div>
       </section>
