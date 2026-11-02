@@ -26,6 +26,7 @@ export const Icon = {
   prev: () => <Svg><g transform={mirror()}><path d="M9 6l6 6-6 6" /></g></Svg>,
   menu: () => <Svg><path d="M4 7h16" /><path d="M4 12h16" /><path d="M4 17h16" /></Svg>,
   close: () => <Svg><path d="M6 6l12 12" /><path d="M18 6L6 18" /></Svg>,
+  chevron: () => <Svg size={16} sw={2.2}><path d="M6 9l6 6 6-6" /></Svg>,
   plus: () => <Svg size={18} sw={1.9}><path d="M12 5v14" /><path d="M5 12h14" /></Svg>,
   minus: () => <Svg size={16} sw={1.9}><path d="M6 12h12" /></Svg>,
   ok: () => <Svg size={18} sw={2.2}><path d="M5 12.5l4.5 4.5L19 7.5" /></Svg>,

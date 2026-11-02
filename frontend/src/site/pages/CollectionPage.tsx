@@ -6,7 +6,7 @@ import { t, Link, siteLang } from "../i18n";
 import { fetchProducts } from "../../lib/catalog";
 import { SORT_CATALOG, priceKey, priceLabel, priceQuery, useSiteConfig } from "../../lib/siteConfig";
 import { copy } from "../copy";
-import { CardsSkeleton, Icon, ShopCard, Title, usePageTitle } from "../ui";
+import { CardsSkeleton, Icon, ShopCard, usePageTitle } from "../ui";
 
 const PER_PAGE = 12;
 
@@ -15,6 +15,17 @@ function SearchIcon() {
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <circle cx="11" cy="11" r="6.5" />
       <path d="M16 16l4.5 4.5" />
+    </svg>
+  );
+}
+
+function TruckIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3 7h11v9H3z" />
+      <path d="M14 10h4l3 3v3h-7" />
+      <circle cx="7.5" cy="17.5" r="1.8" />
+      <circle cx="17.5" cy="17.5" r="1.8" />
     </svg>
   );
 }
@@ -32,7 +43,8 @@ function FilterIcon() {
 export function CollectionPage() {
   usePageTitle(t("הקולקציה"));
   const { SHIPPING_NOTE, SHOP_INTRO } = copy();
-  const [introHi, introBrand, introWhy] = SHOP_INTRO.split("\n").map((line) => line.replace(/"/g, ""));
+  const introWhy = SHOP_INTRO.split("\n")[2];
+  const [shipLead, shipRest] = SHIPPING_NOTE.replace(/,$/m, "").split("\n");
   const [params, setParams] = useSearchParams();
 
   // Tabs, sorts and price ranges come from the admin; until the team changes them the built-in ones apply.
@@ -62,6 +74,9 @@ export function CollectionPage() {
 
   const [draft, setDraft] = useState(q);
   const [sheet, setSheet] = useState(false);
+  // On a phone the search opens in place of the title.
+  const [searchOpen, setSearchOpen] = useState(q !== "");
+  const mobileSearch = useRef<HTMLInputElement>(null);
   const typing = useRef(false);
 
   function update(next: Record<string, string>, replace = false) {
@@ -122,49 +137,63 @@ export function CollectionPage() {
 
   return (
     <div className="page-collection">
-      <section className="phead">
-        <div className="wrap">
-          <Title big>{t("הקולקציה")}</Title>
-          <div className="intro rv">
-            <span className="intro-hi">{introHi}</span>
-            <span className="intro-brand">{introBrand}</span>
-            <p className="intro-why">{introWhy}</p>
+      <div className="shipstrip">
+        <TruckIcon />
+        <span>{shipLead} — <b>{shipRest}</b></span>
+      </div>
+
+      <section className="chero">
+        <div className="wrap chero-in">
+          <div className="chero-t">
+            {searchOpen ? (
+              <div className="msearch" role="search">
+                <label className="msearch-f">
+                  <SearchIcon />
+                  <input
+                    ref={mobileSearch}
+                    type="search"
+                    value={draft}
+                    onChange={(e) => setDraft(e.target.value)}
+                    placeholder={t("חיפוש מוצר…")}
+                    aria-label={t("חיפוש מוצר")}
+                    enterKeyHint="search"
+                  />
+                  {draft ? (
+                    <button type="button" className="msearch-x" aria-label={t("ניקוי החיפוש")} onClick={() => { setDraft(""); mobileSearch.current?.focus(); }}><Icon.close /></button>
+                  ) : null}
+                </label>
+                <button type="button" className="msearch-c" onClick={() => { setDraft(""); setSearchOpen(false); }}>{t("ביטול")}</button>
+              </div>
+            ) : (
+              <div className="chero-row">
+                <h1 className="chero-h">{t("הקולקציה")}</h1>
+                <div className="chero-btns">
+                  <button type="button" className="cbtn" aria-label={t("חיפוש מוצר")} onClick={() => setSearchOpen(true)}><SearchIcon /></button>
+                  <button type="button" className="cbtn fill" aria-label={t("סינון ומיון")} onClick={() => setSheet(true)}>
+                    <FilterIcon />
+                    {price.key || sort.key ? <span className="cbtn-dot" aria-hidden="true" /> : null}
+                  </button>
+                </div>
+              </div>
+            )}
+            {searchOpen ? null : <p className="chero-p">{introWhy}</p>}
           </div>
-          {/* On phones the shipping line sits right under the title, where it is read first. */}
-          <p className="shipnote shipnote-hero">{SHIPPING_NOTE}</p>
+          <div className="chero-art" aria-hidden="true">
+            <span><img src="/images/shop/hero-gold.jpg" alt="" width="204" height="255" /></span>
+            <span><img src="/images/shop/hero-shirt.jpg" alt="" width="204" height="255" style={{ objectPosition: "50% 20%" }} /></span>
+            <span><img src="/images/shop/hero-fabric.jpg" alt="" width="204" height="255" /></span>
+          </div>
         </div>
       </section>
 
-      <div className="tools" role="search">
-        <div className="wrap tools-in">
-          <label className="tsearch">
-            <SearchIcon />
-            <input
-              type="search"
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              placeholder={t("חיפוש מוצר…")}
-              aria-label={t("חיפוש מוצר")}
-              enterKeyHint="search"
-            />
-            {draft ? (
-              <button type="button" className="tclear" aria-label={t("ניקוי החיפוש")} onClick={() => setDraft("")}>
-                <Icon.close />
-              </button>
-            ) : null}
-          </label>
-
-          <button type="button" className="tfilter" aria-label={t("סינון ומיון")} onClick={() => setSheet(true)}>
-            <FilterIcon />
-            {price.key || sort.key ? <span className="tfilter-dot" aria-hidden="true" /> : null}
-          </button>
-
-          <div className="chips" role="group" aria-label={t("קולקציות")}>
-            {!ready ? [0, 1, 2, 3].map((i) => <span key={i} className="skel chip-skel" aria-hidden="true" />) : COLLECTIONS.filter((c) => !c.hidden || c.key === active.key).map((c) => (
+      <div className="ctools">
+        <div className="wrap ctools-in">
+          <div className="ctabs" role="group" aria-label={t("קולקציות")}>
+            {!ready ? [0, 1, 2, 3].map((i) => <span key={i} className="skel ctab-skel" aria-hidden="true" />) : COLLECTIONS.filter((c) => !c.hidden || c.key === active.key).map((c) => (
               <button
                 key={c.key}
                 type="button"
-                className={`chip${active.key === c.key ? " on" : ""}`}
+                className={`ctab${active.key === c.key ? " on" : ""}`}
                 aria-pressed={active.key === c.key}
                 onClick={() => update({ collection: c.key === "all" ? "" : c.key })}
               >
@@ -173,11 +202,25 @@ export function CollectionPage() {
             ))}
           </div>
 
-          <div className="tsel">
-            <select value={price.key} onChange={(e) => update({ price: e.target.value })} aria-label={t("סינון לפי מחיר")}>
+          <div className="cfind-g" role="search">
+            <label className="cfind">
+              <SearchIcon />
+              <input
+                type="search"
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                placeholder={t("חיפוש מוצר…")}
+                aria-label={t("חיפוש מוצר")}
+                enterKeyHint="search"
+              />
+              {draft ? (
+                <button type="button" className="cfind-x" aria-label={t("ניקוי החיפוש")} onClick={() => setDraft("")}><Icon.close /></button>
+              ) : null}
+            </label>
+            <select className="cpick" value={price.key} onChange={(e) => update({ price: e.target.value })} aria-label={t("סינון לפי מחיר")}>
               {PRICES.map((p) => <option key={p.key} value={p.key}>{p.label}</option>)}
             </select>
-            <select value={sort.key} onChange={(e) => update({ sort: e.target.value })} aria-label={t("מיון")}>
+            <select className="cpick" value={sort.key} onChange={(e) => update({ sort: e.target.value })} aria-label={t("מיון")}>
               {SORTS.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
             </select>
           </div>
@@ -204,7 +247,10 @@ export function CollectionPage() {
             ) : null}
             {filtered ? <button type="button" className="tag-clear" onClick={clearAll}>{t("איפוס הכול")}</button> : null}
           </div>
-          <p className="shipnote">{SHIPPING_NOTE}</p>
+          <button type="button" className="msort" onClick={() => setSheet(true)}>
+            <span>{t("מיון")}: {sort.key === "" ? t("ברירת מחדל") : sort.label}</span>
+            <Icon.chevron />
+          </button>
         </div>
 
         <div className="grid" aria-busy={query.isFetching}>
