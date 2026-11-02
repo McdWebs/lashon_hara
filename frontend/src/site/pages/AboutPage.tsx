@@ -121,7 +121,7 @@ function Founder({ block }: { block: FounderBlock }) {
   );
 }
 
-/** The line fills with the scroll and each year lights up as the line reaches it. */
+/** The line fills with the scroll and each year lights up in turn, each for an equal stretch of it. */
 function Timeline() {
   const list = useRef<HTMLOListElement>(null);
 
@@ -146,11 +146,16 @@ function Timeline() {
         progress = (anchor - box.top) / box.height;
       }
       progress = Math.min(Math.max(progress, 0), 1);
-      tl!.style.setProperty("--p", String(progress));
-      const reached = items.filter((item) => item.offsetTop <= progress * tl!.offsetHeight);
-      items.forEach((item) => {
-        item.classList.toggle("on", reached.includes(item));
-        item.classList.toggle("cur", item === reached[reached.length - 1]);
+      // Every year gets the same stretch of scrolling, however long its text is.
+      const slot = Math.min(Math.floor(progress * items.length), items.length - 1);
+      const dots = items.map((item) => item.offsetTop + 14);
+      const from = dots[slot];
+      const to = slot < items.length - 1 ? dots[slot + 1] : tl!.offsetHeight;
+      const within = progress * items.length - slot;
+      tl!.style.setProperty("--p", String(Math.min((from + (to - from) * within) / tl!.offsetHeight, 1)));
+      items.forEach((item, i) => {
+        item.classList.toggle("on", i <= slot);
+        item.classList.toggle("cur", i === slot);
       });
     }
     function request() {
