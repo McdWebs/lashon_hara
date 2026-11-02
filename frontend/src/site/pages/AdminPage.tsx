@@ -3,6 +3,7 @@ import { adminConfig, type StoredConfig } from "../../lib/adminConfig";
 import { adminApi, adminToken } from "../../lib/media";
 import { CalendarSection } from "../admin/CalendarSection";
 import { CounterSection } from "../admin/CounterSection";
+import { FlagsSection } from "../admin/FlagsSection";
 import { LecturesSection } from "../admin/LecturesSection";
 import { MediaSection } from "../admin/MediaSection";
 import { ShopSection } from "../admin/ShopSection";
@@ -15,6 +16,7 @@ const SECTIONS = [
   { key: "calendar", label: "יומן ותאריכים", page: "/activity" },
   { key: "shop", label: "חנות", page: "/shop" },
   { key: "counter", label: "מונה צמידים", page: "/activity" },
+  { key: "flags", label: "דגלי תכונות", page: "/" },
 ] as const;
 type SectionKey = (typeof SECTIONS)[number]["key"];
 
@@ -138,6 +140,7 @@ function Manager({ onLogout }: { onLogout: (notice?: string) => void }) {
           {section === "calendar" ? (stored ? <CalendarSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
           {section === "shop" ? (stored ? <ShopSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
           {section === "counter" ? (stored ? <CounterSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
+          {section === "flags" ? (stored ? <FlagsSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
         </main>
 
         <div className="adm-toasts" aria-live="polite">

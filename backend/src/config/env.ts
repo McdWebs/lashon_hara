@@ -28,6 +28,7 @@ export const env = {
     bucket: process.env.R2_BUCKET ?? "",
     publicUrl: (process.env.R2_PUBLIC_URL ?? "").replace(/\/$/, ""),
   },
+  siteUrl: (process.env.SITE_URL ?? "https://lashonhara.co.il").replace(/\/$/, ""),
   contactInbox: process.env.CONTACT_INBOX ?? "",
   whatsappNumber: process.env.WHATSAPP_NUMBER ?? "972543644512",
   supportHours: process.env.SUPPORT_HOURS ?? "09:00-18:00, six days a week",

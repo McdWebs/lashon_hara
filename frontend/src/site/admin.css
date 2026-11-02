@@ -254,3 +254,12 @@
   .adm-acc-a .adm-ib { width: 36px; height: 36px; }
   .adm-save { bottom: 10px; }
 }
+
+/* feature flags */
+.adm-flags { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.adm-flags li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 6px 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.adm-flags li:last-child { border-bottom: 0; }
+.adm-flags .adm-sw { font-size: 17px; font-weight: 700; }
+.adm-flags p { grid-column: 1; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; max-width: 70ch; }
+.adm-state { grid-row: 1; grid-column: 2; padding: 4px 12px; border-radius: 999px; background: var(--soft); color: var(--muted); font-size: 13px; font-weight: 700; }
+.adm-state.on { background: #EAF7EE; color: #145A2A; }

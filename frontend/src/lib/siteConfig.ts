@@ -14,7 +14,16 @@ export type LectureConfig = { id: string; he: Program; en?: Program };
 /** What the admin saves for the calendar, which also holds the link and the dates blocked by hand. */
 export type CalendarSettings = { icsUrl: string; closedWeekdays: number[]; monthsAhead: number; blockedDates: string[] };
 
+/** Switches the team can turn on and off in the admin. */
+export type Flags = { english: boolean };
+
+export const DEFAULT_FLAGS: Flags = {
+  // The site starts in Hebrew only; English is switched on from the admin when it is ready.
+  english: false,
+};
+
 export type SiteConfig = {
+  flags: Flags;
   counter: number | null;
   calendar: CalendarConfig;
   shop: ShopConfig;
@@ -61,6 +70,7 @@ export const DEFAULT_COUNTER = 2885026;
 export const DEFAULT_LECTURES: LectureConfig[] = PROGRAMS_HE.map((he, i) => ({ id: `default-${i}`, he, en: PROGRAMS_EN[i] }));
 
 export const DEFAULTS: SiteConfig = {
+  flags: DEFAULT_FLAGS,
   counter: DEFAULT_COUNTER,
   calendar: DEFAULT_CALENDAR,
   shop: DEFAULT_SHOP,
@@ -92,7 +102,7 @@ export function priceLabel(p: PriceRange, lang: "he" | "en") {
 
 /* ---------- loading ---------- */
 
-type Stored = Partial<{ counter: number | null; calendar: CalendarConfig; shop: ShopConfig; lectures: LectureConfig[] }>;
+type Stored = Partial<{ flags: Partial<Flags>; counter: number | null; calendar: CalendarConfig; shop: ShopConfig; lectures: LectureConfig[] }>;
 
 async function fetchStored(): Promise<Stored> {
   const res = await fetch("/api/site-config");
@@ -103,6 +113,7 @@ async function fetchStored(): Promise<Stored> {
 function merge(stored: Stored | undefined): SiteConfig {
   if (!stored) return DEFAULTS;
   return {
+    flags: { ...DEFAULT_FLAGS, ...stored.flags },
     counter: stored.counter !== undefined ? stored.counter : DEFAULTS.counter,
     calendar: stored.calendar ?? DEFAULTS.calendar,
     shop: stored.shop ?? DEFAULTS.shop,

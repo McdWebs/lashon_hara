@@ -54,7 +54,10 @@ const lectures = z.object({
     .refine((list) => new Set(list.map((l) => l.id)).size === list.length, "duplicate_id"),
 });
 
-const SECTIONS = { counter, calendar, shop, lectures } as const;
+/** Switches the team can turn on and off. A flag that was never saved keeps the default the site ships with. */
+const flags = z.object({ english: z.boolean() });
+
+const SECTIONS = { counter, calendar, shop, lectures, flags } as const;
 type Section = keyof typeof SECTIONS;
 const isSection = (name: string): name is Section => name in SECTIONS;
 
@@ -74,6 +77,7 @@ siteConfigRouter.get("/", async (_req, res) => {
   if (all.counter) out.counter = (all.counter as z.infer<typeof counter>).value;
   if (all.shop) out.shop = all.shop;
   if (all.lectures) out.lectures = (all.lectures as z.infer<typeof lectures>).items;
+  if (all.flags) out.flags = all.flags;
 
   // Calendar rules are always sent, because the taken days can come from the connected calendar.
   const cal = all.calendar as z.infer<typeof calendar> | undefined;
@@ -93,7 +97,8 @@ siteConfigRouter.get("/", async (_req, res) => {
     };
   }
 
-  res.set("Cache-Control", "public, max-age=30, s-maxage=60, stale-while-revalidate=300");
+  // Short, so a change in the admin reaches visitors within about a minute.
+  res.set("Cache-Control", "public, max-age=20, s-maxage=30, stale-while-revalidate=30");
   res.json(out);
 });
 

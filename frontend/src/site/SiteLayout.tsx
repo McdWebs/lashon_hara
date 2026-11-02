@@ -8,6 +8,7 @@ import { ContactContext, ContactPanel, useContact } from "./contact";
 import { langFromPath, stripLocale, withLocale } from "../i18n/locale";
 import { LocaleContext, buildLocale } from "../i18n/useLocale";
 import { useCart } from "../lib/cart";
+import { useSiteConfig } from "../lib/siteConfig";
 import { SITE } from "../lib/site";
 import { CookieBanner } from "./CookieBanner";
 import { Icon } from "./ui";
@@ -40,6 +41,9 @@ function Logo() {
 /** The same page in the other language. */
 function LangSwitch({ className, short, onClick }: { className?: string; short?: boolean; onClick?: () => void }) {
   const { pathname, search, hash } = useLocation();
+  const { config } = useSiteConfig();
+  // The language switch is part of the English feature flag. It stays on a page that is already in English, so nobody is stranded.
+  if (!config.flags.english && siteLang() !== "en") return null;
   const other = siteLang() === "en" ? "he" : "en";
   const label = other === "en" ? (short ? "EN" : "English") : (short ? "HE" : "עברית");
   return <RouterLink className={className} to={`${withLocale(pathname, other)}${search}${hash}`} lang={other} onClick={onClick}>{label}</RouterLink>;

@@ -3,11 +3,12 @@ import { CacheProvider } from "@emotion/react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { BrowserRouter, Route, Routes, useLocation, useParams } from "react-router-dom";
+import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
 import { LocaleRedirect } from "./components/LocaleRedirect";
-import { langFromPath } from "./i18n/locale";
+import { langFromPath, stripLocale } from "./i18n/locale";
+import { useSiteConfig } from "./lib/siteConfig";
 import { SiteLayout } from "./site/SiteLayout";
 import { AboutPage as SiteAboutPage } from "./site/pages/AboutPage";
 import { ActivityPage as SiteActivityPage } from "./site/pages/ActivityPage";
@@ -33,6 +34,16 @@ function OldPayLink() {
   const { search } = useLocation();
   const key = new URLSearchParams(search).get("key") ?? "";
   return <LocaleRedirect to={`/order-pay/${encodeURIComponent(id)}?key=${encodeURIComponent(key)}`} />;
+}
+
+/** The English pages exist only while the English flag is on; otherwise they open the same page in Hebrew. */
+function EnglishGate() {
+  const { config, ready } = useSiteConfig();
+  const { pathname, search, hash } = useLocation();
+  // Wait for the answer, so a visitor on an English link is not sent to Hebrew just because the answer is still on its way.
+  if (!ready) return null;
+  if (!config.flags.english) return <Navigate to={`${stripLocale(pathname)}${search}${hash}`} replace />;
+  return <Outlet />;
 }
 
 const cacheRtl = createCache({ key: "muirtl", stylisPlugins: [prefixer, rtlPlugin] });
@@ -88,7 +99,7 @@ function ThemedTree() {
         <Routes>
           {/* The team's tools have their own layout, without the public header and footer. */}
           <Route path="admin" element={<SiteAdminPage />} />
-          <Route path="/en">
+          <Route path="/en" element={<EnglishGate />}>
             {newSitePages()}
           </Route>
           {newSitePages()}

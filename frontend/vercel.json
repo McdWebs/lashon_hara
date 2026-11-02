@@ -5,6 +5,10 @@
       "destination": "https://lashon-hara.onrender.com/api/:path*"
     },
     {
+      "source": "/sitemap.xml",
+      "destination": "https://lashon-hara.onrender.com/api/sitemap.xml"
+    },
+    {
       "source": "/health",
       "destination": "https://lashon-hara.onrender.com/health"
     },

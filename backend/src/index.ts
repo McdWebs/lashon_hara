@@ -14,6 +14,7 @@ import { healthRouter } from "./routes/health.js";
 import { adminRouter, mediaRouter } from "./routes/media.js";
 import { payRouter } from "./routes/pay.js";
 import { siteConfigRouter } from "./routes/siteConfig.js";
+import { sitemapRouter } from "./routes/sitemap.js";
 import { statsRouter } from "./routes/stats.js";
 
 const app = express();
@@ -32,6 +33,7 @@ app.use("/api/forms", formsRouter);
 app.use("/api/stats", statsRouter);
 app.use("/api/media", mediaRouter);
 app.use("/api/site-config", siteConfigRouter);
+app.use("/api/sitemap.xml", sitemapRouter);
 app.use("/api/pay", payRouter);
 app.use("/api/admin", adminRouter);
 
