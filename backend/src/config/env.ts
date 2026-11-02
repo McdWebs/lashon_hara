@@ -17,6 +17,17 @@ export const env = {
   catalogPurgeSecret: process.env.CATALOG_PURGE_SECRET ?? "",
   turnstileSecret: process.env.TURNSTILE_SECRET_KEY ?? "",
   sentryDsn: process.env.SENTRY_DSN ?? "",
+  admin: {
+    password: process.env.ADMIN_PASSWORD ?? "",
+    tokenSecret: process.env.ADMIN_TOKEN_SECRET ?? "",
+  },
+  r2: {
+    accountId: process.env.R2_ACCOUNT_ID ?? "",
+    accessKeyId: process.env.R2_ACCESS_KEY_ID ?? "",
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY ?? "",
+    bucket: process.env.R2_BUCKET ?? "",
+    publicUrl: (process.env.R2_PUBLIC_URL ?? "").replace(/\/$/, ""),
+  },
   contactInbox: process.env.CONTACT_INBOX ?? "",
   whatsappNumber: process.env.WHATSAPP_NUMBER ?? "972543644512",
   supportHours: process.env.SUPPORT_HOURS ?? "09:00-18:00, six days a week",

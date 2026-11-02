@@ -11,6 +11,7 @@ import { langFromPath } from "./i18n/locale";
 import { SiteLayout } from "./site/SiteLayout";
 import { AboutPage as SiteAboutPage } from "./site/pages/AboutPage";
 import { ActivityPage as SiteActivityPage } from "./site/pages/ActivityPage";
+import { AdminPage as SiteAdminPage } from "./site/pages/AdminPage";
 import { CartPage as SiteCartPage } from "./site/pages/CartPage";
 import { CheckoutPage as SiteCheckoutPage } from "./site/pages/CheckoutPage";
 import { CollectionPage as SiteCollectionPage } from "./site/pages/CollectionPage";
@@ -46,6 +47,7 @@ function newSitePages() {
       <Route path="checkout" element={<SiteCheckoutPage />} />
       <Route path="order-confirmation" element={<SiteConfirmationPage />} />
       <Route path="join" element={<SiteJoinPage />} />
+      <Route path="admin" element={<SiteAdminPage />} />
       <Route path="terms" element={<SiteTermsPage />} />
       <Route path="accessibility" element={<SiteAccessibilityPage />} />
       <Route path="about" element={<LocaleRedirect to="/who-we-are" />} />

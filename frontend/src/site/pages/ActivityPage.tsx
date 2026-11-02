@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { dateLocale, siteLang, t, Link, Navigate } from "../i18n";
 import { Field, FormShell, Panel, Reveal, Toggle, useSiteForm } from "../forms";
 import type { Program } from "../about";
+import { fetchMedia, type MediaWorld } from "../../lib/media";
 import { copy } from "../copy";
 import { Icon, Title, usePageTitle } from "../ui";
 
@@ -485,7 +486,18 @@ export function ActivityPage() {
   const next = firstFree(today, requested);
 
   const world = WORLDS.find((w) => w.key === (worldKey ?? "schools"));
+
+  // The team uploads photos and videos in the admin. Until they upload any, the sample set above is shown.
+  const mediaWorld: MediaWorld | null = world?.key === "idf" || world?.key === "ambassadors" ? world.key : null;
+  const uploaded = useQuery({
+    queryKey: ["site-media", mediaWorld],
+    queryFn: () => fetchMedia(mediaWorld!),
+    enabled: mediaWorld !== null,
+    retry: 0,
+  });
+
   if (!world) return <Navigate to="/activity" replace />;
+  const reels: Reel[] | undefined = uploaded.data?.length ? uploaded.data.map((m) => ({ kind: m.kind, src: m.src, caption: m.caption })) : world.reels;
 
   return (
     <div className="page-activity">
@@ -516,7 +528,7 @@ export function ActivityPage() {
           {world.reels ? (
             <>
               <Banner world={world} />
-              <Reels reels={world.reels} />
+              {uploaded.isLoading ? <div className="skel" style={{ height: 420 }} aria-hidden="true" /> : <Reels reels={reels ?? []} />}
             </>
           ) : (
             <div className="book">

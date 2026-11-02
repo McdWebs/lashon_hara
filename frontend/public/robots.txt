@@ -6,6 +6,8 @@ Disallow: /order-confirmation
 Disallow: /en/cart
 Disallow: /en/checkout
 Disallow: /en/order-confirmation
+Disallow: /admin
+Disallow: /en/admin
 Disallow: /api/
 
 Sitemap: https://lashonhara.co.il/sitemap.xml

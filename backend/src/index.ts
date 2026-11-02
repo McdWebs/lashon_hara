@@ -11,6 +11,7 @@ import { catalogRouter, startCatalogWarmup } from "./routes/catalog.js";
 import { checkoutRouter } from "./routes/checkout.js";
 import { formsRouter } from "./routes/forms.js";
 import { healthRouter } from "./routes/health.js";
+import { adminRouter, mediaRouter } from "./routes/media.js";
 import { statsRouter } from "./routes/stats.js";
 
 const app = express();
@@ -27,6 +28,8 @@ app.use("/api/cart", cartRouter);
 app.use("/api/checkout", checkoutRouter);
 app.use("/api/forms", formsRouter);
 app.use("/api/stats", statsRouter);
+app.use("/api/media", mediaRouter);
+app.use("/api/admin", adminRouter);
 
 Sentry.setupExpressErrorHandler(app);
 
