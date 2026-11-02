@@ -204,7 +204,7 @@ export const STORE_COPY = {
     storyEyebrow: "More than a product",
     storyTitle: "One sentence.\nA whole movement.",
     storyBody:
-      "Since 2007, “Lashon hara doesn't speak to me” has passed from person to person. Every piece is a quiet way to take part.",
+      "Since 2007, “Lashon hara speak no evil” has passed from person to person. Every piece is a quiet way to take part.",
     storyCta: "Why it matters",
     socialEyebrow: "Out in the world",
     socialTitle: "Wear it. Share it. Pass it on.",

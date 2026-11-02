@@ -7,7 +7,7 @@ export const FOUNDER_WHY = "In essence, I wanted to bring part of my father's ed
 
 export const FOUNDER: FounderBlock[] = [
   "From a young age, my father, of blessed memory, taught us not to talk about others, neither good nor bad, unless the words carry added value or a lesson worth having in life.",
-  { kind: "headed", head: "The campaign \"Lashon hara doesn't speak to me!\"", text: "was born after I witnessed, up close, an unfortunate incident in which two people close to me fought and cut off contact because of something said about one of them, which in the end turned out to be exaggerated and out of all proportion. When I saw the rift and the pain caused by distorted words that had spun out of control, I felt I could not stand by, and I thought of a slogan that would remind people, and lead them not to speak lashon hara." },
+  { kind: "headed", head: "The campaign \"Lashon hara speak no evil!\"", text: "was born after I witnessed, up close, an unfortunate incident in which two people close to me fought and cut off contact because of something said about one of them, which in the end turned out to be exaggerated and out of all proportion. When I saw the rift and the pain caused by distorted words that had spun out of control, I felt I could not stand by, and I thought of a slogan that would remind people, and lead them not to speak lashon hara." },
   { kind: "choice", intro: "I hesitated for a long time over which sentence was right:", chosen: ["\"Lashon hara ", "doesn't speak", " to me\""], or: "or", rejected: ["\"Lashon hara, ", "don't speak", " to me\""], outro: "I understood that there is a very big difference between the two, and I decided the right path was personal commitment and taking responsibility, not preaching and demanding that others change their norms." },
   FOUNDER_WHY,
   "Today, especially with so many channels of communication and such vast exposure, guarding our tongue is becoming more significant and more fateful. It is no accident that it is said, \"Death and life are in the power of the tongue.\"",
@@ -23,13 +23,13 @@ export const FOUNDER: FounderBlock[] = [
 ];
 
 export const MISSION = [
-  "\"Lashon Hara Doesn't Speak to Me\" is a nonprofit working to strengthen a positive culture of discourse in Israel and to promote the values of tolerance and mutual respect by raising awareness of the harm caused by lashon hara and shaming.",
+  "\"Lashon Hara Speak No Evil\" is a nonprofit working to strengthen a positive culture of discourse in Israel and to promote the values of tolerance and mutual respect by raising awareness of the harm caused by lashon hara and shaming.",
   "The initiative was founded in 2007 by businessman David Halperin. It spread the message through giant billboards across the country, regular distribution of millions of stickers and bracelets to students in educational institutions, visits and product handouts at hospitals and army bases, and art exhibitions.\nWithin a short time the message became a common expression on many people's lips, crossing sectors and cultures.\nThe purpose of the campaign is a daily reminder of the damage caused by lashon hara, raising awareness of the power of words, and a statement of values by those who wear the message about their commitment to eradicating the phenomenon, because cultural change begins with each of us. The work is done by enlisting many partners and ambassadors, with the aim of creating an activist movement. The initiative has been a great success, has won broad public support across the country and at all ages, and the bracelets have become a sought-after fashion item.",
   "In recent years we have witnessed an escalation in accepted discourse. The phrase \"word of mouth\" takes on new meaning given the wide exposure of digital networks. Discourse turns hurtful quite easily and can lead to devastating results, when children who experience shaming and boycotts harm themselves, political debates take on a violent dimension, and there is a general decline in accepting others and different opinions.",
   "So, after 14 years of \"guerrilla\" activity born of doing, it was decided to formalize the work as a nonprofit, in order to expand it systematically and increase its influence on educating the next generation.",
   "The nonprofit's work comes from the belief that real cultural change will happen through education and personal example.\nThe nonprofit focuses on education and runs professional programs tailored to children and teenagers in kindergartens, schools, high schools and youth movements across the country. Graduates of our programs, along with many other volunteers, become part of a community of \"ambassadors\" committed to guarding the tongue, tolerance and respect for others, who act on the ground and on social networks to improve discourse. Alongside this, the nonprofit works, among other things, online, on social networks and in public media to reach as wide an audience as possible. The nonprofit partners with leading opinion shapers who have become its ambassadors, are also committed to the cause, and want to set a personal example.",
   "The nonprofit's work spans the world. To date the slogan has been translated into 19 languages, with more to come. The nonprofit is very active in English, including a website and distribution in the USA, as well as Instagram pages and distribution in other languages around the world.",
-  "In 2020 the Lashon Hara Doesn't Speak to Me initiative won the prestigious Jerusalem Prize.",
+  "In 2020 the Lashon Hara Speak No Evil initiative won the prestigious Jerusalem Prize.",
 ];
 
 export const MISSION_CALL = "Join us: together we can make a difference.";
@@ -51,7 +51,7 @@ export const ACTIONS: Array<{ head: string; body: string; say?: string; reply?: 
   { head: "Know some \"juicy\" gossip about someone? Stopping it is in your hands.", body: "Let's hold back from passing it on. We wouldn't want people telling such things about us." },
   { head: "Want to hold a discussion, offer criticism, express your opinion? Stick to the issue,", body: "respectfully. Keep the debate civil and give the other person room to speak. You don't have to agree with everyone and every idea, but it's worth listening: they may know at least one thing you hadn't thought of." },
   { head: "In a conversation where lashon hara begins?", body: "You can choose not to have lashon hara spoken around you, just as people ask others not to smoke or shout near them." },
-  { head: "Read a hurtful comment online?", say: "Reply:", reply: "\"There's a nicer way to write that. Lashon hara doesn't speak to me.\"", body: "If a message isn't given a stage, it becomes pointless. We encourage boosting positive comments and expressing opinions in a civil way, and bringing down those who hurt us by ignoring them or with a sharp message. You can block and delete hurtful commenters if they are \"friends\" on social networks." },
+  { head: "Read a hurtful comment online?", say: "Reply:", reply: "\"There's a nicer way to write that. Lashon hara speak no evil.\"", body: "If a message isn't given a stage, it becomes pointless. We encourage boosting positive comments and expressing opinions in a civil way, and bringing down those who hurt us by ignoring them or with a sharp message. You can block and delete hurtful commenters if they are \"friends\" on social networks." },
   { head: "Asking for help:", body: "If lashon hara was spread about you, in writing or by word of mouth, it's worth going to the source or the platform where it was published and asking for a correction or removal." },
   { head: "When minors are involved:", body: "It's important to tell a supportive adult or family member who can help deal with it." },
 ];
@@ -82,11 +82,11 @@ export const PROGRAMS: Program[] = [
   {
     title: "Heroes of Light in Schools",
     lead: "An Israeli hero: a story of courage,\ninspiration and choosing good",
-    body: ["A moving, inspiring talk by an IDF hero, a soldier severely wounded during his service who chose not to give in to his injury, rebuilt his life and turned his personal story into a mission of giving and meaning.\nToday, as an ambassador of Lashon Hara Doesn't Speak to Me, he visits schools and educational institutions, shares his story of heroism and delivers a powerful message about willpower, coping with crises, choosing life and, above all, the power each of us has to choose good words, mutual respect and unity."],
+    body: ["A moving, inspiring talk by an IDF hero, a soldier severely wounded during his service who chose not to give in to his injury, rebuilt his life and turned his personal story into a mission of giving and meaning.\nToday, as an ambassador of Lashon Hara Speak No Evil, he visits schools and educational institutions, shares his story of heroism and delivers a powerful message about willpower, coping with crises, choosing life and, above all, the power each of us has to choose good words, mutual respect and unity."],
     notes: ["Suited to students and teenagers,\ngiven to grade 7 and up", "After the talk, about 45 minutes long,\nthe famous silicone bracelets are handed out to all students"],
   },
   {
-    title: "A talk by David Halperin\nFounder of Lashon Hara Doesn't Speak to Me",
+    title: "A talk by David Halperin\nFounder of Lashon Hara Speak No Evil",
     lead: "",
     body: [
       "How did a slogan that started as one sticker in 2007 become common property, an expression known in almost every home in Israel, and a social movement touching hundreds of thousands of people in Israel and around the world?\nIn a personal, fascinating and inspiring talk, David Halperin shares the story behind founding the nonprofit and the journey of turning a simple message into a worldview: the power of words to shape reality, influence people and change lives.",
@@ -97,6 +97,6 @@ export const PROGRAMS: Program[] = [
   },
 ];
 
-export const SHOP_INTRO = "Welcome to the official store of\n\"Lashon Hara Doesn't Speak to Me\"\nSales on the site allow us to keep handing out products for free to schools and educational institutions.";
+export const SHOP_INTRO = "Welcome to the official store of\n\"Lashon Hara Speak No Evil\"\nSales on the site allow us to keep handing out products for free to schools and educational institutions.";
 
 export const SHIPPING_NOTE = "On orders over ₪100,\nfree shipping to pickup points across Israel";
