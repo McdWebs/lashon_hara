@@ -977,7 +977,6 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
 .page-collection .tag { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px 0 12px; border: 0; background: var(--soft); color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; transition: background .25s ease; }
 .page-collection .tag:hover { background: var(--soft2); }
 .page-collection .tag svg { width: 14px; height: 14px; }
-.page-collection .msort { display: none; }
 
 @media (max-width: 900px) {
   .page-collection .shipstrip { gap: 8px; font-size: 12px; min-height: 36px; padding: 6px 12px; }
@@ -1007,11 +1006,10 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
   .page-collection .ctab { font-size: 16px; }
   .page-collection .cfind-g { display: none; }
 
-  .page-collection .shop-top { padding-block: 4px 12px; flex-wrap: nowrap; align-items: flex-start; }
+  .page-collection .shop-top { padding-block: 4px 12px; }
   .page-collection .meta { flex: 1 1 auto; min-width: 0; padding-top: 6px; }
   .page-collection .cnt { font-size: 13px; }
-  .page-collection .msort { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; flex: none; white-space: nowrap; padding: 0; border: 0; background: none; color: var(--ink); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
-}
+  }
 
 /* ===== Custom dropdown ===== */
 .cdrop { position: relative; }

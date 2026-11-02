@@ -258,10 +258,6 @@ export function CollectionPage() {
             ) : null}
             {filtered ? <button type="button" className="tag-clear" onClick={clearAll}>{t("איפוס הכול")}</button> : null}
           </div>
-          <button type="button" className="msort" onClick={() => setSheet(true)}>
-            <span>{t("מיון")}: {sort.key === "" ? t("ברירת מחדל") : sort.label}</span>
-            <Icon.chevron />
-          </button>
         </div>
 
         <div className="grid" aria-busy={query.isFetching}>
