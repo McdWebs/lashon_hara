@@ -16,7 +16,7 @@ const SECTIONS = [
   { key: "calendar", label: "יומן ותאריכים", page: "/activity" },
   { key: "shop", label: "חנות", page: "/shop" },
   { key: "counter", label: "מונה צמידים", page: "/activity" },
-  { key: "flags", label: "דגלי תכונות", page: "/" },
+  { key: "flags", label: "חסמים", page: "/" },
 ] as const;
 type SectionKey = (typeof SECTIONS)[number]["key"];
 

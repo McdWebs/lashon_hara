@@ -8,7 +8,7 @@ const FLAGS: Array<{ key: keyof Flags; title: string; text: string }> = [
   {
     key: "english",
     title: "גרסה באנגלית",
-    text: "כשהדגל פועל, מופיע באתר מתג השפה והגרסה באנגלית. כשהוא כבוי, האתר מוצג בעברית בלבד, וקישורים לעמודים באנגלית פותחים את העמוד המקביל בעברית. מפת האתר לגוגל מתעדכנת בהתאם.",
+    text: "כשהחסם פועל, מופיע באתר מתג השפה והגרסה באנגלית. כשהוא כבוי, האתר מוצג בעברית בלבד, וקישורים לעמודים באנגלית פותחים את העמוד המקביל בעברית. מפת האתר לגוגל מתעדכנת בהתאם.",
   },
 ];
 
@@ -53,7 +53,7 @@ export function FlagsSection({ stored, onSaved }: { stored: StoredConfig | null;
   return (
     <div className="adm-section">
       <SectionHead
-        title="דגלי תכונות"
+        title="חסמים"
         text="מפעילים ומכבים תכונות של האתר בלי לפרסם גרסה חדשה. שינוי מגיע לאתר בתוך כדקה."
         onReset={custom ? () => setResetting(true) : undefined}
       />
@@ -72,7 +72,7 @@ export function FlagsSection({ stored, onSaved }: { stored: StoredConfig | null;
 
       {error ? <p className="adm-err" role="alert">{error}</p> : null}
       <SaveBar dirty={dirty} saving={saving} onSave={() => void save()} onDiscard={() => { setDraft(saved); setError(""); }} />
-      {resetting ? <ConfirmDialog title="לחזור להגדרות המקוריות?" text="כל הדגלים יחזרו למצב שבו האתר נשלח: אנגלית כבויה." confirmLabel="חזרה" onConfirm={() => void reset()} onCancel={() => setResetting(false)} /> : null}
+      {resetting ? <ConfirmDialog title="לחזור להגדרות המקוריות?" text="כל החסמים יחזרו למצב שבו האתר נשלח: אנגלית כבויה." confirmLabel="חזרה" onConfirm={() => void reset()} onCancel={() => setResetting(false)} /> : null}
     </div>
   );
 }
