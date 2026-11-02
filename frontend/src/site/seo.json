@@ -1,0 +1,75 @@
+{
+  "site": {
+    "name": "לשון הרע לא מדבר אליי",
+    "nameEn": "Lashon Hara — Speak No Evil",
+    "origin": "https://lashonhara.co.il",
+    "image": "/og-default.jpg"
+  },
+  "pages": {
+    "/": {
+      "title": "לשון הרע לא מדבר אליי",
+      "description": "העמותה מעודדת תרבות שיח חיובית ומנהלת מאבק בלשון הרע, ברכילות ובשיימינג. צמידים, הרצאות לבתי ספר ושגרירים שמפיצים את המסר.",
+      "en": {
+        "title": "Lashon Hara — Speak No Evil",
+        "description": "A nonprofit promoting positive speech and standing up to gossip, shaming and bullying. Bracelets, school talks and ambassadors spreading the message."
+      }
+    },
+    "/who-we-are": {
+      "title": "אודות",
+      "description": "הסיפור של לשון הרע לא מדבר אליי: מי אנחנו, איך התחלנו, ואיך צמיד אחד הפך לתנועה של שיח מכבד.",
+      "en": {
+        "title": "About",
+        "description": "The story of Lashon Hara: who we are, how we started, and how one bracelet became a movement for respectful speech."
+      }
+    },
+    "/activity": {
+      "title": "הפעילות שלנו",
+      "description": "הרצאות לבתי ספר ולמוסדות חינוך, פעילות בצה״ל ושגרירים. בחרו תאריך להרצאה ונחזור אליכם.",
+      "en": {
+        "title": "Our activity",
+        "description": "Talks for schools and educational institutions, work with the IDF, and ambassadors. Choose a date and we'll get back to you."
+      }
+    },
+    "/activity/idf": {
+      "title": "פעילות בצה״ל",
+      "description": "מפגשים והרצאות לחיילים ולמפקדים, על כוחה של מילה ועל שיח מכבד.",
+      "en": {
+        "title": "IDF activity",
+        "description": "Meetings and talks for soldiers and commanders about the power of words and respectful speech."
+      }
+    },
+    "/activity/ambassadors": {
+      "title": "שגרירים",
+      "description": "אמנים, ספורטאים ואנשי ציבור שמצטרפים ואומרים: לשון הרע לא מדבר אליי.",
+      "en": {
+        "title": "Ambassadors",
+        "description": "Artists, athletes and public figures who join in and say: Lashon Hara, speak no evil to me."
+      }
+    },
+    "/shop": {
+      "title": "הקולקציה",
+      "description": "צמידי בד ומתכת, חולצות, כובעים וציוד ספורט עם המסר של לשון הרע לא מדבר אליי. משלוח חינם בקנייה מעל ₪100 לנקודות איסוף. הרווחים מחלקים צמידים בחינם לבתי ספר.",
+      "en": {
+        "title": "The collection",
+        "description": "Fabric and metal bracelets, shirts, caps and sport gear carrying the Lashon Hara message. Free shipping over ₪100 to pickup points. Sales fund free bracelets for schools."
+      }
+    },
+    "/join": {
+      "title": "הצטרפו",
+      "description": "הצטרפו לשגרירים, חלקו צמידים בעצמכם, הביאו את זה לבית הספר או שתפו את הסיפור שלכם.",
+      "en": {
+        "title": "Join us",
+        "description": "Become an ambassador, hand out bracelets yourself, bring this to your school, or share your story."
+      }
+    },
+    "/terms": {
+      "title": "תקנון ומדיניות פרטיות",
+      "description": "תנאי השימוש באתר, מדיניות הפרטיות, המשלוחים וההחזרות של לשון הרע לא מדבר אליי."
+    },
+    "/accessibility": {
+      "title": "הצהרת נגישות",
+      "description": "הצהרת הנגישות של האתר ופרטי יצירת קשר לבקשות והתאמות."
+    }
+  },
+  "private": ["/cart", "/checkout", "/order-confirmation", "/order-pay", "/admin"]
+}

@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import { Router } from "express";
+import { clientIp } from "../middleware/rateLimit.js";
 import mongoose from "mongoose";
 import { z } from "zod";
 import { Media } from "../models/Media.js";
@@ -41,7 +42,7 @@ mediaRouter.get("/:world", async (req, res) => {
 export const adminRouter = Router();
 
 adminRouter.post("/login", (req, res) => {
-  const ip = req.ip ?? "unknown";
+  const ip = clientIp(req);
   if (!loginAllowed(ip)) {
     res.status(429).json({ error: "too_many_attempts" });
     return;

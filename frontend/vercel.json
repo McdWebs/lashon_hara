@@ -1,4 +1,15 @@
 {
+  "headers": [
+    {
+      "source": "/(cart|checkout|order-confirmation|admin|order-pay/.*|checkout/order-pay/.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/:path*",

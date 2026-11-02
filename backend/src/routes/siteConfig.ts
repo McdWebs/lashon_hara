@@ -147,7 +147,7 @@ adminConfigRouter.post("/calendar/test", async (req, res) => {
   }
   try {
     const feed = await takenDaysFromFeed(url, true);
-    res.json({ ok: true, events: feed.events, days: feed.days.slice(0, 12), totalDays: feed.days.length });
+    res.json({ ok: true, events: feed.events, days: feed.days, totalDays: feed.days.length });
   } catch (err) {
     res.status(400).json({ error: err instanceof Error && err.message.startsWith("calendar_") ? err.message : "calendar_unreachable" });
   }

@@ -5,6 +5,7 @@ import { t, Link, siteLang } from "../i18n";
 import { track } from "../../lib/analytics";
 import { useCart } from "../../lib/cart";
 import { fetchProduct, fetchRelatedProducts, type WcProduct } from "../../lib/catalog";
+import { SITE_ORIGIN } from "../../lib/seo";
 import { clampOrderQuantity, formatOrderRulesNotice, getProductOrderRules, hasOrderConstraints } from "../../lib/productOrderRules";
 import { SCHOOLS_PRODUCT_ID } from "../../lib/site";
 import { ProductPage as SchoolsProductPage } from "../../pages/ProductPage";
@@ -196,10 +197,43 @@ function ProductDetail({ product }: { product: WcProduct }) {
   );
 }
 
+function plainText(html = "") {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  return (doc.body.textContent ?? "").replace(/\s+/g, " ").trim();
+}
+
+/** Description, preview image and structured data so a product can show price and stock in search results. */
+function productSeo(product: WcProduct) {
+  const text = plainText(product.short_description) || plainText(product.description);
+  const description = text.length > 160 ? `${text.slice(0, 157).trimEnd()}…` : text;
+  const image = product.images[0]?.src;
+  const price = Number(product.prices.price) / 10 ** (product.prices.currency_minor_unit ?? 2);
+  return {
+    description: description || undefined,
+    image,
+    type: "product" as const,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: product.name,
+      description: description || undefined,
+      image: product.images.map((i) => i.src),
+      offers: {
+        "@type": "Offer",
+        url: `${SITE_ORIGIN}/shop/product/${product.id}`,
+        priceCurrency: product.prices.currency_code || "ILS",
+        price: Number.isFinite(price) ? price : undefined,
+        availability: product.is_in_stock === false ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
+      },
+    },
+  };
+}
+
 export function ProductPage() {
   const { id } = useParams();
   const query = useQuery({ queryKey: ["product", id], queryFn: () => fetchProduct(id ?? ""), enabled: Boolean(id) });
-  usePageTitle(query.data?.name ?? t("מוצר"));
+  const product = query.data;
+  usePageTitle(product?.name ?? t("מוצר"), product ? productSeo(product) : {});
 
   if (query.data?.id === SCHOOLS_PRODUCT_ID) return <SchoolsProductPage />;
 

@@ -17,30 +17,10 @@ const WEEKDAYS_EN = ["S", "M", "T", "W", "T", "F", "S"];
 type Reel = { kind: "video" | "photo"; src?: string; poster?: string; caption?: string };
 type WorldConfig = { key: string; name: string; line: string; live: string; image: string; banner?: string; reels?: Reel[] };
 
-/** Placeholder media: the team's own photos and videos, served from the live site until they pick the final set. */
-const LIVE_MEDIA = "https://lashonhara.co.il/wp-content/uploads";
-
-const idfReels: Reel[] = [
-  { kind: "video", src: `${LIVE_MEDIA}/2024/05/WhatsApp-Video-2024-05-07-at-15.34.14_1cb4ba69.mp4` },
-  { kind: "photo", src: `${LIVE_MEDIA}/2024/02/חיילים-e1706777574141.jpeg` },
-  { kind: "photo", src: `${LIVE_MEDIA}/2020/11/1-2.jpg` },
-  { kind: "photo", src: `${LIVE_MEDIA}/2020/11/2-3.jpg` },
-  { kind: "photo", src: `${LIVE_MEDIA}/2020/11/6-1.jpg` },
-];
-
-const ambassadorReels: Reel[] = [
-  { kind: "video", src: `${LIVE_MEDIA}/2022/09/רימון-מקלדת-הבימה-הקמה.mp4` },
-  { kind: "photo", src: "/images/site/omer.jpg" },
-  { kind: "photo", src: "/images/site/static.jpg" },
-  { kind: "video", src: `${LIVE_MEDIA}/2022/04/WhatsApp-Video-2022-04-14-at-12.03.57.mp4` },
-  { kind: "photo", src: "/images/store_images/celeb.jpg" },
-  { kind: "photo", src: `${LIVE_MEDIA}/2020/11/7-1.jpg` },
-];
-
 const WORLDS: WorldConfig[] = [
   { key: "schools", name: "בתי ספר והרצאות", line: "הרצאות לבתי ספר ולמוסדות חינוך. בחרו תאריך ונחזור אליכם.", live: "", image: "/images/store_images/hands_heart_sign.jpg" },
-  { key: "idf", name: "צה״ל", line: "[שורה אחת על הפעילות בצה״ל — מהצוות]", live: "[שורה חיה — מתעדכנת במערכת]", image: `${LIVE_MEDIA}/2024/02/חיילים-e1706777574141.jpeg`, banner: `${LIVE_MEDIA}/2020/11/1-2.jpg`, reels: idfReels },
-  { key: "ambassadors", name: "שגרירים", line: "[שורה אחת על השגרירים — מהצוות]", live: "[שורה חיה — מתעדכנת במערכת]", image: "/images/site/static.jpg", banner: "/images/store_images/celeb.jpg", reels: ambassadorReels },
+  { key: "idf", name: "צה״ל", line: "מפגשים והרצאות לחיילים ולמפקדים, על כוחה של מילה ועל שיח מכבד.", live: "", image: "/images/fabric_bracelet/all_bracelet.jpeg", reels: [] },
+  { key: "ambassadors", name: "שגרירים", line: "אמנים, ספורטאים ואנשי ציבור שמצטרפים ואומרים: לשון הרע לא מדבר אליי.", live: "", image: "/images/site/static.jpg", banner: "/images/store_images/celeb.jpg", reels: [] },
 ];
 
 
@@ -223,7 +203,7 @@ function SchoolForm({ date, lecture, onSent }: { date: Date; lecture: string; on
   );
 }
 
-function Banner({ world }: { world: WorldConfig }) {
+function Banner({ world, banner }: { world: WorldConfig; banner?: string }) {
   return (
     <div className="wb">
       <div className="wb-tx">
@@ -232,7 +212,7 @@ function Banner({ world }: { world: WorldConfig }) {
         <p className="lead">{t(world.line)}</p>
       </div>
       <div className="wb-ph">
-        {world.banner ? <img src={world.banner} alt="" /> : <span className="ph" style={{ position: "absolute", inset: 0 }}>{t("תמונה מהפעילות")}</span>}
+        <img src={banner ?? world.banner ?? world.image} alt="" />
       </div>
     </div>
   );
@@ -488,7 +468,7 @@ export function ActivityPage() {
 
   const world = WORLDS.find((w) => w.key === (worldKey ?? "schools"));
 
-  // The team uploads photos and videos in the admin. Until they upload any, the sample set above is shown.
+  // The team uploads photos and videos in the admin; until they do, the section says more is coming.
   const mediaWorld: MediaWorld | null = world?.key === "idf" || world?.key === "ambassadors" ? world.key : null;
   const uploaded = useQuery({
     queryKey: ["site-media", mediaWorld],
@@ -498,7 +478,8 @@ export function ActivityPage() {
   });
 
   if (!world) return <Navigate to="/activity" replace />;
-  const reels: Reel[] | undefined = uploaded.data?.length ? uploaded.data.map((m) => ({ kind: m.kind, src: m.src, caption: m.caption })) : world.reels;
+  const reels: Reel[] = (uploaded.data ?? []).map((m) => ({ kind: m.kind, src: m.src, caption: m.caption }));
+  const firstPhoto = uploaded.data?.find((m) => m.kind === "photo")?.src;
 
   return (
     <div className="page-activity">
@@ -528,8 +509,8 @@ export function ActivityPage() {
         <div className="wrap">
           {world.reels ? (
             <>
-              <Banner world={world} />
-              {uploaded.isLoading ? <div className="skel" style={{ height: 420 }} aria-hidden="true" /> : <Reels reels={reels ?? []} />}
+              <Banner world={world} banner={firstPhoto} />
+              {uploaded.isLoading ? <div className="skel" style={{ height: 420 }} aria-hidden="true" /> : <Reels reels={reels} />}
             </>
           ) : (
             <div className="book">

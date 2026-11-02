@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import { Router } from "express";
+import { rateLimit } from "../middleware/rateLimit.js";
 import { z } from "zod";
 import { env } from "../config/env.js";
 
@@ -68,25 +69,7 @@ async function verified(id: string, key: unknown) {
   return order;
 }
 
-const attempts = new Map<string, { count: number; resetAt: number }>();
-function allowed(ip: string) {
-  const now = Date.now();
-  const entry = attempts.get(ip);
-  if (!entry || entry.resetAt < now) {
-    attempts.set(ip, { count: 1, resetAt: now + 60_000 });
-    return true;
-  }
-  entry.count += 1;
-  return entry.count <= 60;
-}
-
-payRouter.use((req, res, next) => {
-  if (!allowed(req.ip ?? "unknown")) {
-    res.status(429).json({ error: "too_many_requests" });
-    return;
-  }
-  next();
-});
+payRouter.use(rateLimit({ name: "pay", windowMs: 60_000, max: 90 }));
 
 payRouter.get("/:id", async (req, res) => {
   try {

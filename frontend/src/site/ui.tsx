@@ -1,6 +1,9 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useLocation } from "react-router-dom";
 import { t, Link, siteLang } from "./i18n";
+import { applySeo, type SeoInput } from "../lib/seo";
+import { useSiteConfig } from "../lib/siteConfig";
 import { useCart } from "../lib/cart";
 import { fetchProduct, type WcProduct } from "../lib/catalog";
 import { getProductOrderRules } from "../lib/productOrderRules";
@@ -72,10 +75,16 @@ export function Title({ children, lead, big, as: Tag = "h1" }: { children: React
   );
 }
 
-export function usePageTitle(title: string) {
+/** Sets the tab title and everything search engines and link previews read. The site table fills in the description. */
+export function usePageTitle(title: string, extra: Omit<SeoInput, "title"> = {}) {
+  const { pathname } = useLocation();
+  const { config } = useSiteConfig();
+  const english = config.flags.english;
+  const { description, image, noindex, type } = extra;
+  const jsonLd = extra.jsonLd ? JSON.stringify(extra.jsonLd) : "";
   useEffect(() => {
-    document.title = `${title} · ${t("לשון הרע לא מדבר אליי")}`;
-  }, [title]);
+    applySeo({ title, description, image, noindex, type, jsonLd: jsonLd ? JSON.parse(jsonLd) : undefined }, pathname, siteLang(), english);
+  }, [title, description, image, noindex, type, jsonLd, pathname, english]);
 }
 
 export function priceLabel(product: WcProduct) {

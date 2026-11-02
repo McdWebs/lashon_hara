@@ -1,10 +1,61 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { adminConfig, type CalendarTest, type StoredConfig } from "../../lib/adminConfig";
 import { DEFAULT_CALENDAR, type CalendarSettings } from "../../lib/siteConfig";
 import { Card, ConfirmDialog, I, SaveBar, SectionHead, Switch, errorText, same, useAdmin } from "./ui";
 
 const DAYS = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
 const DEFAULT: CalendarSettings = { icsUrl: "", closedWeekdays: DEFAULT_CALENDAR.closedWeekdays, monthsAhead: DEFAULT_CALENDAR.monthsAhead, blockedDates: [] };
+
+const SHORT_DAYS = ["א", "ב", "ג", "ד", "ה", "ו", "ש"];
+const pad = (n: number) => String(n).padStart(2, "0");
+const isoOf = (y: number, m: number, d: number) => `${y}-${pad(m + 1)}-${pad(d)}`;
+
+/** A month of the booking calendar as visitors will see it: taken, blocked, closed and free days. */
+function Preview({ taken, draft, today }: { taken: string[]; draft: CalendarSettings; today: string }) {
+  const [offset, setOffset] = useState(0);
+  const takenSet = useMemo(() => new Set(taken), [taken]);
+  const base = new Date(`${today}T12:00:00`);
+  const first = new Date(base.getFullYear(), base.getMonth() + offset, 1);
+  const y = first.getFullYear();
+  const m = first.getMonth();
+  const count = new Date(y, m + 1, 0).getDate();
+  const last = new Date(base.getFullYear(), base.getMonth() + draft.monthsAhead, base.getDate()).toISOString().slice(0, 10);
+  const cells: Array<number | null> = [...Array.from({ length: first.getDay() }, () => null), ...Array.from({ length: count }, (_, i) => i + 1)];
+  const blocked = new Set(draft.blockedDates);
+
+  function state(iso: string, weekday: number) {
+    if (iso <= today || iso > last) return "off";
+    if (takenSet.has(iso)) return "taken";
+    if (blocked.has(iso)) return "blocked";
+    if (draft.closedWeekdays.includes(weekday)) return "closed";
+    return "free";
+  }
+
+  return (
+    <div className="adm-cal">
+      <div className="adm-cal-h">
+        <button type="button" onClick={() => setOffset((o) => o - 1)} disabled={offset <= 0} aria-label="החודש הקודם">{I.right()}</button>
+        <b>{first.toLocaleDateString("he-IL", { month: "long", year: "numeric" })}</b>
+        <button type="button" onClick={() => setOffset((o) => o + 1)} disabled={offset >= draft.monthsAhead} aria-label="החודש הבא">{I.left()}</button>
+      </div>
+      <div className="adm-cal-g" role="grid">
+        {SHORT_DAYS.map((d) => <span key={d} className="adm-cal-w" role="columnheader">{d}</span>)}
+        {cells.map((day, i) => {
+          if (day === null) return <span key={`e${i}`} />;
+          const iso = isoOf(y, m, day);
+          const st = state(iso, (first.getDay() + day - 1) % 7);
+          return <span key={iso} className={`adm-cal-d ${st}`} role="gridcell" title={dayLabel(iso)}>{day}</span>;
+        })}
+      </div>
+      <ul className="adm-cal-key">
+        <li><i className="free" />פנוי</li>
+        <li><i className="taken" />תפוס ביומן</li>
+        <li><i className="blocked" />נחסם ידנית</li>
+        <li><i className="closed" />יום סגור</li>
+      </ul>
+    </div>
+  );
+}
 
 const dayLabel = (iso: string) => new Date(`${iso}T12:00:00`).toLocaleDateString("he-IL", { weekday: "short", day: "numeric", month: "long", year: "numeric" });
 
@@ -100,10 +151,10 @@ export function CalendarSection({ stored, onSaved }: { stored: StoredConfig | nu
         </div>
         {test ? (
           <div className="adm-ok" role="status">
-            <b>היומן מחובר.</b> נמצאו {test.events} אירועים, והם תופסים {test.totalDays} ימים{test.totalDays ? ", למשל:" : "."}
-            {test.days.length ? <span className="adm-days">{test.days.map((d) => <i key={d}>{dayLabel(d)}</i>)}</span> : null}
+            <b>היומן מחובר.</b> נמצאו {test.events} אירועים, והם תופסים {test.totalDays} ימים. כך ייראה היומן באתר:
           </div>
         ) : null}
+        {test ? <Preview taken={test.days} draft={draft} today={today} /> : null}
         {testError ? <p className="adm-err" role="alert">{testError}</p> : null}
 
         <details className="adm-help">

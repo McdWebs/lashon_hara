@@ -5,7 +5,7 @@ import { SITE, waLink } from "../../lib/site";
 import { Icon, Title, usePageTitle } from "../ui";
 
 export function NotFoundPage() {
-  usePageTitle(t("הדף לא נמצא"));
+  usePageTitle(t("הדף לא נמצא"), { noindex: true });
   return (
     <div className="page-notfound">
       <section className="nf">
