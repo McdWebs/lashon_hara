@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { t, Link } from "../i18n";
+import { useContact } from "../contact";
 import { track } from "../../lib/analytics";
 import { useCart } from "../../lib/cart";
 import { getOrder } from "../../lib/cartSession";
@@ -27,6 +28,7 @@ function stashedOrder(): { id: string; key?: string } | null {
 export function ConfirmationPage() {
   usePageTitle(t("אישור הזמנה"));
   const [params] = useSearchParams();
+  const { openContact } = useContact();
   const clearCart = useCart((s) => s.clear);
   const [status, setStatus] = useState<Status>("checking");
   const cleared = useRef(false);
@@ -98,14 +100,14 @@ export function ConfirmationPage() {
               <>
                 <h1 className="ok-h disp"><span className="o1">{t("עדיין")}</span><span className="o2">{t("מאשרים…")}</span></h1>
                 <p className="lead">{t("אישור התשלום לוקח קצת יותר זמן מהרגיל. אם זה לא מתעדכן בקרוב, צרו קשר ונבדוק.")}</p>
-                <Link className="btn btn-ink" to="/join?panel=contact"><span>{t("צרו קשר")}</span><Icon.arrow /></Link>
+                <button type="button" className="btn btn-ink" onClick={openContact}><span>{t("צרו קשר")}</span><Icon.arrow /></button>
               </>
             ) : null}
             {status === "failed" ? (
               <>
                 <h1 style={{ margin: 0, fontSize: 40, fontWeight: 800 }}>{t("לא הצלחנו לאתר את ההזמנה")}</h1>
                 <p className="lead">{t("אם השלמתם תשלום, אל דאגה — צרו קשר עם הפרטים שלכם ונסדר את זה.")}</p>
-                <Link className="btn btn-ink" to="/join?panel=contact"><span>{t("צרו קשר")}</span><Icon.arrow /></Link>
+                <button type="button" className="btn btn-ink" onClick={openContact}><span>{t("צרו קשר")}</span><Icon.arrow /></button>
               </>
             ) : null}
           </div>

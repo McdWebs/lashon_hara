@@ -1,9 +1,10 @@
 import { Drawer } from "@mui/material";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link as RouterLink, Outlet, useLocation } from "react-router-dom";
+import { Link as RouterLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { t, Link, NavLink, setSiteLang, siteLang } from "./i18n";
 import { AccessibilityWidget } from "../components/AccessibilityWidget";
 import { SkipLink } from "../components/SkipLink";
+import { ContactContext, ContactPanel, useContact } from "./contact";
 import { langFromPath, stripLocale, withLocale } from "../i18n/locale";
 import { LocaleContext, buildLocale } from "../i18n/useLocale";
 import { useCart } from "../lib/cart";
@@ -111,6 +112,7 @@ function Nav() {
 }
 
 function Footer() {
+  const { openContact } = useContact();
   return (
     <footer className="foot" id="foot">
       <div className="wrap foot-in">
@@ -121,7 +123,7 @@ function Footer() {
         <div className="foot-b">
           <Link className="btn btn-red" to="/join#donate"><span>{t("לתרומה")}</span><Icon.arrow /></Link>
           <div className="foot-icons">
-            <Link className="iconbtn dark" to="/join?panel=contact" aria-label={t("צרו קשר")}><Icon.mail /></Link>
+            <button type="button" className="iconbtn dark" onClick={openContact} aria-label={t("צרו קשר")}><Icon.mail /></button>
             <a className="iconbtn dark" href={SITE.instagram} aria-label="Instagram"><Icon.ig /></a>
             <a className="iconbtn dark" href={SITE.facebook} aria-label="Facebook"><Icon.fb /></a>
           </div>
@@ -166,7 +168,8 @@ function useReveal(root: React.RefObject<HTMLDivElement | null>) {
 }
 
 export function SiteLayout() {
-  const { pathname, hash } = useLocation();
+  const { pathname, hash, search } = useLocation();
+  const navigate = useNavigate();
   const lang = langFromPath(pathname);
   setSiteLang(lang);
   const dir = lang === "en" ? "ltr" : "rtl";
@@ -175,6 +178,20 @@ export function SiteLayout() {
   const root = useRef<HTMLDivElement>(null);
   const prevPath = useRef(pathname);
   useReveal(root);
+
+  // The contact panel opens over whatever page the visitor is on.
+  const [contactOpen, setContactOpen] = useState(false);
+  const contact = useMemo(() => ({ openContact: () => setContactOpen(true) }), []);
+
+  // Older links (/contact, ?panel=contact) open the same panel.
+  useEffect(() => {
+    const params = new URLSearchParams(search);
+    if (params.get("panel") !== "contact") return;
+    setContactOpen(true);
+    params.delete("panel");
+    const rest = params.toString();
+    navigate({ pathname, search: rest ? `?${rest}` : "", hash }, { replace: true, preventScrollReset: true });
+  }, [search, pathname, hash, navigate]);
 
   useEffect(() => {
     hydrateCart();
@@ -203,6 +220,7 @@ export function SiteLayout() {
 
   return (
     <LocaleContext.Provider value={locale}>
+      <ContactContext.Provider value={contact}>
       <SkipLink />
       <div className="lh lh-js a11y-zoom-scope" dir={dir} key={lang} ref={root}>
         <Nav />
@@ -211,8 +229,10 @@ export function SiteLayout() {
         </main>
         <Footer />
         <CookieBanner />
+        <ContactPanel open={contactOpen} onClose={() => setContactOpen(false)} />
       </div>
       <AccessibilityWidget />
+      </ContactContext.Provider>
     </LocaleContext.Provider>
   );
 }

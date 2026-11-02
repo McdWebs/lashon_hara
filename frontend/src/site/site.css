@@ -536,9 +536,6 @@ form[data-form] { display: flex; flex-direction: column; gap: 16px; }
 .file-b { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 16px; border: 1px dashed #9C9C9C; font-size: 15px; color: var(--ink2); transition: border-color .3s ease, background .3s ease; }
 .file:hover .file-b { border-color: var(--ink); background: var(--soft); }
 .file input:focus-visible + .file-b { outline: 2px solid var(--red); outline-offset: 3px; }
-.cinfo { display: flex; flex-direction: column; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 3px solid var(--ink); }
-.crow { display: flex; align-items: center; gap: 12px; min-height: 52px; font-size: 16px; text-decoration: none; color: var(--ink); border-bottom: 1px solid var(--line); }
-.crow > span { flex: 1; } .crow b { font-weight: 700; }
 @media (max-width: 900px) {
   .don-in { grid-template-columns: 1fr; gap: 26px; } .don-tx { position: static; } .don-tx h2 { font-size: 100px; } .don-f { padding: 22px; }
   .ways { grid-template-columns: 1fr; }
@@ -1025,3 +1022,12 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
 .cdrop-o svg { flex: none; color: var(--red); }
 @keyframes lh-drop { from { opacity: 0; transform: translateY(-6px); } }
 @media (prefers-reduced-motion: reduce) { .cdrop-m { animation: none; } }
+
+/* A button that reads as a link inside running text */
+.lh .textlink { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.lh .textlink:hover { color: var(--red); }
+
+/* Contact panel: it opens on any page, so these are not scoped to the join page */
+.cinfo { display: flex; flex-direction: column; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 3px solid var(--ink); }
+.crow { display: flex; align-items: center; gap: 12px; min-height: 52px; font-size: 16px; text-decoration: none; color: var(--ink); border-bottom: 1px solid var(--line); }
+.crow > span { flex: 1; } .crow b { font-weight: 700; }

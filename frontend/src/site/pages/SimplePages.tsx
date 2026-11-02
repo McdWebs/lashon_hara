@@ -1,4 +1,5 @@
 import { t, Link, siteLang } from "../i18n";
+import { useContact } from "../contact";
 import { TERMS_TITLE, TermsHeContent } from "../../content/termsHe";
 import { SITE, waLink } from "../../lib/site";
 import { Icon, Title, usePageTitle } from "../ui";
@@ -37,6 +38,7 @@ export function TermsPage() {
 
 export function AccessibilityPage() {
   usePageTitle(t("הצהרת נגישות"));
+  const { openContact } = useContact();
   return (
     <section className="legal">
       <div className="wrap">
@@ -65,7 +67,7 @@ export function AccessibilityPage() {
 
           <h2>פנייה בנושא נגישות</h2>
           <p>
-            נתקלתם בקושי, או שיש לכם הצעה לשיפור? נשמח לשמוע ולטפל בהקדם, ובכל מקרה נשיב בתוך זמן סביר. אפשר לפנות אלינו בוואטסאפ או דרך <Link to="/join?panel=contact">טופס יצירת הקשר</Link>. כדי שנוכל לסייע, כדאי לציין את כתובת העמוד, תיאור הקושי, ואת הדפדפן או הטכנולוגיה המסייעת שבה השתמשתם.
+            נתקלתם בקושי, או שיש לכם הצעה לשיפור? נשמח לשמוע ולטפל בהקדם, ובכל מקרה נשיב בתוך זמן סביר. אפשר לפנות אלינו בוואטסאפ או דרך <button type="button" className="textlink" onClick={openContact}>טופס יצירת הקשר</button>. כדי שנוכל לסייע, כדאי לציין את כתובת העמוד, תיאור הקושי, ואת הדפדפן או הטכנולוגיה המסייעת שבה השתמשתם.
           </p>
           <p>
             <a className="btn btn-ink" href={waLink("שלום, אני פונה בנושא נגישות באתר")}><span>פנייה בוואטסאפ</span></a>

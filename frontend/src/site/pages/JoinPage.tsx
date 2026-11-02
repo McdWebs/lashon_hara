@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { t, Link } from "../i18n";
 import { Check, Choice, Field, FormShell, Panel, Reveal, Toggle, useSiteForm } from "../forms";
-import { SITE, waLink } from "../../lib/site";
+import { useContact } from "../contact";
 import { Icon, Title, usePageTitle } from "../ui";
 
 const PRESET_AMOUNTS = ["72", "180", "360", "720"];
@@ -88,49 +88,28 @@ function StoryForm() {
   );
 }
 
-function ContactForm() {
-  const form = useSiteForm({ name: { required: true }, email: { required: true, kind: "email" }, message: { required: true } }, { kind: "contact" });
-  return (
-    <>
-      <div className="cinfo">
-        <a className="crow" href={waLink()}><Icon.wa /><span>WhatsApp</span><b dir="ltr">054-3644512</b></a>
-        <span className="crow"><Icon.mail /><span>{t("מייל")}</span><b>{t("[כתובת המייל]")}</b></span>
-        <span className="crow"><Icon.pin /><span>{t("כתובת")}</span><b>{t("[הכתובת]")}</b></span>
-        <div style={{ display: "flex", gap: 8, paddingTop: 10 }}>
-          <a className="iconbtn" href={SITE.instagram} aria-label="Instagram"><Icon.ig /></a>
-          <a className="iconbtn" href={SITE.facebook} aria-label="Facebook"><Icon.fb /></a>
-        </div>
-      </div>
-      <FormShell form={form} submitLabel={t("שליחת ההודעה")} thanksTitle={t("תודה! ההודעה נשלחה.")} thanksText={t("נחזור אליכם בהקדם.")}>
-        <Field f={form.field("name")} label={t("שם")} auto="name" />
-        <Field f={form.field("email")} label={t("כתובת מייל")} type="email" mode="email" auto="email" dir="ltr" />
-        <Field f={form.field("message")} label={t("הודעה")} rows={4} />
-      </FormShell>
-    </>
-  );
-}
+type PanelKey = "ambassadors" | "story";
 
-type PanelKey = "ambassadors" | "story" | "contact";
-
-const WAYS: Array<{ title: string; line: string; button: string; panel?: PanelKey; to?: string; image?: string }> = [
+const WAYS: Array<{ title: string; line: string; button: string; panel?: PanelKey; contact?: boolean; to?: string; image?: string }> = [
   { title: "להצטרף לצוות השגרירים", line: "להפיץ את המסר בקהילה, בכיתה או ברשת.", button: "להצטרפות", panel: "ambassadors", image: "/images/site/static.jpg" },
   { title: "לחלק צמידים בעצמכם", line: "צמידי שגרירים מהחנות, לחלוקה בעצמכם.", button: "לצמידים", to: "/shop?collection=bracelets", image: "/images/fabric_bracelet/black_bracelet.jpeg" },
   { title: "להביא את זה לבית הספר", line: "הרצאות וחלוקת צמידים לתלמידים.", button: "לבתי ספר", to: "/activity", image: "/images/store_images/hands_heart_sign.jpg" },
   { title: "לשתף את הסיפור שלכם", line: "ספרו לנו איך המסר נגע בכם.", button: "לשיתוף", panel: "story", image: "/images/fabric_bracelet/all_bracelet.jpeg" },
-  { title: "צרו קשר", line: "WhatsApp, מייל או טופס קצר.", button: "ליצירת קשר", panel: "contact" },
+  { title: "צרו קשר", line: "WhatsApp, מייל או טופס קצר.", button: "ליצירת קשר", contact: true },
 ];
 
-const PANEL_TITLES: Record<PanelKey, string> = { ambassadors: "להצטרף לשגרירים", story: "לשתף סיפור", contact: "צרו קשר" };
+const PANEL_TITLES: Record<PanelKey, string> = { ambassadors: "להצטרף לשגרירים", story: "לשתף סיפור" };
 
 export function JoinPage() {
   usePageTitle(t("הצטרפו"));
   const [params, setParams] = useSearchParams();
   const [panel, setPanel] = useState<PanelKey | null>(null);
+  const { openContact } = useContact();
 
   // The footer's contact icon opens the contact panel directly.
   useEffect(() => {
     const wanted = params.get("panel");
-    if (wanted === "contact" || wanted === "story" || wanted === "ambassadors") {
+    if (wanted === "story" || wanted === "ambassadors") {
       setPanel(wanted);
       setParams({}, { replace: true, preventScrollReset: true });
     }
@@ -163,8 +142,8 @@ export function JoinPage() {
             <div className="way-b">
               <h3>{t(way.title)}</h3>
               <p>{t(way.line)}</p>
-              {way.panel ? (
-                <button className="btn btn-ink" onClick={() => setPanel(way.panel!)}><span>{t(way.button)}</span><Icon.arrow /></button>
+              {way.panel || way.contact ? (
+                <button className="btn btn-ink" onClick={() => (way.contact ? openContact() : setPanel(way.panel!))}><span>{t(way.button)}</span><Icon.arrow /></button>
               ) : (
                 <Link className="btn btn-ink" to={way.to!}><span>{t(way.button)}</span><Icon.arrow /></Link>
               )}
@@ -176,7 +155,6 @@ export function JoinPage() {
       <Panel open={panel !== null} onClose={() => setPanel(null)} title={panel ? t(PANEL_TITLES[panel]) : ""}>
         {panel === "ambassadors" ? <AmbassadorForm /> : null}
         {panel === "story" ? <StoryForm /> : null}
-        {panel === "contact" ? <ContactForm /> : null}
       </Panel>
     </div>
   );
