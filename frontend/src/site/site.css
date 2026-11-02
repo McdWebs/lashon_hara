@@ -1017,3 +1017,5 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
   .sheet-b .btn { height: 48px; }
   .sheet-b .tag-clear { height: 36px; }
 }
+
+.page-collection .chip-skel { flex: none; width: 96px; height: 38px; }

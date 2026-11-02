@@ -2,45 +2,13 @@ import { Drawer } from "@mui/material";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { t, Link } from "../i18n";
+import { t, Link, siteLang } from "../i18n";
 import { fetchProducts } from "../../lib/catalog";
+import { SORT_CATALOG, priceKey, priceLabel, priceQuery, useSiteConfig } from "../../lib/siteConfig";
 import { copy } from "../copy";
 import { CardsSkeleton, Icon, ShopCard, Title, usePageTitle } from "../ui";
 
 const PER_PAGE = 12;
-
-type Collection = { key: string; label: string; query: Record<string, string>; hidden?: boolean };
-
-/** Woo category ids come from the live catalog. */
-const COLLECTIONS: Collection[] = [
-  { key: "all", label: "הכול", query: {} },
-  { key: "bracelets", label: "צמידים", query: { category: "20,166,282" } },
-  { key: "metal-fabric", label: "צמידי מתכת ובד", query: { category: "35,135" } },
-  { key: "clothing", label: "לבוש וספורט", query: { category: "146,19" } },
-  { key: "kids", label: "ילדים ובית ספר", query: { category: "26" } },
-  { key: "accessories", label: "אביזרים", query: { category: "48,29,31,18" } },
-  // Reached from the home page tiles only.
-  { key: "sport", label: "ספורט", query: { category: "19" }, hidden: true },
-  { key: "special", label: "מיוחדים", query: { category: "23" }, hidden: true },
-];
-
-const SORTS: Array<{ key: string; label: string; query: Record<string, string> }> = [
-  { key: "", label: "מיון: ברירת מחדל", query: {} },
-  { key: "new", label: "החדשים ביותר", query: { orderby: "date", order: "desc" } },
-  { key: "best", label: "הנמכרים ביותר", query: { orderby: "popularity" } },
-  { key: "price-asc", label: "מחיר: מהנמוך לגבוה", query: { orderby: "price", order: "asc" } },
-  { key: "price-desc", label: "מחיר: מהגבוה לנמוך", query: { orderby: "price", order: "desc" } },
-  { key: "title", label: "לפי שם (א–ת)", query: { orderby: "title", order: "asc" } },
-];
-
-/** The store takes prices in agorot. */
-const PRICES: Array<{ key: string; label: string; query: Record<string, string> }> = [
-  { key: "", label: "מחיר: הכול", query: {} },
-  { key: "0-50", label: "עד ₪50", query: { max_price: "5000" } },
-  { key: "50-100", label: "₪50 – ₪100", query: { min_price: "5001", max_price: "10000" } },
-  { key: "100-200", label: "₪100 – ₪200", query: { min_price: "10001", max_price: "20000" } },
-  { key: "200", label: "מעל ₪200", query: { min_price: "20001" } },
-];
 
 function SearchIcon() {
   return (
@@ -66,6 +34,24 @@ export function CollectionPage() {
   const { SHIPPING_NOTE, SHOP_INTRO } = copy();
   const [introHi, introBrand, introWhy] = SHOP_INTRO.split("\n").map((line) => line.replace(/"/g, ""));
   const [params, setParams] = useSearchParams();
+
+  // Tabs, sorts and price ranges come from the admin; until the team changes them the built-in ones apply.
+  const { config, ready } = useSiteConfig();
+  const lang = siteLang();
+  const COLLECTIONS = config.shop.collections.map((c) => ({
+    key: c.key,
+    label: lang === "en" ? c.en : c.he,
+    hidden: c.hidden,
+    query: (c.categories.length ? { category: c.categories.join(",") } : {}) as Record<string, string>,
+  }));
+  const SORTS = config.shop.sorts.flatMap((key) => {
+    const s = SORT_CATALOG.find((entry) => entry.key === key);
+    return s ? [{ key, label: key === "" ? t("מיון: ברירת מחדל") : lang === "en" ? s.en : s.he, query: s.query }] : [];
+  });
+  const PRICES = [
+    { key: "", label: t("מחיר: הכול"), query: {} as Record<string, string> },
+    ...config.shop.prices.map((p) => ({ key: priceKey(p), label: priceLabel(p, lang), query: priceQuery(p) })),
+  ];
 
   // Older links (?collection=new / best) were collections; they are sorts now.
   const legacySort = params.get("collection") === "new" ? "new" : params.get("collection") === "best" ? "best" : "";
@@ -104,7 +90,8 @@ export function CollectionPage() {
   }, [q]);
 
   const query = useInfiniteQuery({
-    queryKey: ["site-collection", active.key, sort.key, price.key, q],
+    queryKey: ["site-collection", active.key, active.query.category ?? "", sort.key, price.key, q],
+    enabled: ready,
     initialPageParam: 1,
     placeholderData: keepPreviousData,
     queryFn: ({ pageParam }) =>
@@ -124,7 +111,7 @@ export function CollectionPage() {
   const items = query.data?.pages.flatMap((p) => p.items) ?? [];
   const total = query.data?.pages[0]?.total;
   const refreshing = query.isPlaceholderData;
-  const showSkeleton = query.isLoading || refreshing;
+  const showSkeleton = !ready || query.isLoading || refreshing;
   const filtered = Boolean(q || price.key || sort.key || active.key !== "all");
   const narrowed = Boolean(q || price.key);
 
@@ -173,7 +160,7 @@ export function CollectionPage() {
           </button>
 
           <div className="chips" role="group" aria-label={t("קולקציות")}>
-            {COLLECTIONS.filter((c) => !c.hidden || c.key === active.key).map((c) => (
+            {!ready ? [0, 1, 2, 3].map((i) => <span key={i} className="skel chip-skel" aria-hidden="true" />) : COLLECTIONS.filter((c) => !c.hidden || c.key === active.key).map((c) => (
               <button
                 key={c.key}
                 type="button"
@@ -181,17 +168,17 @@ export function CollectionPage() {
                 aria-pressed={active.key === c.key}
                 onClick={() => update({ collection: c.key === "all" ? "" : c.key })}
               >
-                {t(c.label)}
+                {c.label}
               </button>
             ))}
           </div>
 
           <div className="tsel">
             <select value={price.key} onChange={(e) => update({ price: e.target.value })} aria-label={t("סינון לפי מחיר")}>
-              {PRICES.map((p) => <option key={p.key} value={p.key}>{t(p.label)}</option>)}
+              {PRICES.map((p) => <option key={p.key} value={p.key}>{p.label}</option>)}
             </select>
             <select value={sort.key} onChange={(e) => update({ sort: e.target.value })} aria-label={t("מיון")}>
-              {SORTS.map((s) => <option key={s.key} value={s.key}>{t(s.label)}</option>)}
+              {SORTS.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
             </select>
           </div>
         </div>
@@ -212,7 +199,7 @@ export function CollectionPage() {
             ) : null}
             {price.key ? (
               <button type="button" className="tag" onClick={() => update({ price: "" })}>
-                <span>{t(price.label)}</span><Icon.close />
+                <span>{price.label}</span><Icon.close />
               </button>
             ) : null}
             {filtered ? <button type="button" className="tag-clear" onClick={clearAll}>{t("איפוס הכול")}</button> : null}
@@ -272,7 +259,7 @@ export function CollectionPage() {
           {SORTS.map((s) => (
             <label className={`sopt${sort.key === s.key ? " on" : ""}`} key={s.key}>
               <input type="radio" name="sort" checked={sort.key === s.key} onChange={() => update({ sort: s.key })} />
-              <span>{s.key === "" ? t("ברירת מחדל") : t(s.label)}</span>
+              <span>{s.key === "" ? t("ברירת מחדל") : s.label}</span>
               <span className="sopt-r" aria-hidden="true" />
             </label>
           ))}
@@ -288,7 +275,7 @@ export function CollectionPage() {
                 aria-pressed={price.key === p.key}
                 onClick={() => update({ price: p.key })}
               >
-                {p.key === "" ? t("הכול") : t(p.label)}
+                {p.key === "" ? t("הכול") : p.label}
               </button>
             ))}
           </div>

@@ -28,7 +28,7 @@ export const adminToken = {
   },
 };
 
-async function adminRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
+export async function adminRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers: Record<string, string> = { Accept: "application/json", ...(init.headers as Record<string, string> | undefined) };
   if (init.body) headers["Content-Type"] = "application/json";
   const token = adminToken.get();

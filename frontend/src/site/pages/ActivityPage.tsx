@@ -6,17 +6,11 @@ import { dateLocale, siteLang, t, Link, Navigate } from "../i18n";
 import { Field, FormShell, Panel, Reveal, Toggle, useSiteForm } from "../forms";
 import type { Program } from "../about";
 import { fetchMedia, type MediaWorld } from "../../lib/media";
-import { copy } from "../copy";
+import { useSiteConfig } from "../../lib/siteConfig";
 import { Icon, Title, usePageTitle } from "../ui";
 
-/** From the team's text update. Should move to the admin (see spec). */
-const BRACELETS_HANDED_OUT: number | null = 2885026;
-
-/** Filled from Google/Apple Calendar once connected. Until then only the rules below apply. */
-const TAKEN_DATES = new Set<string>();
-
-const MONTHS_AHEAD = 3;
-const CLOSED_WEEKDAYS = new Set([5, 6]); // Friday, Saturday. Open decision in the spec.
+/** The booking rules, from the admin: closed weekdays, how far ahead, and the days already taken. */
+type CalendarRules = { closed: Set<number>; taken: Set<string>; monthsAhead: number };
 const WEEKDAYS = ["א", "ב", "ג", "ד", "ה", "ו", "ש"];
 const WEEKDAYS_EN = ["S", "M", "T", "W", "T", "F", "S"];
 
@@ -61,22 +55,22 @@ function dayLabel(d: Date) {
 
 type DayState = "free" | "taken" | "requested" | "past" | "closed";
 
-function dayState(d: Date, today: Date, requested: Set<string>): DayState {
+function dayState(d: Date, today: Date, requested: Set<string>, rules: CalendarRules): DayState {
   const iso = isoDate(d);
   if (d <= today) return "past";
-  if (CLOSED_WEEKDAYS.has(d.getDay())) return "closed";
-  if (TAKEN_DATES.has(iso)) return "taken";
+  if (rules.closed.has(d.getDay())) return "closed";
+  if (rules.taken.has(iso)) return "taken";
   if (requested.has(iso)) return "requested";
   return "free";
 }
 
 const STATE_LABEL: Record<DayState, string> = { free: "פנוי", taken: "תפוס", requested: "התבקש", past: "עבר", closed: "לא זמין" };
 
-function firstFree(today: Date, requested: Set<string>) {
+function firstFree(today: Date, requested: Set<string>, rules: CalendarRules) {
   const d = new Date(today);
   for (let i = 0; i < 120; i += 1) {
     d.setDate(d.getDate() + 1);
-    if (dayState(d, today, requested) === "free") return new Date(d);
+    if (dayState(d, today, requested, rules) === "free") return new Date(d);
   }
   return null;
 }
@@ -124,10 +118,10 @@ function Lecture({ program, selected, onSelect }: { program: Program; selected: 
   );
 }
 
-function Calendar({ today, requested, onPick, lecture, picked }: { today: Date; requested: Set<string>; onPick: (d: Date) => void; lecture: string | null; picked: Date | null }) {
+function Calendar({ today, requested, rules, onPick, lecture, picked }: { today: Date; requested: Set<string>; rules: CalendarRules; onPick: (d: Date) => void; lecture: string | null; picked: Date | null }) {
   // Opens on the first month that still has a bookable day.
   const [offset, setOffset] = useState(() => {
-    const next = firstFree(today, requested);
+    const next = firstFree(today, requested, rules);
     if (!next) return 0;
     return (next.getFullYear() - today.getFullYear()) * 12 + next.getMonth() - today.getMonth();
   });
@@ -144,7 +138,7 @@ function Calendar({ today, requested, onPick, lecture, picked }: { today: Date; 
           <dt>{t("הרצאה")}</dt>
           <dd>{lecture ?? t("קודם בוחרים הרצאה")}</dd>
         </div>
-        {lecture && pickedIso && dayState(picked!, today, requested) === "free" ? (
+        {lecture && pickedIso && dayState(picked!, today, requested, rules) === "free" ? (
           <div>
             <dt>{t("מועד")}</dt>
             <dd>{dayLabel(picked!)}</dd>
@@ -155,14 +149,14 @@ function Calendar({ today, requested, onPick, lecture, picked }: { today: Date; 
         <span className="mon-n disp" aria-live="polite">{first.toLocaleDateString(dateLocale(), { month: "long", year: "numeric" })}</span>
         <div className="cal-nav">
           <button className="iconbtn dark" disabled={offset === 0} aria-label={t("החודש הקודם")} onClick={() => setOffset((o) => o - 1)}><Icon.prev /></button>
-          <button className="iconbtn dark" disabled={offset === MONTHS_AHEAD} aria-label={t("החודש הבא")} onClick={() => setOffset((o) => o + 1)}><Icon.next /></button>
+          <button className="iconbtn dark" disabled={offset >= rules.monthsAhead} aria-label={t("החודש הבא")} onClick={() => setOffset((o) => o + 1)}><Icon.next /></button>
         </div>
       </div>
       <div className="cgrid">
         {(siteLang() === "en" ? WEEKDAYS_EN : WEEKDAYS).map((w, i) => <span className="dn" key={i} aria-hidden="true">{w}</span>)}
         {Array.from({ length: first.getDay() }, (_, i) => <span className="cd out" key={`o${i}`} aria-hidden="true" />)}
         {days.map((d) => {
-          const state = dayState(d, today, requested);
+          const state = dayState(d, today, requested, rules);
           const label = `${dayLabel(d)}, ${t(STATE_LABEL[state])}`;
           if (state === "free") {
             return <button key={d.getDate()} type="button" className={`cd free${isoDate(d) === pickedIso ? " pick" : ""}`} aria-label={label} aria-pressed={isoDate(d) === pickedIso} disabled={!lecture} onClick={() => onPick(d)}>{d.getDate()}</button>;
@@ -483,7 +477,14 @@ export function ActivityPage() {
     return d;
   }, []);
   const requested = useMemo(() => new Set([...requestedFromServer, ...sentDates]), [requestedFromServer, sentDates]);
-  const next = firstFree(today, requested);
+  const { config, ready } = useSiteConfig();
+  const rules = useMemo<CalendarRules>(
+    () => ({ closed: new Set(config.calendar.closedWeekdays), taken: new Set(config.calendar.takenDates), monthsAhead: config.calendar.monthsAhead }),
+    [config.calendar],
+  );
+  const programs = config.lectures.map((l) => (siteLang() === "en" ? l.en ?? l.he : l.he));
+  const handedOut = config.counter;
+  const next = firstFree(today, requested, rules);
 
   const world = WORLDS.find((w) => w.key === (worldKey ?? "schools"));
 
@@ -505,8 +506,8 @@ export function ActivityPage() {
         <div className="wrap top-in">
           <Title big lead={t("העמותה מתמקדת בתחום החינוך ומפעילה תוכניות מקצועיות לילדים ובני נוער במסגרת גנים, בתי ספר, תיכונים ותנועות נוער.")}>{t("הפעילות שלנו")}</Title>
           <div className="counter rv">
-            {BRACELETS_HANDED_OUT === null ? <span className="cn disp">000,000</span> : <RollingNumber value={BRACELETS_HANDED_OUT} />}
-            <span className="cl">{t("צמידים חולקו חינם")}{BRACELETS_HANDED_OUT === null ? <span className="muted">{" "}{t("· מספר לדוגמה")}</span> : null}</span>
+            {!ready ? <span className="cn disp" aria-hidden="true">&nbsp;</span> : handedOut === null ? <span className="cn disp">000,000</span> : <RollingNumber value={handedOut} />}
+            <span className="cl">{t("צמידים חולקו חינם")}{ready && handedOut === null ? <span className="muted">{" "}{t("· מספר לדוגמה")}</span> : null}</span>
           </div>
         </div>
       </section>
@@ -536,13 +537,13 @@ export function ActivityPage() {
                 <p className="book-line">{t(world.line)}</p>
                 <h3 className="step disp"><span>1</span>{t("בוחרים הרצאה")}</h3>
                 <div className={`lecs${lecture ? " has-pick" : ""}`}>
-                  {copy().PROGRAMS.map((p) => (
+                  {!ready ? <><div className="skel" style={{ height: 150 }} aria-hidden="true" /><div className="skel" style={{ height: 150 }} aria-hidden="true" /></> : programs.map((p) => (
                     <Lecture key={p.title} program={p} selected={lecture === lectureName(p)} onSelect={() => chooseLecture(lectureName(p))} />
                   ))}
                 </div>
               </div>
               <div className="book-c" id="book-cal">
-                <Calendar today={today} requested={requested} lecture={lecture} picked={picked} onPick={(d) => { setPicked(d); setPanelOpen(true); }} />
+                {ready ? <Calendar today={today} requested={requested} rules={rules} lecture={lecture} picked={picked} onPick={(d) => { setPicked(d); setPanelOpen(true); }} /> : <div className="skel" style={{ height: 420 }} aria-hidden="true" />}
               </div>
             </div>
           )}
