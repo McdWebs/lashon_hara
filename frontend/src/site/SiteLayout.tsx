@@ -7,7 +7,7 @@ import { SkipLink } from "../components/SkipLink";
 import { langFromPath, stripLocale, withLocale } from "../i18n/locale";
 import { LocaleContext, buildLocale } from "../i18n/useLocale";
 import { useCart } from "../lib/cart";
-import { SITE, waLink } from "../lib/site";
+import { SITE } from "../lib/site";
 import { CookieBanner } from "./CookieBanner";
 import { Icon } from "./ui";
 import "./site.css";
@@ -121,7 +121,6 @@ function Footer() {
         <div className="foot-b">
           <Link className="btn btn-red" to="/join#donate"><span>{t("לתרומה")}</span><Icon.arrow /></Link>
           <div className="foot-icons">
-            <a className="iconbtn dark" href={waLink()} aria-label="WhatsApp"><Icon.wa /></a>
             <Link className="iconbtn dark" to="/join?panel=contact" aria-label={t("צרו קשר")}><Icon.mail /></Link>
             <a className="iconbtn dark" href={SITE.instagram} aria-label="Instagram"><Icon.ig /></a>
             <a className="iconbtn dark" href={SITE.facebook} aria-label="Facebook"><Icon.fb /></a>
