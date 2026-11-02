@@ -253,11 +253,6 @@ export function CollectionPage() {
             </button>
           </div>
         ) : null}
-
-        <div className="biz">
-          <h2 className="biz-h">{t("הזמנות לעסקים")}</h2>
-          <Link className="bizl" to="/custom"><span><b>{t("מוצרים לאירוע בהדפסה אישית")}</b><span>{t("כיפה עם הלוגו והדפסה שתבחרו")}</span></span><Icon.ext /></Link>
-        </div>
       </div>
 
       <Drawer

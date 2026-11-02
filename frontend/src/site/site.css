@@ -366,12 +366,6 @@ form[data-form] { display: flex; flex-direction: column; gap: 16px; }
 .pc-p { font-size: 17px; font-weight: 800; }
 .empty { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 40px 0; animation: lh-in .6s var(--ease) both; }
 .empty h2 { margin: 0; font-size: 30px; font-weight: 800; }
-.biz { margin-top: 70px; border-top: 3px solid var(--ink); }
-.biz-h { margin: 0; padding: 20px 0 6px; font-size: 22px; font-weight: 800; }
-.bizl { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; border-bottom: 1px solid var(--line); text-decoration: none; color: var(--ink); }
-.bizl > span { display: flex; flex-direction: column; gap: 2px; }
-.bizl b { font-size: 18px; } .bizl > span > span { font-size: 13px; color: var(--muted); }
-.bizl svg { transition: transform .45s var(--ease); } .bizl:hover svg { transform: translate(-4px, -4px); color: var(--red); }
 @media (max-width: 900px) {
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 12px; }
 }
