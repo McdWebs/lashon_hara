@@ -105,7 +105,8 @@ export function priceLabel(p: PriceRange, lang: "he" | "en") {
 type Stored = Partial<{ flags: Partial<Flags>; counter: number | null; calendar: CalendarConfig; shop: ShopConfig; lectures: LectureConfig[] }>;
 
 async function fetchStored(): Promise<Stored> {
-  const res = await fetch("/api/site-config");
+  // Ask the server each time whether the answer changed (cheap when it did not), so an admin change is not hidden by the browser's own copy.
+  const res = await fetch("/api/site-config", { cache: "no-cache" });
   if (!res.ok) throw new Error("config_unavailable");
   return (await res.json()) as Stored;
 }
@@ -126,6 +127,6 @@ function merge(stored: Stored | undefined): SiteConfig {
  * the parts that depend on it instead of showing the defaults for a moment and then switching.
  */
 export function useSiteConfig(): { config: SiteConfig; ready: boolean } {
-  const query = useQuery({ queryKey: ["site-config"], queryFn: fetchStored, staleTime: 60_000, retry: 1 });
+  const query = useQuery({ queryKey: ["site-config"], queryFn: fetchStored, staleTime: 10_000, retry: 1 });
   return { config: merge(query.data), ready: !query.isLoading };
 }
