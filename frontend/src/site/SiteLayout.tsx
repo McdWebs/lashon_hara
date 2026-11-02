@@ -103,7 +103,6 @@ function Nav() {
           ))}
         </nav>
         <div className="menu-foot">
-          <a href={waLink()}><Icon.wa /><span>WhatsApp</span></a>
           <LangSwitch onClick={() => setMenuOpen(false)} />
         </div>
       </Drawer>
