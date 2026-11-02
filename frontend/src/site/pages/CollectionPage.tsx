@@ -6,6 +6,7 @@ import { t, Link, siteLang } from "../i18n";
 import { fetchProducts } from "../../lib/catalog";
 import { SORT_CATALOG, priceKey, priceLabel, priceQuery, useSiteConfig } from "../../lib/siteConfig";
 import { copy } from "../copy";
+import { Dropdown } from "../Dropdown";
 import { CardsSkeleton, Icon, ShopCard, usePageTitle } from "../ui";
 
 const PER_PAGE = 12;
@@ -217,12 +218,22 @@ export function CollectionPage() {
                 <button type="button" className="cfind-x" aria-label={t("ניקוי החיפוש")} onClick={() => setDraft("")}><Icon.close /></button>
               ) : null}
             </label>
-            <select className="cpick" value={price.key} onChange={(e) => update({ price: e.target.value })} aria-label={t("סינון לפי מחיר")}>
-              {PRICES.map((p) => <option key={p.key} value={p.key}>{p.label}</option>)}
-            </select>
-            <select className="cpick" value={sort.key} onChange={(e) => update({ sort: e.target.value })} aria-label={t("מיון")}>
-              {SORTS.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
-            </select>
+            <Dropdown
+              label={t("סינון לפי מחיר")}
+              text={price.key === "" ? t("מחיר") : price.label}
+              value={price.key}
+              active={price.key !== ""}
+              options={PRICES.map((p) => ({ value: p.key, label: p.key === "" ? t("הכול") : p.label }))}
+              onChange={(v) => update({ price: v })}
+            />
+            <Dropdown
+              label={t("מיון")}
+              text={sort.key === "" ? t("מיון") : sort.label}
+              value={sort.key}
+              active={sort.key !== ""}
+              options={SORTS.map((s) => ({ value: s.key, label: s.key === "" ? t("ברירת מחדל") : s.label }))}
+              onChange={(v) => update({ sort: v })}
+            />
           </div>
         </div>
       </div>

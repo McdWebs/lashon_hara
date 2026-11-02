@@ -971,10 +971,7 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
 .page-collection .cfind input::-webkit-search-cancel-button { display: none; }
 .page-collection .cfind-x { flex: none; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border: 0; background: none; color: var(--muted); cursor: pointer; } .page-collection .cfind-x:hover { color: var(--ink); }
 .page-collection .cfind-x svg { width: 16px; height: 16px; }
-.page-collection .cpick { appearance: none; -webkit-appearance: none; height: 44px; padding: 0 22px 0 4px; border: 0; border-radius: 0; background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230D0D0D' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat left 2px center / 16px; color: var(--ink); font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
-.page-collection .cpick:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
-.lh[dir="ltr"] .page-collection .cpick { padding: 0 4px 0 22px; background-position: right 2px center; }
-
+.lh[dir="ltr"] 
 .page-collection .shop-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px 24px; padding-block: 26px 18px; }
 .page-collection .meta { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
 .page-collection .tag { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px 0 12px; border: 0; background: var(--soft); color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; transition: background .25s ease; }
@@ -1015,3 +1012,18 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
   .page-collection .cnt { font-size: 13px; }
   .page-collection .msort { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; flex: none; white-space: nowrap; padding: 0; border: 0; background: none; color: var(--ink); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
 }
+
+/* ===== Custom dropdown ===== */
+.cdrop { position: relative; }
+.cdrop-b { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 10px; border: 0; border-radius: 0; background: none; color: var(--ink); font: inherit; font-size: 15px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: background .2s ease; }
+.cdrop-b:hover, .cdrop.open .cdrop-b { background: var(--soft); }
+.cdrop-b.on::before { content: ''; width: 7px; height: 7px; border-radius: 999px; background: var(--red); }
+.cdrop-c { display: inline-flex; transition: transform .3s var(--ease); } .cdrop.open .cdrop-c { transform: rotate(180deg); }
+.cdrop-m { position: absolute; top: calc(100% + 6px); inset-inline-end: 0; z-index: 40; min-width: 230px; margin: 0; padding: 6px; list-style: none; background: #FFFFFF; border: 1px solid var(--line); box-shadow: 0 18px 50px rgba(13,13,13,.16); outline: 0; animation: lh-drop .2s var(--ease) both; }
+.cdrop-m:focus-visible { outline: 0; }
+.cdrop-o { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 14px; font-size: 15px; color: var(--ink2); cursor: pointer; white-space: nowrap; }
+.cdrop-o.cur { background: var(--soft); color: var(--ink); }
+.cdrop-o[aria-selected="true"] { color: var(--ink); font-weight: 800; }
+.cdrop-o svg { flex: none; color: var(--red); }
+@keyframes lh-drop { from { opacity: 0; transform: translateY(-6px); } }
+@media (prefers-reduced-motion: reduce) { .cdrop-m { animation: none; } }
