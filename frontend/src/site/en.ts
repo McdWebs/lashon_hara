@@ -13,7 +13,7 @@ export const EN: Record<string, string> = {
   "הלכות נוספות": "More laws", "חלקי העמוד": "Page sections", "מי אני": "Who I am", "הסיפור שלנו": "Our story", "מה זה לשון הרע": "What is lashon hara", "השגרירים שלנו": "Our ambassadors",
   "המיזם הוקם על ידי דוד הלפרין. שלטי חוצות, מיליוני סטיקרים וצמידים, בתי חולים ובסיסים צבאיים.": "David Halperin founded the initiative. Billboards, millions of stickers and bracelets, hospitals and army bases.",
   "לאחר 14 שנים של פעילות ״גרילה״ הוחלט למסד את הפעילות במסגרת עמותה.": "After 14 years of \"guerrilla\" activity, the work was formalized as a nonprofit.",
-  "המיזם זכה בפרס ירושלים.": "The initiative won the Jerusalem Prize.", "הסלוגן תורגם ל־19 שפות.": "The slogan has been translated into 19 languages.", "2007": "2007", "2020": "2020", "[שנה]": "[year]", "היום": "Today",
+  "המיזם זכה בפרס ירושלים.": "The initiative won the Jerusalem Prize.", "הסלוגן תורגם ל־19 שפות.": "The slogan has been translated into 19 languages.", "2007": "2007", "2020": "2020", "2021": "2021", "היום": "Today",
   "עומר אדם": "Omer Adam", "סטטיק": "Static", "שים לב מה אתה אומר": "Watch what you say", "נוצר לשונו שומר נפשו": "Guard your tongue, guard your soul", "[שם]": "[name]", "[ציטוט קצר]": "[short quote]",
   "דוד הלפרין, מייסד המיזם": "David Halperin, founder of the initiative", "דוד הלפרין, מייסד": "David Halperin, founder",
   "מה עושים כשנתקלים בלשון הרע?": "What to do when you come across lashon hara?", "מוקדי עזרה": "Where to get help",
