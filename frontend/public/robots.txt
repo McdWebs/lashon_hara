@@ -3,9 +3,11 @@ Allow: /
 Disallow: /cart
 Disallow: /checkout
 Disallow: /order-confirmation
+Disallow: /order-pay
 Disallow: /en/cart
 Disallow: /en/checkout
 Disallow: /en/order-confirmation
+Disallow: /en/order-pay
 Disallow: /admin
 Disallow: /en/admin
 Disallow: /api/

@@ -3,7 +3,7 @@ import { CacheProvider } from "@emotion/react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
 import { LocaleRedirect } from "./components/LocaleRedirect";
@@ -18,6 +18,7 @@ import { CollectionPage as SiteCollectionPage } from "./site/pages/CollectionPag
 import { ConfirmationPage as SiteConfirmationPage } from "./site/pages/ConfirmationPage";
 import { HomePage as SiteHomePage } from "./site/pages/HomePage";
 import { JoinPage as SiteJoinPage } from "./site/pages/JoinPage";
+import { PayPage as SitePayPage } from "./site/pages/PayPage";
 import { ProductPage as SiteProductPage } from "./site/pages/ProductPage";
 import {
   AccessibilityPage as SiteAccessibilityPage,
@@ -25,6 +26,14 @@ import {
   TermsPage as SiteTermsPage,
 } from "./site/pages/SimplePages";
 import { createAppTheme } from "./theme";
+
+/** A payment link from the old store (/checkout/order-pay/123/?key=…) opens the same payment screen here. */
+function OldPayLink() {
+  const { id = "" } = useParams();
+  const { search } = useLocation();
+  const key = new URLSearchParams(search).get("key") ?? "";
+  return <LocaleRedirect to={`/order-pay/${encodeURIComponent(id)}?key=${encodeURIComponent(key)}`} />;
+}
 
 const cacheRtl = createCache({ key: "muirtl", stylisPlugins: [prefixer, rtlPlugin] });
 const cacheLtr = createCache({ key: "muiltr" });
@@ -46,6 +55,8 @@ function newSitePages() {
       <Route path="cart" element={<SiteCartPage />} />
       <Route path="checkout" element={<SiteCheckoutPage />} />
       <Route path="order-confirmation" element={<SiteConfirmationPage />} />
+      <Route path="order-pay/:id" element={<SitePayPage />} />
+      <Route path="checkout/order-pay/:id" element={<OldPayLink />} />
       <Route path="join" element={<SiteJoinPage />} />
       <Route path="terms" element={<SiteTermsPage />} />
       <Route path="accessibility" element={<SiteAccessibilityPage />} />

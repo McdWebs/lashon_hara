@@ -1031,3 +1031,47 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
 .cinfo { display: flex; flex-direction: column; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 3px solid var(--ink); }
 .crow { display: flex; align-items: center; gap: 12px; min-height: 52px; font-size: 16px; text-decoration: none; color: var(--ink); border-bottom: 1px solid var(--line); }
 .crow > span { flex: 1; } .crow b { font-weight: 700; }
+
+/* ===== Payment screen ===== */
+.page-pay .co-f { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.page-pay .pay-h { display: flex; align-items: flex-start; gap: 14px; }
+.page-pay .pay-h h2 { margin: 0; font-size: 24px; font-weight: 800; }
+.page-pay .pay-h p { margin: 4px 0 0; font-size: 14px; line-height: 1.55; color: var(--muted); max-width: 52ch; }
+.page-pay .pay-lock { flex: none; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; background: var(--ink); color: #FFFFFF; }
+.page-pay .payframe { position: relative; min-height: 640px; border: 1px solid var(--line); background: #FFFFFF; }
+.page-pay .payframe iframe { display: block; width: 100%; height: 700px; border: 0; opacity: 0; position: absolute; inset: 0; transition: opacity .4s ease; }
+.page-pay .payframe iframe.on { opacity: 1; position: static; }
+.page-pay .payframe-s { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 15px; }
+.page-pay .payframe.state { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 12px; min-height: 0; padding: 36px; }
+.page-pay .payframe.state h3 { margin: 0; font-size: 26px; font-weight: 800; }
+.page-pay .payframe.state p { margin: 0; color: var(--muted); }
+.page-pay .pay-b { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 8px; }
+.page-pay .pay-f { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
+.page-pay .pay-link { padding: 0; border: 0; background: none; color: var(--ink); font: inherit; font-size: 14px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.page-pay .pay-to { display: flex; flex-direction: column; gap: 2px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 14px; line-height: 1.5; }
+.page-pay .state { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding-block: 40px 90px; }
+.page-pay .state h2 { margin: 0; font-size: 30px; font-weight: 800; } .page-pay .state p { margin: 0; color: var(--muted); }
+@media (max-width: 900px) {
+  .page-pay .payframe { min-height: 600px; }
+  .page-pay .payframe iframe { height: 660px; }
+  .page-pay .payframe.state { padding: 24px; }
+}
+
+/* The order summary and its grid, as the checkout draws them (those rules are scoped to the checkout page) */
+.page-pay .phead { padding: 64px 0 34px; }
+.page-pay .co { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 56px; align-items: start; padding-bottom: 90px; }
+.page-pay .sum { position: sticky; top: 108px; display: flex; flex-direction: column; gap: 14px; padding: 28px; background: var(--soft); }
+.page-pay .sum h2 { margin: 0 0 4px; font-size: 24px; font-weight: 800; }
+.page-pay .fnote { margin: 0; font-size: 13px; color: var(--muted); }
+.page-pay .si { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 14px; align-items: center; }
+.page-pay .si-m { position: relative; display: block; aspect-ratio: 4 / 5; background: #FFFFFF; }
+.page-pay .si-m img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.page-pay .si-q { position: absolute; top: -8px; inset-inline-start: -8px; min-width: 22px; height: 22px; border-radius: 999px; background: var(--ink); color: #FFFFFF; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.page-pay .si-n { display: flex; flex-direction: column; gap: 2px; font-size: 14px; font-weight: 500; } .page-pay .si-n small { font-size: 12px; color: var(--muted); }
+.page-pay .pay-r { display: flex; justify-content: space-between; align-items: baseline; font-size: 15px; padding-top: 12px; border-top: 1px solid var(--line); }
+.page-pay .pay-r.tot b { font-family: 'Karantina', sans-serif; font-size: 46px; line-height: .9; }
+@media (max-width: 900px) {
+  .page-pay .phead { padding: 28px 0 18px; }
+  .page-pay .co { grid-template-columns: 1fr; gap: 28px; padding-bottom: 60px; }
+  .page-pay .sum { position: static; order: -1; padding: 20px; }
+}

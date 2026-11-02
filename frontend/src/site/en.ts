@@ -54,4 +54,10 @@ export const EN: Record<string, string> = {
   "אימות אנושי לא נטען. נסו לרענן את הדף.": "The human check didn't load. Try refreshing the page.", "יש להשלים את האימות לפני השליחה.": "Please complete the check before sending.",
   "ברירת מחדל": "Default", "הצגת התוצאות": "Show results", "איפוס": "Reset", "סיכום הסל": "Bag summary", "לסל הקניות": "To the bag", "מחיר": "Price",
   "סינון ומיון": "Filter and sort",
+  "תשלום": "Payment", "תשלום בכרטיס אשראי": "Pay by credit card", "תשלום מאובטח": "Secure payment", "הזמנה מספר {id}": "Order number {id}", "סה״כ לתשלום": "Total to pay", "משלוח אל": "Shipping to", "הנחה": "Discount",
+  "התשלום מתבצע בעמוד מאובטח של חברת הסליקה. פרטי הכרטיס לא נשמרים באתר שלנו.": "Payment is made on the payment company's secure page. Your card details are not stored on our site.",
+  "טוענים את עמוד התשלום…": "Loading the payment page…", "לא הצלחנו לפתוח את עמוד התשלום.": "We couldn't open the payment page.", "ההזמנה שלכם שמורה. נסו שוב, ואם זה לא עובד צרו קשר.": "Your order is saved. Try again, and if it still doesn't work, contact us.",
+  "שילמתם והעמוד לא התעדכן? אל דאגה, נעדכן אתכם במייל.": "Paid and the page didn't update? Don't worry, we'll update you by email.", "צריכים עזרה?": "Need help?",
+  "הקישור לתשלום לא תקין.": "This payment link isn't valid.", "בדקו שהקישור נפתח במלואו, או צרו קשר ונעזור.": "Check that the whole link opened, or contact us and we'll help.", "לא הצלחנו לטעון את ההזמנה.": "We couldn't load the order.", "נסו לרענן את הדף, ואם זה לא עובד צרו קשר.": "Try refreshing the page, and if it doesn't work, contact us.",
+  "ההזמנה הזאת כבר לא פתוחה לתשלום.": "This order is no longer open for payment.", "אם זו טעות, צרו קשר ונבדוק.": "If this is a mistake, contact us and we'll check.",
 };

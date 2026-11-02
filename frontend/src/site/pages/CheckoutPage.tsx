@@ -111,11 +111,8 @@ export function CheckoutPage() {
             customer_note: v.note || undefined,
           });
           sessionStorage.setItem("lh-last-order", JSON.stringify({ id: result.order_id, key: result.order_key }));
-          if (result.payment_result.redirect_url) {
-            window.location.href = result.payment_result.redirect_url;
-            return;
-          }
-          navigate(`/order-confirmation?order_id=${result.order_id}&key=${encodeURIComponent(result.order_key)}`);
+          // The order exists now; the card is paid for on the payment screen.
+          navigate(`/order-pay/${result.order_id}?key=${encodeURIComponent(result.order_key)}`);
         } catch (err) {
           const code = err instanceof Error ? err.message : "checkout_failed";
           track("payment_failed", { code });

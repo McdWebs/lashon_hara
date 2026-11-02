@@ -12,6 +12,7 @@ import { checkoutRouter } from "./routes/checkout.js";
 import { formsRouter } from "./routes/forms.js";
 import { healthRouter } from "./routes/health.js";
 import { adminRouter, mediaRouter } from "./routes/media.js";
+import { payRouter } from "./routes/pay.js";
 import { siteConfigRouter } from "./routes/siteConfig.js";
 import { statsRouter } from "./routes/stats.js";
 
@@ -31,6 +32,7 @@ app.use("/api/forms", formsRouter);
 app.use("/api/stats", statsRouter);
 app.use("/api/media", mediaRouter);
 app.use("/api/site-config", siteConfigRouter);
+app.use("/api/pay", payRouter);
 app.use("/api/admin", adminRouter);
 
 Sentry.setupExpressErrorHandler(app);

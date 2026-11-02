@@ -4,7 +4,7 @@ import { t, Link } from "../i18n";
 import { useContact } from "../contact";
 import { track } from "../../lib/analytics";
 import { useCart } from "../../lib/cart";
-import { getOrder } from "../../lib/cartSession";
+import { fetchPayOrder } from "../../lib/pay";
 import { Icon, OkMark, usePageTitle } from "../ui";
 
 const PAID = new Set(["processing", "completed"]);
@@ -32,11 +32,22 @@ export function ConfirmationPage() {
   const clearCart = useCart((s) => s.clear);
   const [status, setStatus] = useState<Status>("checking");
   const cleared = useRef(false);
+  // The payment company can send the card form back to this page inside the payment screen's frame: leave the frame.
+  const framed = window.self !== window.top;
+  useEffect(() => {
+    if (!framed) return;
+    try {
+      window.top?.location.replace(window.location.href);
+    } catch {
+      /* the page around the frame is not ours: stay */
+    }
+  }, [framed]);
   const stash = stashedOrder();
   const orderId = params.get("order_id") ?? stash?.id ?? null;
   const orderKey = params.get("key") ?? stash?.key ?? undefined;
 
   useEffect(() => {
+    if (framed) return;
     if (!orderId) {
       setStatus("failed");
       return;
@@ -45,9 +56,9 @@ export function ConfirmationPage() {
     const started = Date.now();
     async function poll() {
       try {
-        const order = await getOrder(orderId!, orderKey);
+        const order = await fetchPayOrder(orderId!, orderKey ?? "");
         if (cancelled) return;
-        if (PAID.has(order.status)) {
+        if (order.paid || PAID.has(order.status)) {
           setStatus("paid");
           if (!cleared.current) {
             cleared.current = true;
@@ -75,7 +86,9 @@ export function ConfirmationPage() {
     return () => {
       cancelled = true;
     };
-  }, [orderId, orderKey, clearCart]);
+  }, [orderId, orderKey, clearCart, framed]);
+
+  if (framed) return null;
 
   return (
     <div className="page-confirm">
