@@ -47,7 +47,6 @@ function newSitePages() {
       <Route path="checkout" element={<SiteCheckoutPage />} />
       <Route path="order-confirmation" element={<SiteConfirmationPage />} />
       <Route path="join" element={<SiteJoinPage />} />
-      <Route path="admin" element={<SiteAdminPage />} />
       <Route path="terms" element={<SiteTermsPage />} />
       <Route path="accessibility" element={<SiteAccessibilityPage />} />
       <Route path="about" element={<LocaleRedirect to="/who-we-are" />} />
@@ -76,6 +75,8 @@ function ThemedTree() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Routes>
+          {/* The team's tools have their own layout, without the public header and footer. */}
+          <Route path="admin" element={<SiteAdminPage />} />
           <Route path="/en">
             {newSitePages()}
           </Route>
