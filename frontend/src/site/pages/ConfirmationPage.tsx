@@ -4,7 +4,8 @@ import { t, Link } from "../i18n";
 import { useContact } from "../contact";
 import { track } from "../../lib/analytics";
 import { useCart } from "../../lib/cart";
-import { fetchPayOrder } from "../../lib/pay";
+import { fetchPayOrder, type PayOrder } from "../../lib/pay";
+import { OrderSummary } from "../OrderSummary";
 import { Icon, OkMark, usePageTitle } from "../ui";
 
 const PAID = new Set(["processing", "completed"]);
@@ -31,6 +32,7 @@ export function ConfirmationPage() {
   const { openContact } = useContact();
   const clearCart = useCart((s) => s.clear);
   const [status, setStatus] = useState<Status>("checking");
+  const [order, setOrder] = useState<PayOrder | null>(null);
   const cleared = useRef(false);
   // The payment company can send the card form back to this page inside the payment screen's frame: leave the frame.
   const framed = window.self !== window.top;
@@ -58,6 +60,7 @@ export function ConfirmationPage() {
       try {
         const order = await fetchPayOrder(orderId!, orderKey ?? "");
         if (cancelled) return;
+        setOrder(order);
         if (order.paid || PAID.has(order.status)) {
           setStatus("paid");
           if (!cleared.current) {
@@ -93,7 +96,7 @@ export function ConfirmationPage() {
   return (
     <div className="page-confirm">
       <section className="ok">
-        <div className="wrap">
+        <div className={`wrap${status === "paid" && order ? " ok-in" : ""}`}>
           <div className="ok-a" role="status">
             {status === "checking" ? (
               <>
@@ -124,6 +127,7 @@ export function ConfirmationPage() {
               </>
             ) : null}
           </div>
+          {status === "paid" && order ? <OrderSummary order={order} /> : null}
         </div>
       </section>
     </div>
