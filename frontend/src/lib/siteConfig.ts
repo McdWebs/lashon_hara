@@ -15,13 +15,15 @@ export type LectureConfig = { id: string; he: Program; en?: Program };
 export type CalendarSettings = { icsUrl: string; closedWeekdays: number[]; monthsAhead: number; blockedDates: string[] };
 
 /** Switches the team can turn on and off in the admin. */
-export type Flags = { english: boolean; shopMission: boolean };
+export type Flags = { english: boolean; shopMission: boolean; newSearch: boolean };
 
 export const DEFAULT_FLAGS: Flags = {
   // The site starts in Hebrew only; English is switched on from the admin when it is ready.
   english: false,
   // The line under the shop title about handing products out for free to schools stays hidden until it is switched on.
   shopMission: false,
+  // The upgraded shop search (suggestions, and a modal on computers). Off brings back the plain search.
+  newSearch: true,
 };
 
 export type SiteConfig = {

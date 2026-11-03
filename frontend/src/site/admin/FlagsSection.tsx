@@ -15,6 +15,11 @@ const FLAGS: Array<{ key: keyof Flags; title: string; text: string }> = [
     title: "משפט החלוקה בחנות",
     text: "כשהחסם פועל, מופיע מתחת לכותרת החנות המשפט על כך שהמכירות מאפשרות לחלק מוצרים בחינם לבתי ספר ולמוסדות חינוך. כשהוא כבוי, המשפט לא מוצג.",
   },
+  {
+    key: "newSearch",
+    title: "חיפוש משודרג בחנות",
+    text: "כשהחסם פועל, החיפוש בחנות מציג הצעות (חיפושים אחרונים ופופולריים, מוצרים מומלצים ותוצאות תוך כדי הקלדה), ובמחשב נפתח בחלון. כשהוא כבוי, חוזר החיפוש הרגיל.",
+  },
 ];
 
 export function FlagsSection({ stored, onSaved }: { stored: StoredConfig | null; onSaved: () => void }) {
@@ -77,7 +82,7 @@ export function FlagsSection({ stored, onSaved }: { stored: StoredConfig | null;
 
       {error ? <p className="adm-err" role="alert">{error}</p> : null}
       <SaveBar dirty={dirty} saving={saving} onSave={() => void save()} onDiscard={() => { setDraft(saved); setError(""); }} />
-      {resetting ? <ConfirmDialog title="לחזור להגדרות המקוריות?" text="כל החסמים יחזרו למצב שבו האתר נשלח: אנגלית ומשפט החלוקה בחנות כבויים." confirmLabel="חזרה" onConfirm={() => void reset()} onCancel={() => setResetting(false)} /> : null}
+      {resetting ? <ConfirmDialog title="לחזור להגדרות המקוריות?" text="כל החסמים יחזרו למצב שבו האתר נשלח: אנגלית ומשפט החלוקה בחנות כבויים, והחיפוש המשודרג פועל." confirmLabel="חזרה" onConfirm={() => void reset()} onCancel={() => setResetting(false)} /> : null}
     </div>
   );
 }

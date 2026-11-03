@@ -1,5 +1,5 @@
 import { Drawer } from "@mui/material";
-import { useCallback, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { t, Link } from "./i18n";
 import { track, type AnalyticsEvent } from "../lib/analytics";
 import { submitForm } from "../lib/forms";
@@ -235,10 +235,20 @@ export function Choice({ f, label, options }: { f: FieldProps; label: string; op
   );
 }
 
+/** Opens and closes with the same ease: the content stays in place while the space folds shut. */
 export function Reveal({ open, children }: { open: boolean; children: ReactNode }) {
+  const [held, setHeld] = useState(open);
+  useEffect(() => {
+    if (open) {
+      setHeld(true);
+      return;
+    }
+    const id = window.setTimeout(() => setHeld(false), 650);
+    return () => window.clearTimeout(id);
+  }, [open]);
   return (
-    <div className={`reveal${open ? " open" : ""}`} aria-hidden={!open}>
-      <div><div>{open ? children : null}</div></div>
+    <div className={`reveal${open ? " open" : ""}`} aria-hidden={!open} inert={!open}>
+      <div><div>{open || held ? children : null}</div></div>
     </div>
   );
 }

@@ -90,12 +90,12 @@ function StoryForm() {
 
 type PanelKey = "ambassadors" | "story";
 
-const WAYS: Array<{ title: string; line: string; button: string; panel?: PanelKey; contact?: boolean; to?: string; image?: string }> = [
+const WAYS: Array<{ title: string; line: string; button: string; panel?: PanelKey; contact?: boolean; to?: string; image?: string; focus?: string }> = [
   { title: "להצטרף לצוות השגרירים", line: "להפיץ את המסר בקהילה, בכיתה או ברשת.", button: "להצטרפות", panel: "ambassadors", image: "/images/site/static.jpg" },
   { title: "לחלק צמידים בעצמכם", line: "צמידי שגרירים מהחנות, לחלוקה בעצמכם.", button: "לצמידים", to: "/shop?collection=bracelets", image: "/images/fabric_bracelet/black_bracelet.jpeg" },
   { title: "להביא את זה לבית הספר", line: "הרצאות וחלוקת צמידים לתלמידים.", button: "לבתי ספר", to: "/activity", image: "/images/store_images/hands_heart_sign.jpg" },
   { title: "לשתף את הסיפור שלכם", line: "ספרו לנו איך המסר נגע בכם.", button: "לשיתוף", panel: "story", image: "/images/fabric_bracelet/all_bracelet.jpeg" },
-  { title: "צרו קשר", line: "WhatsApp, מייל או טופס קצר.", button: "ליצירת קשר", contact: true },
+  { title: "צרו קשר", line: "WhatsApp, מייל או טופס קצר.", button: "ליצירת קשר", contact: true, image: "/images/site/founder.jpg", focus: "50% 22%" },
 ];
 
 const PANEL_TITLES: Record<PanelKey, string> = { ambassadors: "להצטרף לשגרירים", story: "לשתף סיפור" };
@@ -136,7 +136,7 @@ export function JoinPage() {
         {WAYS.map((way, i) => (
           <article className="way rv" key={way.title} style={{ "--d": `${(i % 3) * 0.07}s` } as React.CSSProperties}>
             <div className="way-m">
-              {way.image ? <img src={way.image} alt="" loading="lazy" /> : null}
+              {way.image ? <img src={way.image} alt="" loading="lazy" style={way.focus ? { objectPosition: way.focus } : undefined} /> : null}
               <span className="way-n disp">0{i + 2}</span>
             </div>
             <div className="way-b">

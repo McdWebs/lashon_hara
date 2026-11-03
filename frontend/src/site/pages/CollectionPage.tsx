@@ -7,18 +7,11 @@ import { fetchProducts } from "../../lib/catalog";
 import { SORT_CATALOG, priceKey, priceLabel, priceQuery, useSiteConfig } from "../../lib/siteConfig";
 import { copy } from "../copy";
 import { Dropdown } from "../Dropdown";
+import { ExpandingSearch, SearchIcon } from "../ExpandingSearch";
 import { CardsSkeleton, Icon, ShopCard, usePageTitle } from "../ui";
 
 const PER_PAGE = 12;
 
-function SearchIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="11" cy="11" r="6.5" />
-      <path d="M16 16l4.5 4.5" />
-    </svg>
-  );
-}
 
 function TruckIcon() {
   return (
@@ -75,24 +68,6 @@ export function CollectionPage() {
 
   const [draft, setDraft] = useState(q);
   const [sheet, setSheet] = useState(false);
-  // On a phone the search button stretches out into the field.
-  const [searchOpen, setSearchOpen] = useState(q !== "");
-  const mobileSearch = useRef<HTMLInputElement>(null);
-  const rowRef = useRef<HTMLDivElement>(null);
-  const searchBtn = useRef<HTMLButtonElement>(null);
-  const searchBox = useRef<HTMLDivElement>(null);
-
-  /** The field opens from, and closes back into, the search button: measure where the button sits in the row. */
-  function toggleSearch(open: boolean) {
-    const row = rowRef.current?.getBoundingClientRect();
-    const btn = searchBtn.current?.getBoundingClientRect();
-    if (row && btn && searchBox.current) {
-      searchBox.current.style.setProperty("--l", `${Math.max(0, btn.left - row.left)}px`);
-      searchBox.current.style.setProperty("--r", `${Math.max(0, row.right - btn.right)}px`);
-    }
-    setSearchOpen(open);
-    if (open) setTimeout(() => mobileSearch.current?.focus({ preventScroll: true }), 60);
-  }
   const typing = useRef(false);
 
   function update(next: Record<string, string>, replace = false) {
@@ -103,6 +78,13 @@ export function CollectionPage() {
       else merged.delete(k);
     }
     setParams(merged, { replace, preventScrollReset: true });
+  }
+
+  /** A suggestion was picked: search for it at once instead of waiting for the typing pause. */
+  function commitSearch(term: string) {
+    typing.current = true;
+    setDraft(term);
+    update({ q: term.trim() }, true);
   }
 
   // Search as you type, without a request per keystroke.
@@ -161,34 +143,22 @@ export function CollectionPage() {
       <section className="chero">
         <div className="wrap chero-in">
           <div className="chero-t">
-            <div className={`chero-row${searchOpen ? " searching" : ""}`} ref={rowRef}>
+            <div className="chero-row">
               <h1 className="chero-h">{t("הקולקציה")}</h1>
               <div className="chero-btns">
-                <button type="button" className="cbtn" ref={searchBtn} aria-label={t("חיפוש מוצר")} onClick={() => toggleSearch(true)}><SearchIcon /></button>
+                <ExpandingSearch draft={draft} setDraft={setDraft} startOpen={q !== ""} rich={config.flags.newSearch} onCommit={commitSearch} />
                 <button type="button" className="cbtn fill" aria-label={t("סינון ומיון")} onClick={() => setSheet(true)}>
                   <FilterIcon />
                   {price.key || sort.key ? <span className="cbtn-dot" aria-hidden="true" /> : null}
                 </button>
               </div>
-              <div className={`msearch${searchOpen ? " open" : ""}`} role="search" ref={searchBox}>
-                <SearchIcon />
-                <input
-                  ref={mobileSearch}
-                  type="search"
-                  value={draft}
-                  onChange={(e) => setDraft(e.target.value)}
-                  placeholder={t("חיפוש מוצר…")}
-                  aria-label={t("חיפוש מוצר")}
-                  enterKeyHint="search"
-                  tabIndex={searchOpen ? 0 : -1}
-                />
-                {draft ? (
-                  <button type="button" className="msearch-x" aria-label={t("ניקוי החיפוש")} onClick={() => { setDraft(""); mobileSearch.current?.focus(); }}><Icon.close /></button>
-                ) : null}
-                <button type="button" className="msearch-c" tabIndex={searchOpen ? 0 : -1} onClick={() => { setDraft(""); toggleSearch(false); }}>{t("ביטול")}</button>
-              </div>
             </div>
             {config.flags.shopMission ? <p className="chero-p">{introWhy}</p> : null}
+            {showSkeleton ? (
+              <span className="skel cnt-skel" aria-hidden="true" />
+            ) : (
+              <span className="cnt" aria-live="polite">{total !== undefined ? t("{n} פריטים", { n: total }) : ""}</span>
+            )}
           </div>
           <div className="chero-art" aria-hidden="true">
             <span><img src="/images/shop/ref-bracelets.jpg" alt="" width="204" height="255" /></span>
@@ -215,20 +185,24 @@ export function CollectionPage() {
           </div>
 
           <div className="cfind-g" role="search">
-            <label className="cfind">
-              <SearchIcon />
-              <input
-                type="search"
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
-                placeholder={t("חיפוש מוצר…")}
-                aria-label={t("חיפוש מוצר")}
-                enterKeyHint="search"
-              />
-              {draft ? (
-                <button type="button" className="cfind-x" aria-label={t("ניקוי החיפוש")} onClick={() => setDraft("")}><Icon.close /></button>
-              ) : null}
-            </label>
+            {config.flags.newSearch ? (
+              <ExpandingSearch draft={draft} setDraft={setDraft} startOpen={q !== ""} rich onCommit={commitSearch} />
+            ) : (
+              <label className="cfind">
+                <SearchIcon />
+                <input
+                  type="search"
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  placeholder={t("חיפוש מוצר…")}
+                  aria-label={t("חיפוש מוצר")}
+                  enterKeyHint="search"
+                />
+                {draft ? (
+                  <button type="button" className="cfind-x" aria-label={t("ניקוי החיפוש")} onClick={() => setDraft("")}><Icon.close /></button>
+                ) : null}
+              </label>
+            )}
             <Dropdown
               label={t("סינון לפי מחיר")}
               text={price.key === "" ? t("מחיר") : price.label}
@@ -250,27 +224,6 @@ export function CollectionPage() {
       </div>
 
       <div className="wrap shop">
-        <div className="shop-top">
-          <div className="meta">
-            {showSkeleton ? (
-              <span className="skel cnt-skel" aria-hidden="true" />
-            ) : (
-              <span className="cnt" aria-live="polite">{total !== undefined ? t("{n} פריטים", { n: total }) : ""}</span>
-            )}
-            {q ? (
-              <button type="button" className="tag" onClick={() => setDraft("")}>
-                <span>“{q}”</span><Icon.close />
-              </button>
-            ) : null}
-            {price.key ? (
-              <button type="button" className="tag" onClick={() => update({ price: "" })}>
-                <span>{price.label}</span><Icon.close />
-              </button>
-            ) : null}
-            {filtered ? <button type="button" className="tag-clear" onClick={clearAll}>{t("איפוס הכול")}</button> : null}
-          </div>
-        </div>
-
         <div className="grid" aria-busy={query.isFetching}>
           {/* A new tab, sort, price or search shows placeholders at once instead of the old products fading. */}
           {showSkeleton ? <CardsSkeleton count={PER_PAGE} /> : items.map((p) => <ShopCard key={p.id} product={p} />)}
