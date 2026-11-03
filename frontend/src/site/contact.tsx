@@ -13,9 +13,9 @@ function ContactForm() {
   return (
     <>
       <div className="cinfo">
-        <a className="crow" href={waLink()}><Icon.wa /><span>WhatsApp</span><b dir="ltr">054-3644512</b></a>
-        <span className="crow"><Icon.mail /><span>{t("מייל")}</span><b>{t("[כתובת המייל]")}</b></span>
-        <span className="crow"><Icon.pin /><span>{t("כתובת")}</span><b>{t("[הכתובת]")}</b></span>
+        <a className="crow" href={waLink()}><Icon.wa /><span>WhatsApp</span><b dir="ltr">052-7027348</b></a>
+        <a className="crow" href={`mailto:${SITE.email}`}><Icon.mail /><span>{t("מייל")}</span><b dir="ltr">{SITE.email}</b></a>
+        <span className="crow"><Icon.pin /><span>{t("כתובת")}</span><b>{t(SITE.address)}</b></span>
         <div style={{ display: "flex", gap: 8, paddingTop: 10 }}>
           <a className="iconbtn" href={SITE.instagram} aria-label="Instagram"><Icon.ig /></a>
           <a className="iconbtn" href={SITE.facebook} aria-label="Facebook"><Icon.fb /></a>

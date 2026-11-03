@@ -140,6 +140,9 @@ function Footer() {
         </nav>
         <span>{t("© לשון הרע לא מדבר אליי")}</span>
       </div>
+      <p className="wrap foot-credit">
+        {t("האתר נבנה על ידי")} <a href="https://www.mcd-webs.com/" target="_blank" rel="noopener noreferrer">Mcd Webs</a>
+      </p>
     </footer>
   );
 }

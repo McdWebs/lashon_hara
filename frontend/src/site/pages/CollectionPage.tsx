@@ -75,9 +75,24 @@ export function CollectionPage() {
 
   const [draft, setDraft] = useState(q);
   const [sheet, setSheet] = useState(false);
-  // On a phone the search opens in place of the title.
+  // On a phone the search button stretches out into the field.
   const [searchOpen, setSearchOpen] = useState(q !== "");
   const mobileSearch = useRef<HTMLInputElement>(null);
+  const rowRef = useRef<HTMLDivElement>(null);
+  const searchBtn = useRef<HTMLButtonElement>(null);
+  const searchBox = useRef<HTMLDivElement>(null);
+
+  /** The field opens from, and closes back into, the search button: measure where the button sits in the row. */
+  function toggleSearch(open: boolean) {
+    const row = rowRef.current?.getBoundingClientRect();
+    const btn = searchBtn.current?.getBoundingClientRect();
+    if (row && btn && searchBox.current) {
+      searchBox.current.style.setProperty("--l", `${Math.max(0, btn.left - row.left)}px`);
+      searchBox.current.style.setProperty("--r", `${Math.max(0, row.right - btn.right)}px`);
+    }
+    setSearchOpen(open);
+    if (open) setTimeout(() => mobileSearch.current?.focus({ preventScroll: true }), 60);
+  }
   const typing = useRef(false);
 
   function update(next: Record<string, string>, replace = false) {
@@ -146,38 +161,34 @@ export function CollectionPage() {
       <section className="chero">
         <div className="wrap chero-in">
           <div className="chero-t">
-            {searchOpen ? (
-              <div className="msearch" role="search">
-                <label className="msearch-f">
-                  <SearchIcon />
-                  <input
-                    ref={mobileSearch}
-                    type="search"
-                    value={draft}
-                    onChange={(e) => setDraft(e.target.value)}
-                    placeholder={t("חיפוש מוצר…")}
-                    aria-label={t("חיפוש מוצר")}
-                    enterKeyHint="search"
-                  />
-                  {draft ? (
-                    <button type="button" className="msearch-x" aria-label={t("ניקוי החיפוש")} onClick={() => { setDraft(""); mobileSearch.current?.focus(); }}><Icon.close /></button>
-                  ) : null}
-                </label>
-                <button type="button" className="msearch-c" onClick={() => { setDraft(""); setSearchOpen(false); }}>{t("ביטול")}</button>
+            <div className={`chero-row${searchOpen ? " searching" : ""}`} ref={rowRef}>
+              <h1 className="chero-h">{t("הקולקציה")}</h1>
+              <div className="chero-btns">
+                <button type="button" className="cbtn" ref={searchBtn} aria-label={t("חיפוש מוצר")} onClick={() => toggleSearch(true)}><SearchIcon /></button>
+                <button type="button" className="cbtn fill" aria-label={t("סינון ומיון")} onClick={() => setSheet(true)}>
+                  <FilterIcon />
+                  {price.key || sort.key ? <span className="cbtn-dot" aria-hidden="true" /> : null}
+                </button>
               </div>
-            ) : (
-              <div className="chero-row">
-                <h1 className="chero-h">{t("הקולקציה")}</h1>
-                <div className="chero-btns">
-                  <button type="button" className="cbtn" aria-label={t("חיפוש מוצר")} onClick={() => setSearchOpen(true)}><SearchIcon /></button>
-                  <button type="button" className="cbtn fill" aria-label={t("סינון ומיון")} onClick={() => setSheet(true)}>
-                    <FilterIcon />
-                    {price.key || sort.key ? <span className="cbtn-dot" aria-hidden="true" /> : null}
-                  </button>
-                </div>
+              <div className={`msearch${searchOpen ? " open" : ""}`} role="search" ref={searchBox}>
+                <SearchIcon />
+                <input
+                  ref={mobileSearch}
+                  type="search"
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  placeholder={t("חיפוש מוצר…")}
+                  aria-label={t("חיפוש מוצר")}
+                  enterKeyHint="search"
+                  tabIndex={searchOpen ? 0 : -1}
+                />
+                {draft ? (
+                  <button type="button" className="msearch-x" aria-label={t("ניקוי החיפוש")} onClick={() => { setDraft(""); mobileSearch.current?.focus(); }}><Icon.close /></button>
+                ) : null}
+                <button type="button" className="msearch-c" tabIndex={searchOpen ? 0 : -1} onClick={() => { setDraft(""); toggleSearch(false); }}>{t("ביטול")}</button>
               </div>
-            )}
-            {searchOpen ? null : <p className="chero-p">{introWhy}</p>}
+            </div>
+            {config.flags.shopMission ? <p className="chero-p">{introWhy}</p> : null}
           </div>
           <div className="chero-art" aria-hidden="true">
             <span><img src="/images/shop/ref-bracelets.jpg" alt="" width="204" height="255" /></span>

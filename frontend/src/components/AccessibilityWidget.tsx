@@ -71,6 +71,27 @@ export function AccessibilityWidget() {
 
   const open = Boolean(anchorEl);
 
+  // On phones the button sits low, and lifts only when the page end (the footer's bottom bar) is in view.
+  const [atEnd, setAtEnd] = useState(false);
+  useEffect(() => {
+    let raf = 0;
+    const check = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const left = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
+        setAtEnd(left < 90);
+      });
+    };
+    check();
+    window.addEventListener("scroll", check, { passive: true });
+    window.addEventListener("resize", check);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", check);
+      window.removeEventListener("resize", check);
+    };
+  }, []);
+
   return (
     <>
       <style>{`
@@ -86,7 +107,8 @@ export function AccessibilityWidget() {
         aria-label={t("a11yMenuLabel")}
         sx={{
           position: "fixed",
-          insetBlockEnd: { xs: 24, sm: 16 },
+          insetBlockEnd: { xs: atEnd ? 84 : 24, sm: 16 },
+          transition: "inset-block-end .3s ease",
           insetInlineEnd: 16,
           zIndex: 1300,
           bgcolor: "#111",

@@ -174,11 +174,15 @@ function ProductDetail({ product }: { product: WcProduct }) {
             </button>
           </div>
           {error ? <p className="ferr on" role="alert">{error}</p> : null}
-          <p className="ship">{t("משלוח לכל הארץ · שירות אישי ב־WhatsApp")}</p>
 
           <div className="accs">
             {description ? <Accordion title={t("פרטי המוצר")} open><div className="acc-html" dir="auto" dangerouslySetInnerHTML={{ __html: description }} /></Accordion> : null}
-            <Accordion title={t("משלוחים ושירות")}><p>{t("אנחנו שולחים לכל הארץ. לזמני אספקה, הזמנות בכמות או כל שאלה אחרת — הצוות שלנו זמין ב-WhatsApp.")}</p></Accordion>
+            <Accordion title={t("משלוחים")}>
+              <p>{t("משלוח לכל הארץ, עד הבית או לנקודות איסוף.")}</p>
+              <p>{t("איסוף בנקודות איסוף, כולל מספר מעקב: ₪10. שליח עד הבית: ₪35.")}</p>
+              <p>{t("משלוח חינם לנקודות האיסוף בהזמנות מעל ₪100.")}</p>
+              <p>{t("זמן האספקה: עד 8 ימי עסקים.")}</p>
+            </Accordion>
             <Accordion title={t("למה זה חשוב")}><p>{t("כל פריט מכניס לחיי היום־יום בחירה פשוטה: לדבר אחרת.")}</p></Accordion>
           </div>
         </div>

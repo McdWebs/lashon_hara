@@ -75,7 +75,7 @@ function Founder({ block }: { block: FounderBlock }) {
   if (block.kind === "headed") {
     return (
       <div className="headed">
-        <h3 className="disp">{block.head}</h3>
+        <h3 className="disp">{block.head.split(/("[^"״]+[״"])/).map((part, i) => (i % 2 ? <span className="one" key={i}>{part}</span> : part))}</h3>
         <p><Marked text={block.text} /></p>
       </div>
     );
@@ -381,6 +381,9 @@ export function AboutPage() {
               </figcaption>
             </figure>
           ))}
+        </div>
+        <div className="ambs-all">
+          <Link className="btn btn-line" to="/activity/ambassadors"><span>{t("לכל השגרירים")}</span><Icon.arrow /></Link>
         </div>
       </Section>
     </div>

@@ -97,7 +97,7 @@ export function SchoolsOrderForm() {
       <Alert severity={saved ? "success" : "warning"} sx={{ mt: 3 }}>
         {saved
           ? "הבקשה נקלטה. נחזור אליכם לאחר בדיקת הפרטים. אל תשכחו לשלוח את טופס ההצהרה ב-WhatsApp."
-          : "השמירה לשרת נכשלה — פנו ב-WhatsApp 054-3644512."}
+          : "השמירה לשרת נכשלה — פנו ב-WhatsApp 052-7027348."}
       </Alert>
     );
   }

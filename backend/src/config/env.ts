@@ -30,7 +30,7 @@ export const env = {
   },
   siteUrl: (process.env.SITE_URL ?? "https://lashonhara.co.il").replace(/\/$/, ""),
   contactInbox: process.env.CONTACT_INBOX ?? "",
-  whatsappNumber: process.env.WHATSAPP_NUMBER ?? "972543644512",
+  whatsappNumber: process.env.WHATSAPP_NUMBER ?? "972527027348",
   supportHours: process.env.SUPPORT_HOURS ?? "09:00-18:00, six days a week",
   wcOrigin: (process.env.WC_ORIGIN ?? "https://lashonhara.co.il").replace(/\/$/, ""),
   resend: {

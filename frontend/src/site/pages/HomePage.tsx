@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { t, Link, siteLang } from "../i18n";
-import { fetchProducts, type WcProduct } from "../../lib/catalog";
+import { fetchProducts } from "../../lib/catalog";
 import { copy } from "../copy";
-import { CardsSkeleton, Icon, ProductImage, QuoteMark, Title, canQuickAdd, priceLabel, usePageTitle, usePrefetchProduct, useQuickAdd } from "../ui";
+import { CardsSkeleton, Icon, QuoteMark, ShopCard, Title, usePageTitle } from "../ui";
 
 const SLIDES = [
   { photo: "omer", sig: "omer_sig", who: "עומר אדם", lines: ["שים לב", "מה אתה אומר"], side: "start" },
@@ -15,7 +15,7 @@ const TILES = [
   { img: "cat_shirts", label: "חולצות", collection: "clothing" },
   { img: "cat_caps", label: "כובעים", collection: "clothing" },
   { img: "cat_sport", label: "ספורט", collection: "sport" },
-  { img: "cat_mixed", label: "מיוחדים", collection: "special" },
+  { img: "cat_mixed", wide: "cat_mixed_wide", label: "מיוחדים", collection: "special" },
 ] as const;
 
 const HOLD_MS = 6500;
@@ -33,6 +33,21 @@ function Hero() {
   const [prev, setPrev] = useState<number | null>(null);
   const [stopped, setStopped] = useState(reduced.current);
   const [held, setHeld] = useState(false);
+  // The first slide starts in its resting-off state and turns on after the first paint (and the fonts), so it plays its entrance on load.
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    let raf = 0;
+    const start = () => {
+      raf = requestAnimationFrame(() => {
+        raf = requestAnimationFrame(() => setReady(true));
+      });
+    };
+    const fonts = document.fonts?.ready;
+    if (!fonts) start();
+    else Promise.race([fonts, new Promise((r) => setTimeout(r, 700))]).then(start);
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   const go = useCallback((i: number) => {
     setCur((c) => {
@@ -42,10 +57,10 @@ function Hero() {
   }, []);
 
   useEffect(() => {
-    if (stopped || held) return;
+    if (stopped || held || !ready) return;
     const timer = setTimeout(() => go((cur + 1) % SLIDES.length), HOLD_MS);
     return () => clearTimeout(timer);
-  }, [cur, stopped, held, go]);
+  }, [cur, stopped, held, ready, go]);
 
   useEffect(() => {
     if (prev === null) return;
@@ -66,7 +81,7 @@ function Hero() {
       {SLIDES.map((s, i) => (
         <div
           key={s.photo}
-          className={`slide side-${s.side}${i === cur ? " on" : ""}${i === prev ? " out" : ""}`}
+          className={`slide side-${s.side}${ready && i === cur ? " on" : ""}${i === prev ? " out" : ""}`}
           role="group"
           aria-roledescription={t("שקופית")}
           aria-label={t("{n} מתוך {total}: {who}", { n: i + 1, total: SLIDES.length, who: t(s.who) })}
@@ -100,39 +115,6 @@ function Hero() {
   );
 }
 
-function ProductCard({ product, index }: { product: WcProduct; index: number }) {
-  const quickAdd = useQuickAdd();
-  const prefetch = usePrefetchProduct();
-  const warm = () => prefetch(product.id);
-  const [state, setState] = useState<"idle" | "busy" | "added" | "failed">("idle");
-  const to = `/shop/product/${product.id}`;
-
-  async function add() {
-    if (state === "busy") return;
-    setState("busy");
-    try {
-      await quickAdd(product);
-      setState("added");
-    } catch {
-      setState("failed");
-    }
-    setTimeout(() => setState("idle"), 1600);
-  }
-
-  return (
-    <article className="pc rv" style={{ "--d": `${(index % 4) * 0.07}s` } as React.CSSProperties}>
-      <Link className="pc-m" to={to} tabIndex={-1} aria-hidden="true" onPointerEnter={warm} onTouchStart={warm}><ProductImage product={product} /></Link>
-      {canQuickAdd(product) ? (
-        <button className={`pc-add${state === "added" ? " ok" : state === "busy" ? " busy" : state === "failed" ? " bad" : ""}`} aria-busy={state === "busy"} onClick={add} aria-label={t("הוספה לסל: {name}", { name: product.name })}>
-          <span>{state === "busy" ? <i className="pc-spin" aria-hidden="true" /> : null}{state === "busy" ? t("מוסיפים…") : state === "added" ? t("נוסף לסל") : state === "failed" ? t("לא הצלחנו, נסו שוב") : t("הוספה לסל")}</span>
-        </button>
-      ) : null}
-      <Link className="pc-n" to={to} dir="auto" onPointerEnter={warm} onFocus={warm} onTouchStart={warm}>{product.name}</Link>
-      <span className="pc-p">{priceLabel(product)}</span>
-    </article>
-  );
-}
-
 export function HomePage() {
   usePageTitle(t("דף הבית"));
   const latest = useQuery({
@@ -147,7 +129,10 @@ export function HomePage() {
       <section className="cats" aria-label={t("קטגוריות בחנות")}>
         {TILES.map((tile) => (
           <Link key={tile.img} className="cat" to={`/shop?collection=${tile.collection}`}>
-            <img src={`/images/site/${tile.img}.jpg`} alt="" />
+            <picture>
+              {"wide" in tile ? <source media="(max-width: 900px)" srcSet={`/images/site/${tile.wide}.jpg`} /> : null}
+              <img src={`/images/site/${tile.img}.jpg`} alt="" />
+            </picture>
             <span className="sr">{t(tile.label)}</span>
           </Link>
         ))}
@@ -171,7 +156,9 @@ export function HomePage() {
           <Title as="h2">{t("הקולקציה החדשה")}</Title>
           <div className="pgrid">
             {latest.isLoading ? <CardsSkeleton /> : null}
-            {latest.data?.items.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
+            {latest.data?.items.map((p, i) => (
+              <div key={p.id} className="rv" style={{ "--d": `${(i % 4) * 0.07}s` } as React.CSSProperties}><ShopCard product={p} /></div>
+            ))}
           </div>
           {latest.isError ? <p className="lead" role="alert">{t("לא הצלחנו לטעון את המוצרים. נסו לרענן את העמוד.")}</p> : null}
           <div style={{ display: "flex", justifyContent: "center", paddingTop: 44 }}>

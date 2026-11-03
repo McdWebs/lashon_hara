@@ -22,7 +22,9 @@ export const SITE = {
     return resolveSiteUrl();
   },
   apiUrl: import.meta.env.VITE_API_URL ?? "",
-  whatsapp: import.meta.env.VITE_WHATSAPP_NUMBER ?? "972543644512",
+  whatsapp: import.meta.env.VITE_WHATSAPP_NUMBER ?? "972527027348",
+  email: "lashonharalomedaber@gmail.com",
+  address: "זבוטינסקי 168, בני ברק",
   supportHours: "09:00–18:00, שישה ימים בשבוע",
   facebook: "https://www.facebook.com/Lashon.Hara.Lo.Medaber.Elai/",
   instagram: "https://www.instagram.com/lashonhara/",

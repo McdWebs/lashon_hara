@@ -15,14 +15,21 @@ const WEEKDAYS = ["א", "ב", "ג", "ד", "ה", "ו", "ש"];
 const WEEKDAYS_EN = ["S", "M", "T", "W", "T", "F", "S"];
 
 type Reel = { kind: "video" | "photo"; src?: string; poster?: string; caption?: string };
-type WorldConfig = { key: string; name: string; line: string; live: string; image: string; banner?: string; reels?: Reel[] };
+type WorldConfig = { key: string; name: string; line: string; live: string; image: string; focus?: string; banner?: string; reels?: Reel[] };
 
 const WORLDS: WorldConfig[] = [
-  { key: "schools", name: "בתי ספר והרצאות", line: "הרצאות לבתי ספר ולמוסדות חינוך. בחרו תאריך ונחזור אליכם.", live: "", image: "/images/store_images/hands_heart_sign.jpg" },
-  { key: "idf", name: "צה״ל", line: "מפגשים והרצאות לחיילים ולמפקדים, על כוחה של מילה ועל שיח מכבד.", live: "", image: "/images/fabric_bracelet/all_bracelet.jpeg", reels: [] },
-  { key: "ambassadors", name: "שגרירים", line: "אמנים, ספורטאים ואנשי ציבור שמצטרפים ואומרים: לשון הרע לא מדבר אליי.", live: "", image: "/images/site/static.jpg", banner: "/images/store_images/celeb.jpg", reels: [] },
+  { key: "schools", name: "בתי ספר והרצאות", line: "הרצאות לבתי ספר ולמוסדות חינוך. בחרו תאריך ונחזור אליכם.", live: "", image: "/images/activity/schools.jpg", focus: "50% 38%" },
+  { key: "idf", name: "צה״ל", line: "מפגשים והרצאות לחיילים ולמפקדים, על כוחה של מילה ועל שיח מכבד.", live: "", image: "/images/activity/idf.jpg", reels: [] },
+  { key: "ambassadors", name: "שגרירים", line: "אמנים, ספורטאים ואנשי ציבור שמצטרפים ואומרים: לשון הרע לא מדבר אליי.", live: "", image: "/images/site/static.jpg", focus: "50% 14%", banner: "/images/store_images/celeb.jpg", reels: [] },
 ];
 
+
+/** On phones the tiles stack above the content, so a pick brings the chosen section into view. */
+function scrollToWorldOnPhone() {
+  if (!window.matchMedia("(max-width: 900px)").matches) return;
+  const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  setTimeout(() => document.querySelector(".page-activity .world")?.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" }), 80);
+}
 
 function isoDate(d: Date) {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -71,13 +78,36 @@ function lectureName(program: Program) {
   return program.title.split("\n")[0];
 }
 
+/** On phones, shrinks the lecture titles just enough to keep each on one line, all to the same size. */
+function useFitOneLine(ref: React.RefObject<HTMLElement | null>, text: string) {
+  useLayoutEffect(() => {
+    const fit = () => {
+      const all = [...document.querySelectorAll<HTMLElement>(".page-activity .lec-h h3")];
+      all.forEach((el) => { el.style.fontSize = ""; });
+      if (!window.matchMedia("(max-width: 900px)").matches) return;
+      let size = Infinity;
+      for (const el of all) {
+        const need = el.scrollWidth;
+        if (need > el.clientWidth) size = Math.min(size, (parseFloat(getComputedStyle(el).fontSize) * el.clientWidth) / need - 0.5);
+      }
+      if (size < Infinity) all.forEach((el) => { el.style.fontSize = `${size}px`; });
+    };
+    fit();
+    window.addEventListener("resize", fit);
+    document.fonts?.ready.then(fit);
+    return () => window.removeEventListener("resize", fit);
+  }, [ref, text]);
+}
+
 function Lecture({ program, selected, onSelect }: { program: Program; selected: boolean; onSelect: () => void }) {
   const [open, setOpen] = useState(false);
   const [title, subtitle] = program.title.split("\n");
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  useFitOneLine(titleRef, title);
   return (
     <article className={`lec${selected ? " on" : ""}`}>
       <header className="lec-h" onClick={onSelect}>
-        <h3 className="disp">{title}</h3>
+        <h3 className="disp" ref={titleRef}>{title}</h3>
         <p>{subtitle ?? program.lead}</p>
       </header>
       <div className={`lec-b${open ? " open" : ""}`}>
@@ -495,8 +525,8 @@ export function ActivityPage() {
 
       <div className="wtiles" role="tablist" aria-label={t("העולמות")}>
         {WORLDS.map((w) => (
-          <Link key={w.key} className={`wt${w.key === world.key ? " on" : ""}`} to={w.key === "schools" ? "/activity" : `/activity/${w.key}`} role="tab" aria-selected={w.key === world.key} preventScrollReset>
-            <img src={w.image} alt="" />
+          <Link key={w.key} className={`wt${w.key === world.key ? " on" : ""}`} to={w.key === "schools" ? "/activity" : `/activity/${w.key}`} role="tab" aria-selected={w.key === world.key} preventScrollReset onClick={scrollToWorldOnPhone}>
+            <img src={w.image} alt="" style={w.focus ? { objectPosition: w.focus } : undefined} />
             <span className="wt-in">
               <span className="wt-n">{t(w.name)}</span>
               <span className="wt-l">{w.key === "schools" && next ? t("המועד הפנוי הבא: {date}", { date: next.toLocaleDateString(dateLocale(), { day: "numeric", month: "long" }) }) : w.live ? t(w.live) : ""}</span>

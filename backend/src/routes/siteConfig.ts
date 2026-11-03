@@ -55,7 +55,7 @@ const lectures = z.object({
 });
 
 /** Switches the team can turn on and off. A flag that was never saved keeps the default the site ships with. */
-const flags = z.object({ english: z.boolean() });
+const flags = z.object({ english: z.boolean(), shopMission: z.boolean().optional() });
 
 const SECTIONS = { counter, calendar, shop, lectures, flags } as const;
 type Section = keyof typeof SECTIONS;
