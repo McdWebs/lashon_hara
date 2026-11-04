@@ -4,7 +4,7 @@ import { Link as RouterLink, Outlet, useLocation, useNavigate } from "react-rout
 import { t, Link, NavLink, setSiteLang, siteLang } from "./i18n";
 import { AccessibilityWidget } from "../components/AccessibilityWidget";
 import { SkipLink } from "../components/SkipLink";
-import { ContactContext, ContactPanel, useContact } from "./contact";
+import { ContactContext, ContactPanel, DonatePanel, useContact } from "./contact";
 import { langFromPath, stripLocale, withLocale } from "../i18n/locale";
 import { LocaleContext, buildLocale } from "../i18n/useLocale";
 import { useCart } from "../lib/cart";
@@ -116,7 +116,7 @@ function Nav() {
 }
 
 function Footer() {
-  const { openContact } = useContact();
+  const { openContact, openDonate } = useContact();
   return (
     <footer className="foot" id="foot">
       <div className="wrap foot-in">
@@ -125,7 +125,7 @@ function Footer() {
           <p className="foot-say">{t("מה שאנחנו לובשים הופך לחלק ממה שאנחנו אומרים.")}</p>
         </div>
         <div className="foot-b">
-          <Link className="btn btn-red" to="/join#donate"><span>{t("לתרומה")}</span><Icon.arrow /></Link>
+          <button type="button" className="btn btn-red" onClick={openDonate}><span>{t("לתרומה")}</span><Icon.arrow /></button>
           <div className="foot-icons">
             <button type="button" className="iconbtn dark" onClick={openContact} aria-label={t("צרו קשר")}><Icon.mail /></button>
             <a className="iconbtn dark" href={SITE.instagram} aria-label="Instagram"><Icon.ig /></a>
@@ -186,9 +186,10 @@ export function SiteLayout() {
   const prevPath = useRef(pathname);
   useReveal(root);
 
-  // The contact panel opens over whatever page the visitor is on.
+  // The contact and donation panels open over whatever page the visitor is on.
   const [contactOpen, setContactOpen] = useState(false);
-  const contact = useMemo(() => ({ openContact: () => setContactOpen(true) }), []);
+  const [donateOpen, setDonateOpen] = useState(false);
+  const contact = useMemo(() => ({ openContact: () => setContactOpen(true), openDonate: () => setDonateOpen(true) }), []);
 
   // Older links (/contact, ?panel=contact) open the same panel.
   useEffect(() => {
@@ -237,6 +238,7 @@ export function SiteLayout() {
         <Footer />
         <CookieBanner />
         <ContactPanel open={contactOpen} onClose={() => setContactOpen(false)} />
+        <DonatePanel open={donateOpen} onClose={() => setDonateOpen(false)} />
       </div>
       <AccessibilityWidget />
       </ContactContext.Provider>

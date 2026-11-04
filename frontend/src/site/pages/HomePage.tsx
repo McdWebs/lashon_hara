@@ -140,8 +140,7 @@ export function HomePage() {
 
       <section className="story">
         <div className="wrap story-in">
-          <div className="story-ph rv"><img src="/images/site/founder.jpg" alt={t("מייסד המיזם")} /></div>
-          <div className="story-tx rv" style={{ "--d": ".1s" } as React.CSSProperties}>
+          <div className="story-tx rv">
             <h2 className="story-h">{t("הסיפור של")}<br />{t("לשון הרע לא מדבר אליי")}</h2>
             <span className="bar" aria-hidden="true" />
             <p>{copy().FOUNDER_LEAD}</p>

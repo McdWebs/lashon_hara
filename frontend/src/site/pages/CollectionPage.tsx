@@ -161,9 +161,9 @@ export function CollectionPage() {
             )}
           </div>
           <div className="chero-art" aria-hidden="true">
-            <span><img src="/images/shop/ref-bracelets.jpg" alt="" width="204" height="255" /></span>
-            <span><img src="/images/shop/ref-portrait.jpg" alt="" width="204" height="255" /></span>
-            <span><img src="/images/shop/ref-wristband.jpg" alt="" width="204" height="255" /></span>
+            <span><img src="/images/fabric_bracelet/all_bracelet.jpeg" alt="" width="204" height="255" /></span>
+            <span><img src="/images/site/omer.jpg" alt="" width="204" height="255" /></span>
+            <span><img src="/images/site/static.jpg" alt="" width="204" height="255" /></span>
           </div>
         </div>
       </section>

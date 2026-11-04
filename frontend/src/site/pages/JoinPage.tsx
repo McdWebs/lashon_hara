@@ -1,37 +1,17 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { t, Link } from "../i18n";
-import { Check, Choice, Field, FormShell, Panel, Reveal, Toggle, useSiteForm } from "../forms";
+import { Check, Field, FormShell, Panel, Reveal, Toggle, useSiteForm } from "../forms";
 import { useContact } from "../contact";
 import { Icon, Title, usePageTitle } from "../ui";
 
-const PRESET_AMOUNTS = ["72", "180", "360", "720"];
-
 function DonateForm() {
-  const form = useSiteForm(
-    {
-      frequency: { kind: "choice", required: true },
-      amount: { kind: "choice", required: true },
-      otherAmount: { required: true, kind: "num", active: (v) => v.amount === "other" },
-      fullName: { required: true },
-      email: { required: true, kind: "email" },
-    },
-    { kind: "donate", initial: { frequency: "once" } },
-  );
+  const { openDonate } = useContact();
   return (
-    <FormShell form={form} submitLabel={t("לתרומה")} thanksTitle={t("תודה על התרומה!")} thanksText={t("קיבלנו את הפרטים. ניצור איתכם קשר להשלמת התשלום.")}>
-      <span className="flabel">{t("סוג התרומה")}</span>
-      <Choice f={form.field("frequency")} label={t("סוג התרומה")} options={[{ value: "once", label: t("חד־פעמית") }, { value: "monthly", label: t("חודשית") }]} />
-      <span className="flabel">{t("סכום")}{" "}<span className="req" aria-hidden="true">*</span></span>
-      <Choice f={form.field("amount")} label={t("סכום")} options={[...PRESET_AMOUNTS.map((a) => ({ value: a, label: `₪${a}` })), { value: "other", label: t("סכום אחר") }]} />
-      <Reveal open={form.values.amount === "other"}>
-        <Field f={form.field("otherAmount")} label={t("סכום בשקלים")} mode="numeric" />
-      </Reveal>
-      <div className="two">
-        <Field f={form.field("fullName")} label={t("שם מלא")} auto="name" />
-        <Field f={form.field("email")} label={t("כתובת מייל")} type="email" mode="email" auto="email" dir="ltr" note={t("לשם יישלח אישור התרומה")} />
-      </div>
-    </FormShell>
+    <div className="don-card">
+      <p>{t("בוחרים סכום, ממלאים פרטים ומשלמים באתר מאובטח.")}</p>
+      <button type="button" className="btn btn-red" onClick={openDonate}><span>{t("לתרומה")}</span><Icon.arrow /></button>
+    </div>
   );
 }
 
@@ -95,7 +75,7 @@ const WAYS: Array<{ title: string; line: string; button: string; panel?: PanelKe
   { title: "לחלק צמידים בעצמכם", line: "צמידי שגרירים מהחנות, לחלוקה בעצמכם.", button: "לצמידים", to: "/shop?collection=bracelets", image: "/images/fabric_bracelet/black_bracelet.jpeg" },
   { title: "להביא את זה לבית הספר", line: "הרצאות וחלוקת צמידים לתלמידים.", button: "לבתי ספר", to: "/activity", image: "/images/store_images/hands_heart_sign.jpg" },
   { title: "לשתף את הסיפור שלכם", line: "ספרו לנו איך המסר נגע בכם.", button: "לשיתוף", panel: "story", image: "/images/fabric_bracelet/all_bracelet.jpeg" },
-  { title: "צרו קשר", line: "WhatsApp, מייל או טופס קצר.", button: "ליצירת קשר", contact: true, image: "/images/site/founder.jpg", focus: "50% 22%" },
+  { title: "צרו קשר", line: "WhatsApp, מייל או טופס קצר.", button: "ליצירת קשר", contact: true, image: "/images/site/contact.jpg", focus: "50% 55%" },
 ];
 
 const PANEL_TITLES: Record<PanelKey, string> = { ambassadors: "להצטרף לשגרירים", story: "לשתף סיפור" };
@@ -124,8 +104,7 @@ export function JoinPage() {
       <section id="donate" className="don">
         <div className="wrap don-in">
           <div className="don-tx rv">
-            <span className="don-n disp">01</span>
-            <h2 className="disp">{t("לתרום")}</h2>
+            <div className="don-h"><span className="don-n disp">01</span><h2 className="disp">{t("לתרום")}</h2></div>
             <p>{t("תרומה מחזקת חינוך וחלוקה חינם של צמידים לבתי ספר ולמוסדות חינוך.")}</p>
           </div>
           <div className="don-f rv"><DonateForm /></div>

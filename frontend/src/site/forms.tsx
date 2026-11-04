@@ -295,7 +295,7 @@ export function FormShell({ form, submitLabel, thanksTitle, thanksText, children
   );
 }
 
-export function Panel({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: ReactNode }) {
+export function Panel({ open, onClose, title, children, flush }: { open: boolean; onClose: () => void; title: string; children: ReactNode; /** No padding: the content (an embedded page) fills the panel. */ flush?: boolean }) {
   return (
     <Drawer
       anchor="left"
@@ -308,7 +308,7 @@ export function Panel({ open, onClose, title, children }: { open: boolean; onClo
         <h2>{title}</h2>
         <button className="iconbtn" onClick={onClose} aria-label={t("סגירה")}><Icon.close /></button>
       </div>
-      <div className="pnl-b">{children}</div>
+      <div className={`pnl-b${flush ? " flush" : ""}`}>{children}</div>
     </Drawer>
   );
 }
