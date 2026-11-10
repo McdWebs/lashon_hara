@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { env } from "../config/env.js";
+import { clearProductIndex, refreshProductIndex, searchIndex, startProductIndex } from "../services/productIndex.js";
 import { getProduct, listCategories, listProducts, listProductsByIds } from "../services/woocommerce.js";
 
 export const catalogRouter = Router();
@@ -52,6 +53,8 @@ const WARM: Array<[string, () => Promise<unknown>]> = [
     "per_page=8&orderby=popularity",
     "per_page=8&orderby=date&order=desc",
     "per_page=24",
+    "per_page=12&page=2",
+    "per_page=12&page=3",
     ...SHOP_CATEGORIES.map((category) => shopQuery({ ...(category ? { category } : {}), per_page: "12", page: "1" })),
     ...SHOP_SORTS.map((sort) => `${sort}&per_page=12&page=1`),
   ].map((q): [string, () => Promise<unknown>] => [`list:${q}`, () => listProducts(new URLSearchParams(q))]),
@@ -68,6 +71,7 @@ function warmCache() {
 export function startCatalogWarmup() {
   warmCache();
   setInterval(warmCache, WARM_EVERY_MS).unref();
+  startProductIndex();
 }
 
 /** WooCommerce webhook (product created/updated/deleted): drop cached answers so edits show up at once. */
@@ -77,7 +81,9 @@ catalogRouter.post("/purge", (req, res) => {
     return;
   }
   cache.clear();
+  clearProductIndex();
   warmCache();
+  void refreshProductIndex();
   res.json({ ok: true });
 });
 
@@ -95,6 +101,12 @@ catalogRouter.get("/products", async (req, res) => {
     const include = params.get("include");
     if (include) {
       res.json(await remember(`ids:${include}`, () => listProductsByIds(include.split(","))));
+      return;
+    }
+    // Typed searches are answered from the product list kept in memory, so they do not wait on the live store.
+    const found = params.has("search") ? searchIndex(params) : null;
+    if (found) {
+      res.json(found);
       return;
     }
     const data = await remember(`list:${params.toString()}`, () => listProducts(params));
