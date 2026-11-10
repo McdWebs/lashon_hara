@@ -96,11 +96,11 @@ export function moneyLabel(minor: string | number, minorUnit = 2) {
   return `₪${Number.isInteger(n) ? n : n.toFixed(2)}`;
 }
 
-export function ProductImage({ product }: { product: WcProduct }) {
+export function ProductImage({ product, priority = false }: { product: WcProduct; priority?: boolean }) {
   const image = product.images[0];
   if (!image) return <span className="ph" style={{ position: "absolute", inset: 0 }}>{t("תמונה בקרוב")}</span>;
   // Cards are small, so the browser picks a fitting size from srcset instead of the full-size src.
-  return <img src={image.src} srcSet={image.srcset} sizes="(max-width: 900px) 50vw, 300px" alt={image.alt || product.name} loading="lazy" decoding="async" />;
+  return <img src={image.src} srcSet={image.srcset} sizes="(max-width: 900px) 50vw, 300px" alt={image.alt || product.name} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : undefined} decoding="async" />;
 }
 
 /** Starts loading a product as the pointer or finger reaches its link, so the page opens already filled. */
@@ -137,7 +137,7 @@ export function useQuickAdd() {
 }
 
 /** Shop card: the product link plus a round add-to-bag button on the photo for products that need no choices. */
-export function ShopCard({ product }: { product: WcProduct }) {
+export function ShopCard({ product, priority = false }: { product: WcProduct; priority?: boolean }) {
   const quickAdd = useQuickAdd();
   const prefetch = usePrefetchProduct();
   const [state, setState] = useState<"idle" | "busy" | "added" | "failed">("idle");
@@ -164,7 +164,7 @@ export function ShopCard({ product }: { product: WcProduct }) {
   return (
     <article className="pc pcw">
       <div className="pcw-m">
-        <Link className="pc-m" to={to} tabIndex={-1} aria-hidden="true" onPointerEnter={warm} onTouchStart={warm}><ProductImage product={product} /></Link>
+        <Link className="pc-m" to={to} tabIndex={-1} aria-hidden="true" onPointerEnter={warm} onTouchStart={warm}><ProductImage product={product} priority={priority} /></Link>
         {canQuickAdd(product) ? (
           <button type="button" className={`pc-q${state === "idle" ? "" : ` ${state}`}`} aria-busy={state === "busy"} aria-label={label} onClick={add}>
             {state === "busy" ? <i className="pc-spin" aria-hidden="true" /> : state === "added" ? <Icon.ok /> : <Icon.plus />}

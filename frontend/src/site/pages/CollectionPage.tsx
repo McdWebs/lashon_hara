@@ -226,7 +226,7 @@ export function CollectionPage() {
       <div className="wrap shop">
         <div className="grid" aria-busy={query.isFetching}>
           {/* A new tab, sort, price or search shows placeholders at once instead of the old products fading. */}
-          {showSkeleton ? <CardsSkeleton count={PER_PAGE} /> : items.map((p) => <ShopCard key={p.id} product={p} />)}
+          {showSkeleton ? <CardsSkeleton count={PER_PAGE} /> : items.map((p, i) => <ShopCard key={p.id} product={p} priority={i < 4} />)}
           {query.isFetchingNextPage ? <CardsSkeleton count={4} /> : null}
         </div>
 

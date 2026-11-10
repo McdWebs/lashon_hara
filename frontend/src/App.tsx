@@ -1,7 +1,9 @@
 import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
+import { QueryClient } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { useMemo } from "react";
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { prefixer } from "stylis";
@@ -50,8 +52,24 @@ const cacheRtl = createCache({ key: "muirtl", stylisPlugins: [prefixer, rtlPlugi
 const cacheLtr = createCache({ key: "muiltr" });
 
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { staleTime: 60_000, retry: 1 } },
+  defaultOptions: { queries: { staleTime: 60_000, gcTime: 24 * 60 * 60_000, retry: 1 } },
 });
+
+/** Shop lists are saved in the browser, so a return visit shows the last answer at once and refreshes behind it. */
+const persister = createSyncStoragePersister({
+  storage: typeof window === "undefined" ? undefined : window.localStorage,
+  key: "lh-shop-cache",
+  throttleTime: 1000,
+});
+const persistOptions = {
+  persister,
+  maxAge: 24 * 60 * 60_000,
+  buster: "v1",
+  dehydrateOptions: {
+    shouldDehydrateQuery: (q: { queryKey: readonly unknown[]; state: { status: string } }) =>
+      q.state.status === "success" && ["site-collection", "site-home-latest"].includes(String(q.queryKey[0])),
+  },
+};
 
 /** The new four-door site, in Hebrew and under /en in English. */
 function newSitePages() {
@@ -111,10 +129,10 @@ function ThemedTree() {
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider client={queryClient} persistOptions={persistOptions}>
       <BrowserRouter>
         <ThemedTree />
       </BrowserRouter>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   );
 }
