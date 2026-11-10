@@ -4,7 +4,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { useMemo } from "react";
+import { Suspense, lazy, useMemo } from "react";
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
@@ -12,16 +12,8 @@ import { LocaleRedirect } from "./components/LocaleRedirect";
 import { langFromPath, stripLocale } from "./i18n/locale";
 import { useSiteConfig } from "./lib/siteConfig";
 import { SiteLayout } from "./site/SiteLayout";
-import { AboutPage as SiteAboutPage } from "./site/pages/AboutPage";
-import { ActivityPage as SiteActivityPage } from "./site/pages/ActivityPage";
-import { AdminPage as SiteAdminPage } from "./site/pages/AdminPage";
-import { CartPage as SiteCartPage } from "./site/pages/CartPage";
-import { CheckoutPage as SiteCheckoutPage } from "./site/pages/CheckoutPage";
 import { CollectionPage as SiteCollectionPage } from "./site/pages/CollectionPage";
-import { ConfirmationPage as SiteConfirmationPage } from "./site/pages/ConfirmationPage";
 import { HomePage as SiteHomePage } from "./site/pages/HomePage";
-import { JoinPage as SiteJoinPage } from "./site/pages/JoinPage";
-import { PayPage as SitePayPage } from "./site/pages/PayPage";
 import { ProductPage as SiteProductPage } from "./site/pages/ProductPage";
 import {
   AccessibilityPage as SiteAccessibilityPage,
@@ -29,6 +21,16 @@ import {
   TermsPage as SiteTermsPage,
 } from "./site/pages/SimplePages";
 import { createAppTheme } from "./theme";
+
+// Pages most visitors never open load only when asked for, so the shop starts from a smaller file.
+const SiteAboutPage = lazy(() => import("./site/pages/AboutPage").then((m) => ({ default: m.AboutPage })));
+const SiteActivityPage = lazy(() => import("./site/pages/ActivityPage").then((m) => ({ default: m.ActivityPage })));
+const SiteAdminPage = lazy(() => import("./site/pages/AdminPage").then((m) => ({ default: m.AdminPage })));
+const SiteCartPage = lazy(() => import("./site/pages/CartPage").then((m) => ({ default: m.CartPage })));
+const SiteCheckoutPage = lazy(() => import("./site/pages/CheckoutPage").then((m) => ({ default: m.CheckoutPage })));
+const SiteConfirmationPage = lazy(() => import("./site/pages/ConfirmationPage").then((m) => ({ default: m.ConfirmationPage })));
+const SiteJoinPage = lazy(() => import("./site/pages/JoinPage").then((m) => ({ default: m.JoinPage })));
+const SitePayPage = lazy(() => import("./site/pages/PayPage").then((m) => ({ default: m.PayPage })));
 
 /** A payment link from the old store (/checkout/order-pay/123/?key=…) opens the same payment screen here. */
 function OldPayLink() {
@@ -114,6 +116,7 @@ function ThemedTree() {
     <CacheProvider value={cache}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
+        <Suspense fallback={null}>
         <Routes>
           {/* The team's tools have their own layout, without the public header and footer. */}
           <Route path="admin" element={<SiteAdminPage />} />
@@ -122,6 +125,7 @@ function ThemedTree() {
           </Route>
           {newSitePages()}
         </Routes>
+        </Suspense>
       </ThemeProvider>
     </CacheProvider>
   );

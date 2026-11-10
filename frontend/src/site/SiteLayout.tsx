@@ -201,8 +201,14 @@ export function SiteLayout() {
     navigate({ pathname, search: rest ? `?${rest}` : "", hash }, { replace: true, preventScrollReset: true });
   }, [search, pathname, hash, navigate]);
 
+  // The bag count can wait until the page has painted; the cart and checkout pages need it straight away.
   useEffect(() => {
-    hydrateCart();
+    if (/^\/(en\/)?(cart|checkout|order-)/.test(window.location.pathname)) {
+      hydrateCart();
+      return;
+    }
+    const id = window.setTimeout(hydrateCart, 800);
+    return () => window.clearTimeout(id);
   }, [hydrateCart]);
 
   useEffect(() => {

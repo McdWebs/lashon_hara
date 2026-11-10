@@ -109,7 +109,10 @@ function normalizePage(page: CatalogPage): CatalogPage {
 }
 
 export async function fetchProducts(search: string): Promise<CatalogPage> {
-  const res = await fetch(`${base}/products?${search}`);
+  const early = (window as unknown as { __early?: { products?: { search: string; res: Promise<Response> } } }).__early;
+  const taken = early?.products?.search === search ? early.products.res : undefined;
+  if (taken && early) early.products = undefined;
+  const res = await (taken ?? fetch(`${base}/products?${search}`));
   if (!res.ok) throw new Error("catalog_unavailable");
   return normalizePage(await readCatalogPage(res));
 }

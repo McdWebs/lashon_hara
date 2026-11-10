@@ -57,6 +57,14 @@ export type WcCheckoutResult = {
   };
 };
 
+export function hasCartSession() {
+  try {
+    return Boolean(localStorage.getItem(TOKEN_KEY));
+  } catch {
+    return false;
+  }
+}
+
 function getToken() {
   return localStorage.getItem(TOKEN_KEY) ?? undefined;
 }

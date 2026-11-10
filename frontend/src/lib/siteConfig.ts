@@ -110,7 +110,10 @@ type Stored = Partial<{ flags: Partial<Flags>; counter: number | null; calendar:
 
 async function fetchStored(): Promise<Stored> {
   // Ask the server each time whether the answer changed (cheap when it did not), so an admin change is not hidden by the browser's own copy.
-  const res = await fetch("/api/site-config", { cache: "no-cache" });
+  const early = (window as unknown as { __early?: { config?: Promise<Response> } }).__early;
+  const taken = early?.config;
+  if (early) early.config = undefined;
+  const res = await (taken ?? fetch("/api/site-config", { cache: "no-cache" }));
   if (!res.ok) throw new Error("config_unavailable");
   return (await res.json()) as Stored;
 }

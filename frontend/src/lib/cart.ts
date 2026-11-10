@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { cartApi, clearCartSession, type WcCart, type WcCartItem } from "./cartSession";
+import { cartApi, clearCartSession, hasCartSession, type WcCart, type WcCartItem } from "./cartSession";
 import { decodeHtmlEntities } from "./html";
 
 export type CartItem = {
@@ -121,6 +121,11 @@ export const useCart = create<CartState>((set, get) => ({
 
   hydrate: async () => {
     if (get().hydrated || typeof window === "undefined") return;
+    // A visitor who has never added anything has no cart on the store yet, so there is nothing to ask for.
+    if (!hasCartSession()) {
+      set({ hydrated: true });
+      return;
+    }
     set({ loading: true, error: null });
     try {
       const cart = await cartApi.get();
