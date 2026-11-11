@@ -159,7 +159,7 @@ function SchoolForm({ onClose }: { onClose: () => void }) {
       <Dialog open={asking} onClose={() => setAsking(false)} disablePortal slotProps={{ paper: { className: "ask-paper", role: "dialog", "aria-label": t("הזמנת הרצאה") } }}>
         <button className="iconbtn ask-x" onClick={() => setAsking(false)} aria-label={t("סגירה")}><Icon.close /></button>
         <h3 className="ask-h disp">{t("רגע לפני שליחה")}</h3>
-        <p className="ask-p">{t("רוצים להזמין אלינו גם הרצאה לבית הספר?")}</p>
+        <p className="ask-p">{t("רוצים להזמין גם הרצאה לבית הספר?")}</p>
         <button type="button" className="btn btn-red" onClick={lecture}><span>{t("להזמין הרצאה")}</span><Icon.arrow /></button>
         <p className="ask-s">{t("נעבור ללוח ההרצאות לבחירת תאריך. הפרטים שמילאתם נשמרים ויופיעו מוכנים בבקשה להרצאה.")}</p>
         <div className="ask-or">{t("או")}</div>
