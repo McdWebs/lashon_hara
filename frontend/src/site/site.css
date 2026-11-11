@@ -1203,3 +1203,19 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
 
 /* The search fields show their own focus (border or bar); no red outline box around the typed text. */
 .lh .smodal-bar input:focus-visible, .lh .msearch input:focus-visible, .lh .cfind input:focus-visible { outline: 0; }
+
+/* School bracelet request: the "lecture too?" window */
+.lh .ask-paper { position: relative; width: min(620px, calc(100% - 24px)); max-width: none; margin: 12px; padding: 44px 40px 36px; border-radius: 26px; display: flex; flex-direction: column; gap: 16px; }
+.ask-x { position: absolute; top: 12px; inset-inline-end: 12px; }
+.ask-h { margin: 0; font-size: 40px; line-height: 1.05; }
+.ask-p { margin: 0 0 6px; font-size: 20px; line-height: 1.5; }
+.ask-s { margin: 0; font-size: 15px; line-height: 1.5; color: var(--muted); }
+.ask-or { display: flex; align-items: center; gap: 12px; margin: 6px 0; font-size: 13px; color: var(--muted); }
+.ask-or::before, .ask-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.ask-b { display: flex; flex-direction: column; gap: 14px; padding: 24px; border: 1px solid var(--line); border-radius: 18px; background: var(--soft); }
+.ask-b > span { font-size: 16px; line-height: 1.5; color: var(--muted); }
+.ask-b ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.ask-b li a { display: inline-flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 700; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.ask-b li svg { width: 16px; height: 16px; flex: none; }
+@media (max-width: 520px) { .lh .ask-paper { padding: 40px 22px 26px; } .ask-h { font-size: 34px; } .ask-b { padding: 18px; } }
+.ask-b > b { font-size: 20px; }

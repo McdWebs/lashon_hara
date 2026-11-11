@@ -41,6 +41,8 @@ type Options = {
   send?: (values: Values) => Promise<void>;
   onSent?: (values: Values) => void;
   toPayload?: (values: Values) => Record<string, unknown>;
+  /** Runs once the form is valid, before sending. Return true to hold the send (to ask something first); call `submitNow` to carry on. */
+  gate?: (values: Values) => boolean;
 };
 
 export function useSiteForm(rules: Record<string, Rule>, options: Options = {}) {
@@ -92,8 +94,7 @@ export function useSiteForm(rules: Record<string, Rule>, options: Options = {}) 
     setInvalid(false);
   };
 
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const run = async (skipGate: boolean) => {
     if (sending.current) return;
     const bad = Object.keys(rules).filter((key) => check(key));
     const firstBad = bad[0];
@@ -108,6 +109,7 @@ export function useSiteForm(rules: Record<string, Rule>, options: Options = {}) 
       setFailed(t("יש להשלים את האימות לפני השליחה."));
       return;
     }
+    if (!skipGate && options.gate?.(values)) return;
     sending.current = true;
     setBusy(true);
     setFailed(null);
@@ -140,7 +142,13 @@ export function useSiteForm(rules: Record<string, Rule>, options: Options = {}) 
     }
   };
 
-  return { values, set, field, reset, onSubmit, busy, done, failed, invalid, honey, setFailed, needsCaptcha, setCaptchaToken, captchaReset };
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    return run(false);
+  };
+  const submitNow = () => run(true);
+
+  return { values, set, field, reset, onSubmit, submitNow, busy, done, failed, invalid, honey, setFailed, needsCaptcha, setCaptchaToken, captchaReset };
 }
 
 export type SiteForm = ReturnType<typeof useSiteForm>;

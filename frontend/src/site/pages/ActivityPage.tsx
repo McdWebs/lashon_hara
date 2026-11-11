@@ -8,6 +8,7 @@ import type { Program } from "../about";
 import { fetchMedia, type MediaWorld } from "../../lib/media";
 import { useSiteConfig } from "../../lib/siteConfig";
 import { Icon, Title, usePageTitle } from "../ui";
+import { clearSchoolDraft, loadSchoolDraft } from "../schoolDraft";
 
 /** The booking rules, from the admin: closed weekdays, how far ahead, and the days already taken. */
 type CalendarRules = { closed: Set<number>; taken: Set<string>; monthsAhead: number };
@@ -184,7 +185,22 @@ function Calendar({ today, requested, rules, onPick, lecture, picked }: { today:
   );
 }
 
+/** The lecture request starts from what the school already typed in the bracelet request, if they did. */
+function draftStart() {
+  const draft = loadSchoolDraft();
+  const v = draft?.values;
+  if (!v) return { draft: null, start: {} as Record<string, string> };
+  const audience = [v.ages, v.students ? `${v.students} ${t("תלמידים")}` : ""].filter(Boolean).join(", ");
+  const start: Record<string, string> = {
+    school: v.school ?? "", city: v.city ?? "", contactName: v.name ?? "", role: v.role ?? "",
+    phone: v.phone ?? "", email: v.email ?? "", audience, notes: v.distribution ?? "",
+    ...(v.bracelets ? { freeBracelets: "1", braceletCount: v.bracelets } : {}),
+  };
+  return { draft, start };
+}
+
 function SchoolForm({ date, lecture, onSent }: { date: Date; lecture: string; onSent: (iso: string) => void }) {
+  const [{ draft, start }] = useState(draftStart);
   const form = useSiteForm(
     {
       lecture: { required: true },
@@ -202,9 +218,13 @@ function SchoolForm({ date, lecture, onSent }: { date: Date; lecture: string; on
     },
     {
       kind: "school",
-      initial: { lecture, date: dayLabel(date) },
-      toPayload: (v) => ({ ...v, dateIso: isoDate(date) }),
-      onSent: () => onSent(isoDate(date)),
+      initial: { ...start, lecture, date: dayLabel(date) },
+      // The whole bracelet request travels with the lecture request, so the team has both.
+      toPayload: (v) => ({ ...v, dateIso: isoDate(date), ...(draft?.wantsLecture ? { braceletRequest: draft.values } : {}) }),
+      onSent: () => {
+        if (draft?.wantsLecture) clearSchoolDraft();
+        onSent(isoDate(date));
+      },
     },
   );
   return (
