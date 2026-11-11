@@ -3,6 +3,7 @@ import { t, Link, siteLang } from "../i18n";
 import { HelplinesList } from "../../content/helplinesHe";
 import type { FounderBlock } from "../about";
 import { copy } from "../copy";
+import { useSiteConfig } from "../../lib/siteConfig";
 import { Icon, usePageTitle } from "../ui";
 
 const SECTIONS = [
@@ -236,6 +237,44 @@ function HelplinesEn() {
   );
 }
 
+const VIDEO_SRC = "https://player.vimeo.com/video/662680986?h=186cfef65f&autoplay=1&dnt=1";
+
+/** The founder's photo as it was, with a play button that opens the video over the page. */
+function FounderVideo() {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
+  const { config } = useSiteConfig();
+  if (!config.flags.aboutVideo) return <div className="w-ph"><img src="/images/site/founder.jpg" alt={t("דוד הלפרין, מייסד המיזם")} /></div>;
+
+  return (
+    <div className="w-ph">
+      <button type="button" className="vplay" onClick={() => setOpen(true)} aria-label={t("לנגן את הסרטון")}>
+        <img src="/images/site/founder.jpg" alt={t("דוד הלפרין, מייסד המיזם")} />
+        <span className="vplay-b" aria-hidden="true"><Icon.play /></span>
+      </button>
+      {open ? (
+        <div className="vmodal" role="dialog" aria-modal="true" onClick={() => setOpen(false)}>
+          <button type="button" className="vmodal-x" onClick={() => setOpen(false)} aria-label={t("סגירה")}>×</button>
+          <div className="vmodal-f" onClick={(e) => e.stopPropagation()}>
+            <iframe src={VIDEO_SRC} title={t("דוד הלפרין, מייסד המיזם")} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen />
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function Section({ id, n, title, grey, focus, children }: { id: string; n: number; title: string; grey?: boolean; focus: boolean; children: React.ReactNode }) {
   return (
     <section className={`wsec${grey ? " grey" : ""}${focus ? " focus" : ""}`} id={id} data-wsec={id}>
@@ -307,7 +346,7 @@ export function AboutPage() {
 
       <Section id="who" n={1} title={t("מי אני")} focus={current === "who"}>
         <div className="two">
-          <div className="w-ph"><img src="/images/site/founder.jpg" alt={t("דוד הלפרין, מייסד המיזם")} /></div>
+          <FounderVideo />
           <div className="w-tx">
             <p className="big"><Marked text={copy().FOUNDER_LEAD} /></p>
             {copy().FOUNDER.map((block, i) => <Founder key={i} block={block} />)}

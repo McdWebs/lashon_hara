@@ -15,7 +15,7 @@ export type LectureConfig = { id: string; he: Program; en?: Program };
 export type CalendarSettings = { icsUrl: string; closedWeekdays: number[]; monthsAhead: number; blockedDates: string[] };
 
 /** Switches the team can turn on and off in the admin. */
-export type Flags = { english: boolean; shopMission: boolean; newSearch: boolean };
+export type Flags = { english: boolean; shopMission: boolean; newSearch: boolean; aboutVideo: boolean };
 
 export const DEFAULT_FLAGS: Flags = {
   // The site starts in Hebrew only; English is switched on from the admin when it is ready.
@@ -24,6 +24,8 @@ export const DEFAULT_FLAGS: Flags = {
   shopMission: false,
   // The upgraded shop search (suggestions, and a modal on computers). Off brings back the plain search.
   newSearch: true,
+  // The founder's photo on the About page gets a play button that opens the video. Off shows the plain photo.
+  aboutVideo: false,
 };
 
 export type SiteConfig = {

@@ -9,7 +9,7 @@ export const EN: Record<string, string> = {
   "סל הקניות, {n} פריטים": "Shopping bag, {n} items",
   "שדה חובה": "Required field", "יש לאשר כדי להמשיך": "Please confirm to continue", "יש לבחור אפשרות": "Please choose an option", "יש להזין כתובת מייל תקינה": "Please enter a valid email address", "יש להזין מספר טלפון תקין": "Please enter a valid phone number", "יש להזין מספר": "Please enter a number",
   "השליחה לא הצליחה. מה שכתבתם נשמר — נסו שוב.": "Sending failed. What you wrote is saved, so please try again.", "משהו השתבש. נסו שוב.": "Something went wrong. Please try again.", "שולחים…": "Sending…",
-  "בשליחת הטופס אתם מאשרים את": "By sending this form you agree to the", "מדיניות הפרטיות": "privacy policy", "נא לתקן את השדות המסומנים.": "Please fix the marked fields.", "סגירה": "Close", "תמונה בקרוב": "Image coming soon",
+  "בשליחת הטופס אתם מאשרים את": "By sending this form you agree to the", "מדיניות הפרטיות": "privacy policy", "נא לתקן את השדות המסומנים.": "Please fix the marked fields.", "סגירה": "Close", "לנגן את הסרטון": "Play the video", "תמונה בקרוב": "Image coming soon",
   "הלכות נוספות": "More laws", "חלקי העמוד": "Page sections", "מי אני": "Who I am", "הסיפור שלנו": "Our story", "מה זה לשון הרע": "What is lashon hara", "השגרירים שלנו": "Our ambassadors",
   "המיזם הוקם על ידי דוד הלפרין. שלטי חוצות, מיליוני סטיקרים וצמידים, בתי חולים ובסיסים צבאיים.": "David Halperin founded the initiative. Billboards, millions of stickers and bracelets, hospitals and army bases.",
   "לאחר 14 שנים של פעילות ״גרילה״ הוחלט למסד את הפעילות במסגרת עמותה.": "After 14 years of \"guerrilla\" activity, the work was formalized as a nonprofit.",

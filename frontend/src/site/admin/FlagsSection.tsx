@@ -20,6 +20,11 @@ const FLAGS: Array<{ key: keyof Flags; title: string; text: string }> = [
     title: "חיפוש משודרג בחנות",
     text: "כשהחסם פועל, החיפוש בחנות מציג הצעות (חיפושים אחרונים ופופולריים, מוצרים מומלצים ותוצאות תוך כדי הקלדה), ובמחשב נפתח בחלון. כשהוא כבוי, חוזר החיפוש הרגיל.",
   },
+  {
+    key: "aboutVideo",
+    title: "סרטון בעמוד אודות",
+    text: "כשהחסם פועל, על התמונה של דוד בעמוד אודות מופיע כפתור הפעלה שמנגן את הסרטון. כשהוא כבוי, מוצגת התמונה כרגיל.",
+  },
 ];
 
 export function FlagsSection({ stored, onSaved }: { stored: StoredConfig | null; onSaved: () => void }) {
