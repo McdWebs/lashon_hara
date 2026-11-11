@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { t, siteLang } from "./i18n";
 import { Field, FormShell, Panel, useSiteForm } from "./forms";
 import { SITE, waLink } from "../lib/site";
@@ -45,11 +45,20 @@ export function ContactPanel({ open, onClose }: { open: boolean; onClose: () => 
  */
 const DONATE_FORM = { he: 5362, en: 5362 } as const;
 
-/** Opened from any page by the donate buttons. The form is another site, so it only loads once the window is open. */
+/**
+ * Opened from any page by the donate buttons. The form is another site and slow to come up, so it starts loading
+ * quietly a few seconds after the page is ready (not in the way of the page itself), and stays loaded once it has.
+ */
 export function DonatePanel({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [warm, setWarm] = useState(false);
+  useEffect(() => {
+    const idle = window.requestIdleCallback ?? ((fn: () => void) => window.setTimeout(fn, 1));
+    const timer = window.setTimeout(() => idle(() => setWarm(true)), 3000);
+    return () => window.clearTimeout(timer);
+  }, []);
   return (
-    <Panel open={open} onClose={onClose} title={t("לתרום")} flush>
-      {open ? <iframe className="don-frame" src={`https://doonline.co/lha/f/${DONATE_FORM[siteLang() === "en" ? "en" : "he"]}/`} title={t("טופס תרומה")} allow="payment" /> : null}
+    <Panel open={open} onClose={onClose} title={t("לתרום")} flush keepMounted>
+      {open || warm ? <iframe className="don-frame" src={`https://doonline.co/lha/f/${DONATE_FORM[siteLang() === "en" ? "en" : "he"]}/`} title={t("טופס תרומה")} allow="payment" /> : null}
     </Panel>
   );
 }

@@ -17,6 +17,7 @@ type Raw = Record<string, any>;
 /** Products that stay in WooCommerce but are not shown on this site. */
 const HIDDEN_PRODUCT_IDS = new Set<number>([
   50061, // שמירת מקום להרצאה
+  2443, // בואו להיות שותפים בפרויקט
 ]);
 export const isHiddenProduct = (id: unknown) => HIDDEN_PRODUCT_IDS.has(Number(id));
 

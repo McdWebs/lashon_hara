@@ -66,7 +66,7 @@ const persister = createSyncStoragePersister({
 const persistOptions = {
   persister,
   maxAge: 24 * 60 * 60_000,
-  buster: "v1",
+  buster: "v2",
   dehydrateOptions: {
     shouldDehydrateQuery: (q: { queryKey: readonly unknown[]; state: { status: string } }) =>
       q.state.status === "success" && ["site-collection", "site-home-latest"].includes(String(q.queryKey[0])),

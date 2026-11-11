@@ -295,13 +295,14 @@ export function FormShell({ form, submitLabel, thanksTitle, thanksText, children
   );
 }
 
-export function Panel({ open, onClose, title, children, flush }: { open: boolean; onClose: () => void; title: string; children: ReactNode; /** No padding: the content (an embedded page) fills the panel. */ flush?: boolean }) {
+export function Panel({ open, onClose, title, children, flush, keepMounted }: { open: boolean; onClose: () => void; title: string; children: ReactNode; /** No padding: the content (an embedded page) fills the panel. */ flush?: boolean; /** Keeps the content in the page while closed, so what it loaded is there when it opens. */ keepMounted?: boolean }) {
   return (
     <Drawer
       anchor="left"
       open={open}
       onClose={onClose}
       disablePortal
+      keepMounted={keepMounted}
       slotProps={{ paper: { className: "pnl-paper", role: "dialog", "aria-label": title } }}
     >
       <div className="pnl-h">
