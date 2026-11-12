@@ -82,6 +82,9 @@ const LECTURE_VIDEOS: Array<{ title: string; url: string }> = [
 function SchoolForm({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
   const [asking, setAsking] = useState(false);
+  // Schools that want only bracelets say why they do not want a lecture.
+  const [reason, setReason] = useState("");
+  const [reasonError, setReasonError] = useState(false);
   const form = useSiteForm(
     {
       name: { required: true },
@@ -102,6 +105,7 @@ function SchoolForm({ onClose }: { onClose: () => void }) {
     {
       kind: "school_order",
       initial: { gender: "mixed", ...loadSchoolDraft()?.values },
+      toPayload: (v) => ({ ...v, noLectureReason: reason.trim() }),
       gate: () => { setAsking(true); return true; },
       onSent: () => clearSchoolDraft(),
     },
@@ -119,6 +123,11 @@ function SchoolForm({ onClose }: { onClose: () => void }) {
     navigate("/activity");
   }
   function braceletsOnly() {
+    if (!reason.trim()) {
+      setReasonError(true);
+      document.getElementById("no-lecture-reason")?.focus();
+      return;
+    }
     setAsking(false);
     void form.submitNow();
   }
@@ -169,6 +178,18 @@ function SchoolForm({ onClose }: { onClose: () => void }) {
           <ul>
             {LECTURE_VIDEOS.map((v) => <li key={v.url}><a href={v.url} target="_blank" rel="noreferrer"><Icon.play />{t(v.title)}</a></li>)}
           </ul>
+          <div className={`fld${reasonError ? " bad" : ""}`}>
+            <label htmlFor="no-lecture-reason">{t("למה לא הרצאה?")}<span className="req" aria-hidden="true"> *</span></label>
+            <textarea
+              id="no-lecture-reason"
+              rows={2}
+              value={reason}
+              aria-required="true"
+              aria-invalid={reasonError || undefined}
+              onChange={(e) => { setReason(e.target.value); if (e.target.value.trim()) setReasonError(false); }}
+            />
+            <span className="err" role="alert">{reasonError ? t("שדה חובה") : ""}</span>
+          </div>
           <button type="button" className="btn btn-line" onClick={braceletsOnly}><span>{t("שליחת בקשת הצמידים")}</span></button>
         </div>
       </Dialog>

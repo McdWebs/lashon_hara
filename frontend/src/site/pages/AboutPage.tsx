@@ -7,7 +7,7 @@ import { useSiteConfig } from "../../lib/siteConfig";
 import { Icon, usePageTitle } from "../ui";
 
 const SECTIONS = [
-  { id: "who", label: "מי אני" },
+  { id: "who", label: "איך הכל התחיל" },
   { id: "story", label: "הסיפור שלנו" },
   { id: "what", label: "מה זה לשון הרע" },
   { id: "ambassadors", label: "השגרירים שלנו" },
@@ -344,7 +344,7 @@ export function AboutPage() {
         </div>
       </nav>
 
-      <Section id="who" n={1} title={t("מי אני")} focus={current === "who"}>
+      <Section id="who" n={1} title={t("איך הכל התחיל")} focus={current === "who"}>
         <div className="two">
           <FounderVideo />
           <div className="w-tx">
