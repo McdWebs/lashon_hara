@@ -11,13 +11,13 @@ import rtlPlugin from "stylis-plugin-rtl";
 import { LocaleRedirect } from "./components/LocaleRedirect";
 import { langFromPath, stripLocale } from "./i18n/locale";
 import { useSiteConfig } from "./lib/siteConfig";
+import { LegacyGate } from "./site/LegacyGate";
 import { SiteLayout } from "./site/SiteLayout";
 import { CollectionPage as SiteCollectionPage } from "./site/pages/CollectionPage";
 import { HomePage as SiteHomePage } from "./site/pages/HomePage";
 import { ProductPage as SiteProductPage } from "./site/pages/ProductPage";
 import {
   AccessibilityPage as SiteAccessibilityPage,
-  NotFoundPage as SiteNotFoundPage,
   TermsPage as SiteTermsPage,
 } from "./site/pages/SimplePages";
 import { createAppTheme } from "./theme";
@@ -100,7 +100,7 @@ function newSitePages() {
       <Route path="contact" element={<LocaleRedirect to="/join?panel=contact" />} />
       <Route path="contact-us" element={<LocaleRedirect to="/join?panel=contact" />} />
       <Route path="join-us" element={<LocaleRedirect to="/join" />} />
-      <Route path="*" element={<SiteNotFoundPage />} />
+      <Route path="*" element={<LegacyGate />} />
     </Route>
   );
 }

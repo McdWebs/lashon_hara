@@ -1,25 +1,31 @@
-# SEO redirect map (Phase 1)
+# Old addresses → new site
 
-New app uses cleaner paths. Until the domain cutover, these are in-app `Navigate` aliases. At cutover, implement **301** at Cloudflare/Kinsta for the same pairs.
+People still have links to the old store (Google results, shares, bookmarks, old emails). Every old address opens its
+matching page here instead of a dead end.
 
-| Current | New (canonical in the React app) | Action |
-| --- | --- | --- |
-| `/` | `/` | Keep |
-| `/about-us/` | `/about` | Alias now; 301 at cutover |
-| `/our-activity/` | `/activities` | Alias now; 301 at cutover |
-| `/join-us/` | `/join` | Alias now; 301 at cutover |
-| `/contact-us/` | `/contact` | Alias now; 301 at cutover |
-| `/contact/` | `/contact` | Keep meaning |
-| `/donate/` | `/donate` (UI) then existing WC donate for payment | Keep `/donate/` live on WP until payments |
-| `/תרומה/` `/תרומה-donate/` `/תרומה-לדוגמה/` | `/donate/` | 301 to `/donate/` at cutover |
-| `/shop/` | `/shop` | Keep |
-| `/shop-m/` | `/shop` | Alias now; 301 at cutover |
-| `/product/{slug}/` | Woo URLs stay canonical for SEO | New UI uses `/shop/product/:id` as extra; do not drop WC product URLs |
-| `/cart/` `/checkout/` `/my-account/` | unchanged on Woo | Keep |
-| `/wholesale/` `/request-a-quote/` `/custom/` `/terms/` | unchanged | Keep |
-| Campaign pages (`/rimon/`, `/shabbat/`, …) | unchanged | Do not delete |
+**Two layers**
 
-Yoast sitemap currently lists `http://` locs. Fix scheme to `https` on WordPress when you have admin access.
+1. `frontend/vercel.json` — real 301s for the old pages with plain-letter addresses (with and without the trailing slash).
+2. `frontend/src/site/legacyUrls.ts` (opened through `LegacyGate`, the site's catch-all) — everything else:
+   Hebrew-letter addresses and every `/product/{slug}/`. This one moves the visitor in the browser, not with a 301.
 
-| `/en/` … | English UI prefix | New; Hebrew remains canonical home |
-| `/map` | Public map shell | No pins until consent |
+| Old address | Opens |
+| --- | --- |
+| `/product/{slug}/` | `/shop/product/{id}` (unknown slug → `/shop`) |
+| `/product-category/…`, `/product-tag/…` | `/shop` |
+| `/about-us/` | `/who-we-are` |
+| `/our-activity/`, `/2019-bak-to-school/` | `/activity` |
+| `/join-us/` | `/join` |
+| `/contact-us/`, `/contact/`, `/wholesale/`, `/request-a-quote/`, `/custom/` | `/join?panel=contact` |
+| `/donate/`, `/תרומה/`, `/תרומה-donate/`, `/תרומה-לדוגמה/` | `/join#donate` |
+| `/shop-m/`, `/my-account/`, `/חנויות-שניתן-להשיג/` | `/shop` |
+| `/החזון-שלנו/` | `/who-we-are` |
+| `/rimon/`, `/rimon-en/`, `/shabbat/`, `/communication-preferences/`, `/af-product-visibility/` | `/` |
+
+`/en/…` versions of the same addresses work too. `/cart/` and `/checkout/` are real pages here.
+
+**Choices to review:** where `/wholesale/`, `/request-a-quote/`, `/custom/` and the campaign pages land is a guess
+(the new site has no matching page). Change them in `legacyUrls.ts` and `vercel.json`.
+
+**Keeping the product list current.** Slugs come from `products/all-products.json`. After refreshing that snapshot run
+`node frontend/scripts/legacy-products.mjs`. A product added to the store after the snapshot has no old link to keep.

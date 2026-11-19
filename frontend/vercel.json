@@ -1,4 +1,176 @@
 {
+  "redirects": [
+    {
+      "source": "/about-us/",
+      "destination": "/who-we-are",
+      "permanent": true
+    },
+    {
+      "source": "/about-us",
+      "destination": "/who-we-are",
+      "permanent": true
+    },
+    {
+      "source": "/our-activity/",
+      "destination": "/activity",
+      "permanent": true
+    },
+    {
+      "source": "/our-activity",
+      "destination": "/activity",
+      "permanent": true
+    },
+    {
+      "source": "/join-us/",
+      "destination": "/join",
+      "permanent": true
+    },
+    {
+      "source": "/join-us",
+      "destination": "/join",
+      "permanent": true
+    },
+    {
+      "source": "/contact-us/",
+      "destination": "/join?panel=contact",
+      "permanent": true
+    },
+    {
+      "source": "/contact-us",
+      "destination": "/join?panel=contact",
+      "permanent": true
+    },
+    {
+      "source": "/contact/",
+      "destination": "/join?panel=contact",
+      "permanent": true
+    },
+    {
+      "source": "/contact",
+      "destination": "/join?panel=contact",
+      "permanent": true
+    },
+    {
+      "source": "/donate/",
+      "destination": "/join#donate",
+      "permanent": true
+    },
+    {
+      "source": "/donate",
+      "destination": "/join#donate",
+      "permanent": true
+    },
+    {
+      "source": "/shop-m/",
+      "destination": "/shop",
+      "permanent": true
+    },
+    {
+      "source": "/shop-m",
+      "destination": "/shop",
+      "permanent": true
+    },
+    {
+      "source": "/my-account/",
+      "destination": "/shop",
+      "permanent": true
+    },
+    {
+      "source": "/my-account",
+      "destination": "/shop",
+      "permanent": true
+    },
+    {
+      "source": "/wholesale/",
+      "destination": "/join?panel=contact",
+      "permanent": true
+    },
+    {
+      "source": "/wholesale",
+      "destination": "/join?panel=contact",
+      "permanent": true
+    },
+    {
+      "source": "/request-a-quote/",
+      "destination": "/join?panel=contact",
+      "permanent": true
+    },
+    {
+      "source": "/request-a-quote",
+      "destination": "/join?panel=contact",
+      "permanent": true
+    },
+    {
+      "source": "/custom/",
+      "destination": "/join?panel=contact",
+      "permanent": true
+    },
+    {
+      "source": "/custom",
+      "destination": "/join?panel=contact",
+      "permanent": true
+    },
+    {
+      "source": "/2019-bak-to-school/",
+      "destination": "/activity",
+      "permanent": true
+    },
+    {
+      "source": "/2019-bak-to-school",
+      "destination": "/activity",
+      "permanent": true
+    },
+    {
+      "source": "/rimon/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/rimon",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/rimon-en/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/rimon-en",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/shabbat/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/shabbat",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/communication-preferences/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/communication-preferences",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/af-product-visibility/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/af-product-visibility",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(cart|checkout|order-confirmation|admin|order-pay/.*|checkout/order-pay/.*)",
