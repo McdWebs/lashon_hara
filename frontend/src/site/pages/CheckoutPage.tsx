@@ -73,6 +73,11 @@ export function CheckoutPage() {
   const [checkingRates, setCheckingRates] = useState(false);
   const rateRef = useRef<string | null>(null);
   rateRef.current = rateId;
+  const packagesRef = useRef<WcShippingPackage[]>([]);
+  packagesRef.current = packages;
+  // What the store already has for this cart, so pressing pay does not repeat steps that are done.
+  const syncedAddress = useRef("");
+  const syncedRate = useRef<string | null>(null);
 
   const shipElsewhere = (v: Values) => Boolean(v.shipElsewhere);
   const form = useSiteForm(
@@ -99,10 +104,14 @@ export function CheckoutPage() {
           const billing = billingAddress(v);
           const shipping = shippingAddress(v);
           if (needsShipping) {
-            const cart = await cartApi.updateCustomer({ billing_address: billing, shipping_address: shipping });
-            const first = cart.shipping_rates[0];
+            let first = packagesRef.current[0];
+            if (syncedAddress.current !== JSON.stringify(shipping)) {
+              const cart = await cartApi.updateCustomer({ billing_address: billing, shipping_address: shipping });
+              first = cart.shipping_rates[0] ?? first;
+              syncedRate.current = first?.shipping_rates.find((r) => r.selected)?.rate_id ?? null;
+            }
             const rate = rateRef.current ?? first?.shipping_rates.find((r) => r.selected)?.rate_id;
-            if (first && rate) await cartApi.selectShippingRate({ package_id: first.package_id, rate_id: rate });
+            if (first && rate && syncedRate.current !== rate) await cartApi.selectShippingRate({ package_id: first.package_id, rate_id: rate });
           }
           track("checkout_started");
           const result = await checkoutRequest({
@@ -127,22 +136,43 @@ export function CheckoutPage() {
   const ready = addressReady(shippingTarget) && Boolean(v.firstName && v.lastName);
   const addressKey = JSON.stringify(shippingTarget);
 
-  // Delivery options depend on the address, so ask for them once it is complete.
+  // The delivery options are the same for every address in Israel, so ask for them as soon as the page opens
+  // instead of making the customer fill in the address and wait.
+  useEffect(() => {
+    if (!hydrated || !needsShipping) return;
+    let cancelled = false;
+    setCheckingRates(true);
+    cartApi
+      .updateCustomer({ billing_address: { country: "IL" }, shipping_address: { country: "IL" } })
+      .then((cart) => {
+        if (cancelled || packagesRef.current.length) return;
+        const rates = cart.shipping_rates[0]?.shipping_rates ?? [];
+        setPackages(cart.shipping_rates);
+        setRateId(rates.find((r) => r.selected)?.rate_id ?? rates[0]?.rate_id ?? null);
+        syncedRate.current = rates.find((r) => r.selected)?.rate_id ?? null;
+      })
+      .catch(() => undefined)
+      .finally(() => !cancelled && setCheckingRates(false));
+    return () => {
+      cancelled = true;
+    };
+  }, [hydrated, needsShipping]);
+
+  // Once the address is complete, give it to the store quietly, so the order step has less left to do.
   useEffect(() => {
     if (!needsShipping || !ready) return;
     let cancelled = false;
     const timer = setTimeout(async () => {
-      setCheckingRates(true);
       try {
         const cart = await cartApi.updateCustomer({ billing_address: billingAddress(v), shipping_address: shippingTarget });
         if (cancelled) return;
-        setPackages(cart.shipping_rates);
+        syncedAddress.current = addressKey;
         const rates = cart.shipping_rates[0]?.shipping_rates ?? [];
-        setRateId(rates.find((r) => r.selected)?.rate_id ?? rates[0]?.rate_id ?? null);
+        syncedRate.current = rates.find((r) => r.selected)?.rate_id ?? null;
+        setPackages(cart.shipping_rates);
+        setRateId(rates.find((r) => r.rate_id === rateRef.current)?.rate_id ?? rates.find((r) => r.selected)?.rate_id ?? rates[0]?.rate_id ?? null);
       } catch {
         /* the purchase step reports the real problem if it still can't proceed */
-      } finally {
-        if (!cancelled) setCheckingRates(false);
       }
     }, 500);
     return () => {
@@ -151,6 +181,19 @@ export function CheckoutPage() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [needsShipping, ready, addressKey]);
+
+  // The customer's choice is saved at once, in the background.
+  function pickRate(id: string) {
+    setRateId(id);
+    const pkg = packagesRef.current[0];
+    if (!pkg) return;
+    cartApi
+      .selectShippingRate({ package_id: pkg.package_id, rate_id: id })
+      .then(() => {
+        syncedRate.current = id;
+      })
+      .catch(() => undefined);
+  }
 
   if (hydrated && items.length === 0) {
     return (
@@ -210,12 +253,11 @@ export function CheckoutPage() {
             {needsShipping ? (
               <fieldset>
                 <legend>{t("אופן משלוח")}{" "}<span className="fnote">{t("· משלוח לישראל בלבד")}</span></legend>
-                {!ready ? <p className="fnote">{t("אפשרויות המשלוח יופיעו אחרי מילוי הכתובת.")}</p> : null}
-                {ready && checkingRates ? <p className="fnote" role="status">{t("בודקים אפשרויות משלוח…")}</p> : null}
+                {checkingRates && !rates.length ? <p className="fnote" role="status">{t("בודקים אפשרויות משלוח…")}</p> : null}
                 <div className="rates">
                   {rates.map((rate) => (
                     <label className="rate" key={rate.rate_id}>
-                      <input type="radio" name="rate" checked={rate.rate_id === rateId} onChange={() => setRateId(rate.rate_id)} />
+                      <input type="radio" name="rate" checked={rate.rate_id === rateId} onChange={() => pickRate(rate.rate_id)} />
                       <span className="rd" aria-hidden="true" />
                       <span dir="auto">{decodeHtmlEntities(rate.name)}</span>
                       <b>{Number(rate.price) === 0 ? t("חינם") : moneyLabel(rate.price, rate.currency_minor_unit)}</b>
