@@ -272,8 +272,19 @@ export function CheckoutPage() {
           </FormShell>
         </div>
 
-        <aside className="sum">
+        <aside className="sum" aria-busy={!hydrated}>
           <h2>{t("סיכום הזמנה")}</h2>
+          {!hydrated ? (
+            <div aria-hidden="true" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              <div className="si">
+                <span className="si-m skel" />
+                <span className="si-n"><span className="skel" style={{ height: 14, width: "80%" }} /><span className="skel" style={{ height: 12, width: "45%" }} /></span>
+                <span className="skel" style={{ height: 16, width: 44 }} />
+              </div>
+              <div className="sr"><span className="skel" style={{ height: 14, width: 56 }} /><span className="skel" style={{ height: 14, width: 90 }} /></div>
+              <div className="sr tot"><span className="skel" style={{ height: 14, width: 44 }} /><span className="skel" style={{ height: 40, width: 72 }} /></div>
+            </div>
+          ) : null}
           {items.map((item) => (
             <div className="si" key={item.key}>
               <span className="si-m">
@@ -284,8 +295,12 @@ export function CheckoutPage() {
               <b>{moneyLabel(item.lineTotal, item.currencyMinorUnit)}</b>
             </div>
           ))}
-          <div className="sr"><span>{t("משלוח")}</span><span>{selectedRate ? (Number(selectedRate.price) === 0 ? t("חינם") : moneyLabel(selectedRate.price, selectedRate.currency_minor_unit)) : t("לפי אופן המשלוח")}</span></div>
-          <div className="sr tot"><span>{t("סה״כ")}</span><b>{moneyLabel(total, unit)}</b></div>
+          {hydrated ? (
+            <>
+            <div className="sr"><span>{t("משלוח")}</span><span>{selectedRate ? (Number(selectedRate.price) === 0 ? t("חינם") : moneyLabel(selectedRate.price, selectedRate.currency_minor_unit)) : t("לפי אופן המשלוח")}</span></div>
+            <div className="sr tot"><span>{t("סה״כ")}</span><b>{moneyLabel(total, unit)}</b></div>
+            </>
+          ) : null}
           <Link className="link" to="/cart" style={{ alignSelf: "flex-start" }}><span>{t("חזרה לסל")}</span></Link>
         </aside>
       </div>

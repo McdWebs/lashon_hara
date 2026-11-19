@@ -187,6 +187,8 @@ form[data-form] { display: flex; flex-direction: column; gap: 16px; }
 
 /* states */
 .skel { background: linear-gradient(100deg, #F2F2F2 30%, #E4E4E4 50%, #F2F2F2 70%); background-size: 240% 100%; animation: lh-skel 1.4s linear infinite; }
+/* Inside the grey summary card the usual grey would vanish, so the loading bars are white. */
+.sum .skel { display: block; background: linear-gradient(100deg, #FFFFFF 30%, #E4E4E4 50%, #FFFFFF 70%); background-size: 240% 100%; }
 @keyframes lh-skel { from { background-position: 120% 0; } to { background-position: -120% 0; } }
 .state { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 40px 0; }
 .state h2 { margin: 0; font-size: 30px; font-weight: 800; }
