@@ -196,7 +196,7 @@
       "destination": "https://lashon-hara-eu.onrender.com/health"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!assets/).*)",
       "destination": "/index.html"
     }
   ]

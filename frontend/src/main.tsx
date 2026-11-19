@@ -16,6 +16,20 @@ if (sentryDsn) {
   });
 }
 
+// After a new version goes live, a tab that was already open still points at the old file names, and the next page
+// it opens fails to load. Reload once to pick up the new version; the guard stops a loop if the problem is something else.
+window.addEventListener("vite:preloadError", (event) => {
+  try {
+    const last = Number(sessionStorage.getItem("lh-chunk-reload") ?? 0);
+    if (Date.now() - last < 60_000) return;
+    sessionStorage.setItem("lh-chunk-reload", String(Date.now()));
+  } catch {
+    return;
+  }
+  event.preventDefault();
+  window.location.reload();
+});
+
 function CrashFallback() {
   return (
     <div role="alert" dir="rtl" style={{ padding: "80px 24px", textAlign: "center", fontFamily: "Heebo, system-ui, sans-serif" }}>
