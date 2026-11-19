@@ -1221,3 +1221,12 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
 .ask-b li svg { width: 16px; height: 16px; flex: none; }
 @media (max-width: 520px) { .lh .ask-paper { padding: 40px 22px 26px; } .ask-h { font-size: 34px; } .ask-b { padding: 18px; } }
 .ask-b > b { font-size: 20px; }
+
+/* stories */
+.stories-sec { padding-block: 72px; background: var(--soft); }
+.stories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 32px; }
+.st-card { margin: 0; padding: 28px 26px 24px; background: #FFFFFF; border: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
+.st-mark { font-size: 64px; line-height: .6; height: 28px; color: var(--red); }
+.st-card blockquote { margin: 0; font-size: 18px; line-height: 1.7; color: var(--ink); white-space: pre-wrap; overflow-wrap: anywhere; }
+.st-card figcaption { margin-top: auto; font-weight: 700; font-size: 15px; color: var(--ink2); }
+.st-cta { display: flex; justify-content: center; padding-top: 44px; }

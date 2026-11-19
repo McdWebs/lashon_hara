@@ -280,3 +280,8 @@
 .adm-cal-key li { display: inline-flex; align-items: center; gap: 6px; }
 .adm-cal-key i { width: 14px; height: 14px; border-radius: 4px; }
 .adm-cal-key i.free { background: #EAF7EE; border: 1px solid #145A2A; } .adm-cal-key i.taken { background: var(--red); } .adm-cal-key i.blocked { background: repeating-linear-gradient(135deg, #CFCFCF 0 3px, #F6F6F6 3px 6px); } .adm-cal-key i.closed { background: var(--soft); border: 1px solid #C4C4C4; }
+
+/* stories */
+.adm-seg { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.adm-story-t { margin: 0; white-space: pre-wrap; line-height: 1.7; font-size: 15px; }
+.adm-story-d { color: var(--muted); font-size: 13px; }

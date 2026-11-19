@@ -7,6 +7,7 @@ import { Field, FormShell, Panel, Reveal, Toggle, useSiteForm } from "../forms";
 import type { Program } from "../about";
 import { fetchMedia, type MediaWorld } from "../../lib/media";
 import { useSiteConfig } from "../../lib/siteConfig";
+import { useStories } from "../../lib/stories";
 import { Icon, Title, usePageTitle } from "../ui";
 import { clearSchoolDraft, loadSchoolDraft } from "../schoolDraft";
 
@@ -253,21 +254,6 @@ function SchoolForm({ date, lecture, onSent }: { date: Date; lecture: string; on
   );
 }
 
-function Banner({ world, banner }: { world: WorldConfig; banner?: string }) {
-  return (
-    <div className="wb">
-      <div className="wb-tx">
-        <span className="bar" aria-hidden="true" />
-        <h2 className="wb-t disp">{t(world.name)}</h2>
-        <p className="lead">{t(world.line)}</p>
-      </div>
-      <div className="wb-ph">
-        <img src={banner ?? world.banner ?? world.image} alt="" />
-      </div>
-    </div>
-  );
-}
-
 function ReelMedia({ reel, index, playing, muted = true, onToggle, onProgress }: { reel: Reel; index: number; playing: boolean; muted?: boolean; onToggle?: () => void; onProgress?: (share: number) => void }) {
   const video = useRef<HTMLVideoElement>(null);
   const name = `${t(reel.kind === "video" ? "סרטון" : "תמונה")} ${index + 1}`;
@@ -483,6 +469,32 @@ function RollingNumber({ value }: { value: number }) {
   );
 }
 
+/** Stories the team chose to show. Only while the Stories flag is on and at least one story is picked. */
+function StoriesSection() {
+  const { config } = useSiteConfig();
+  const stories = useStories(config.flags.stories);
+  if (!config.flags.stories || !stories.data?.length) return null;
+  return (
+    <section className="stories-sec" id="stories" aria-label={t("הסיפורים שלכם")}>
+      <div className="wrap">
+        <Title as="h2" lead={t("אנשים אמיתיים מספרים איך המסר נגע בהם.")}>{t("הסיפורים שלכם")}</Title>
+        <div className="stories-grid">
+          {stories.data.map((s, i) => (
+            <figure className="st-card rv" key={s.id} style={{ "--d": `${(i % 3) * 0.07}s` } as React.CSSProperties}>
+              <span className="st-mark disp" aria-hidden="true">“</span>
+              <blockquote>{s.story}</blockquote>
+              <figcaption>{s.name || t("אנונימי/ת")}</figcaption>
+            </figure>
+          ))}
+        </div>
+        <div className="st-cta">
+          <Link className="btn btn-ink" to="/join?panel=story"><span>{t("לשתף את הסיפור שלכם")}</span><Icon.arrow /></Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function ActivityPage() {
   usePageTitle(t("הפעילות שלנו"));
   const { world: worldKey } = useParams();
@@ -529,7 +541,6 @@ export function ActivityPage() {
 
   if (!world) return <Navigate to="/activity" replace />;
   const reels: Reel[] = (uploaded.data ?? []).map((m) => ({ kind: m.kind, src: m.src, caption: m.caption }));
-  const firstPhoto = uploaded.data?.find((m) => m.kind === "photo")?.src;
 
   return (
     <div className="page-activity">
@@ -559,7 +570,6 @@ export function ActivityPage() {
         <div className="wrap">
           {world.reels ? (
             <>
-              <Banner world={world} banner={firstPhoto} />
               {uploaded.isLoading ? <div className="skel" style={{ height: 420 }} aria-hidden="true" /> : <Reels reels={reels} />}
             </>
           ) : (
@@ -580,6 +590,8 @@ export function ActivityPage() {
           )}
         </div>
       </section>
+
+      <StoriesSection />
 
       <Panel open={panelOpen} onClose={() => setPanelOpen(false)} title={t("בקשה לבית ספר")}>
         {picked && lecture ? (

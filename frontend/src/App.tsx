@@ -89,6 +89,7 @@ function newSitePages() {
       <Route path="order-pay/:id" element={<SitePayPage />} />
       <Route path="checkout/order-pay/:id" element={<OldPayLink />} />
       <Route path="join" element={<SiteJoinPage />} />
+      <Route path="stories" element={<LocaleRedirect to="/activity#stories" />} />
       <Route path="terms" element={<SiteTermsPage />} />
       <Route path="accessibility" element={<SiteAccessibilityPage />} />
       <Route path="about" element={<LocaleRedirect to="/who-we-are" />} />

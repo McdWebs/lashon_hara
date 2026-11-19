@@ -7,6 +7,7 @@ import { FlagsSection } from "../admin/FlagsSection";
 import { LecturesSection } from "../admin/LecturesSection";
 import { MediaSection } from "../admin/MediaSection";
 import { ShopSection } from "../admin/ShopSection";
+import { StoriesSection } from "../admin/StoriesSection";
 import { AdminContext, Brand, ERRORS, I, errorText, type AdminTools } from "../admin/ui";
 import "../admin.css";
 
@@ -16,6 +17,7 @@ const SECTIONS = [
   { key: "calendar", label: "יומן ותאריכים", page: "/activity" },
   { key: "shop", label: "חנות", page: "/shop" },
   { key: "counter", label: "מונה צמידים", page: "/activity" },
+  { key: "stories", label: "סיפורים", page: "/activity#stories" },
   { key: "flags", label: "חסמים", page: "/" },
 ] as const;
 type SectionKey = (typeof SECTIONS)[number]["key"];
@@ -140,6 +142,7 @@ function Manager({ onLogout }: { onLogout: (notice?: string) => void }) {
           {section === "calendar" ? (stored ? <CalendarSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
           {section === "shop" ? (stored ? <ShopSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
           {section === "counter" ? (stored ? <CounterSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
+          {section === "stories" ? <StoriesSection /> : null}
           {section === "flags" ? (stored ? <FlagsSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
         </main>
 

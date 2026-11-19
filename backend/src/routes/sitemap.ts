@@ -8,10 +8,10 @@ export const sitemapRouter = Router();
 
 const PAGES = ["/", "/who-we-are", "/activity", "/activity/idf", "/activity/ambassadors", "/shop", "/join", "/terms", "/accessibility"];
 
-async function englishOn() {
+async function flagOn(name: "english" | "stories") {
   if (mongoose.connection.readyState !== 1) return false;
   const doc = await Setting.findOne({ key: "flags" }).lean();
-  return Boolean((doc?.value as { english?: boolean } | undefined)?.english);
+  return Boolean((doc?.value as Record<string, boolean | undefined> | undefined)?.[name]);
 }
 
 /** Product pages, so they can be found by search. A store hiccup just leaves them out this time. */
@@ -26,7 +26,7 @@ async function productPaths(): Promise<string[]> {
 
 /** The sitemap lists the English pages only while the English version is switched on. */
 sitemapRouter.get("/", async (_req, res) => {
-  const english = await englishOn();
+  const english = await flagOn("english");
   const base = env.siteUrl;
   const url = (path: string, lang: "he" | "en") => base + (lang === "he" ? path : path === "/" ? "/en" : `/en${path}`);
 

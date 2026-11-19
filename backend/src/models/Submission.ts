@@ -9,6 +9,8 @@ const submissionSchema = new mongoose.Schema(
     },
     payload: { type: mongoose.Schema.Types.Mixed, required: true },
     sourcePath: { type: String, default: "" },
+    /** Stories only: whether the team chose to show it on the Stories page. */
+    shown: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

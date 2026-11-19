@@ -5,6 +5,7 @@ import { Dialog } from "@mui/material";
 import { Check, Choice, Field, FormShell, Panel, Reveal, Toggle, useSiteForm } from "../forms";
 import { useContact } from "../contact";
 import { clearSchoolDraft, loadSchoolDraft, saveSchoolDraft } from "../schoolDraft";
+import { useSiteConfig } from "../../lib/siteConfig";
 import { Icon, Title, usePageTitle } from "../ui";
 
 function DonateForm() {
@@ -214,6 +215,7 @@ export function JoinPage() {
   const [params, setParams] = useSearchParams();
   const [panel, setPanel] = useState<PanelKey | null>(null);
   const { openContact } = useContact();
+  const { config } = useSiteConfig();
 
   // The footer's contact icon opens the contact panel directly.
   useEffect(() => {
@@ -255,6 +257,7 @@ export function JoinPage() {
               ) : (
                 <Link className="btn btn-ink" to={way.to!}><span>{t(way.button)}</span><Icon.arrow /></Link>
               )}
+              {way.panel === "story" && config.flags.stories ? <Link className="link" to="/activity#stories"><span>{t("לקריאת סיפורים של אחרים")}</span><Icon.arrow /></Link> : null}
             </div>
           </article>
         ))}
