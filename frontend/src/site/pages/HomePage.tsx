@@ -5,10 +5,17 @@ import { fetchProducts } from "../../lib/catalog";
 import { copy } from "../copy";
 import { CardsSkeleton, Icon, QuoteMark, ShopCard, Title, usePageTitle } from "../ui";
 
-const SLIDES = [
+type Slide = { photo: string; sig?: string; who: string; lines: string[]; side: "start" | "end"; long?: boolean };
+
+const SLIDES: Slide[] = [
   { photo: "omer", sig: "omer_sig", who: "עומר אדם", lines: ["שים לב", "מה אתה אומר"], side: "start" },
   { photo: "static", sig: "static_sig", who: "סטטיק", lines: ["נוצר לשונו", "שומר נפשו"], side: "end" },
-] as const;
+  { photo: "q1", sig: "q1_sig", who: "אתי אפינגר", lines: ["מוות וחיים", "ביד הלשון"], side: "start" },
+  { photo: "q2", sig: "q2_sig", who: "לירן דנינו", lines: ["שומר פיו ולשונו", "שומר מצרות נפשו"], side: "end" },
+  { photo: "q3", sig: "q3_sig", who: "עדן", lines: ["אם אנשים כמונו מצאו את האור בחושך", "אין לכם חושך בחיים שלכם", "פשוט תחיו"], side: "start", long: true },
+  { photo: "q4", sig: "q4_sig", who: "דה-כהן", lines: ["מילה בונה, מילה הורסת", "הבחירה במילים", "היא הבחירה באדם"], side: "end", long: true },
+  { photo: "q5", sig: "q5_sig", who: "שחר חיון", lines: ["תרקדו", "תשמחו", "תנצחו"], side: "start" },
+];
 
 const TILES = [
   { img: "cat_bracelets", label: "צמידים", collection: "bracelets" },
@@ -21,10 +28,15 @@ const TILES = [
 const HOLD_MS = 6500;
 
 /** The two-line quotes, line by line. */
-const QUOTE_EN: Record<string, string> = { "שים לב": "Watch", "מה אתה אומר": "what you say", "נוצר לשונו": "Guard your tongue,", "שומר נפשו": "guard your soul" };
+const QUOTE_EN: Record<string, string> = { "שים לב": "Watch", "מה אתה אומר": "what you say", "נוצר לשונו": "Guard your tongue,", "שומר נפשו": "guard your soul",
+  "מוות וחיים": "Death and life", "ביד הלשון": "are in the power of the tongue",
+  "שומר פיו ולשונו": "Whoever guards their mouth and tongue", "שומר מצרות נפשו": "keeps their soul from trouble",
+  "אם אנשים כמונו מצאו את האור בחושך": "If people like us found the light in the dark", "אין לכם חושך בחיים שלכם": "there's no dark in your lives", "פשוט תחיו": "just live",
+  "מילה בונה, מילה הורסת": "A word builds, a word destroys", "הבחירה במילים": "Choosing your words", "היא הבחירה באדם": "is choosing who you are",
+  "תרקדו": "Dance", "תשמחו": "be happy", "תנצחו": "win" };
 
 function EN_QUOTE(line: string) {
-  return siteLang() === "en" ? QUOTE_EN[line] : line;
+  return siteLang() === "en" ? QUOTE_EN[line] ?? line : line;
 }
 
 function Hero() {
@@ -81,14 +93,14 @@ function Hero() {
       {SLIDES.map((s, i) => (
         <div
           key={s.photo}
-          className={`slide side-${s.side}${ready && i === cur ? " on" : ""}${i === prev ? " out" : ""}`}
+          className={`slide side-${s.side}${s.long ? " long" : ""}${ready && i === cur ? " on" : ""}${i === prev ? " out" : ""}`}
           role="group"
           aria-roledescription={t("שקופית")}
-          aria-label={t("{n} מתוך {total}: {who}", { n: i + 1, total: SLIDES.length, who: t(s.who) })}
+          aria-label={s.who ? t("{n} מתוך {total}: {who}", { n: i + 1, total: SLIDES.length, who: t(s.who) }) : t("שקופית {n}", { n: i + 1 })}
           aria-hidden={i !== cur}
         >
           <div className="s-photo">
-            <img src={`/images/site/${s.photo}.jpg`} alt={t("{who} בקפוצ׳ון של לשון הרע לא מדבר אליי", { who: t(s.who) })} />
+            <img src={`/images/site/${s.photo}.jpg`} alt={s.who ? t("{who} בקפוצ׳ון של לשון הרע לא מדבר אליי", { who: t(s.who) }) : t("שגריר.ית בקפוצ׳ון של לשון הרע לא מדבר אליי")} />
           </div>
           <figure className="s-quote">
             <QuoteMark />
@@ -97,7 +109,7 @@ function Hero() {
                 <span key={line} className={`ql ql${k + 1}`}><span>{EN_QUOTE(line)}</span></span>
               ))}
             </blockquote>
-            <figcaption><img className="sig" src={`/images/site/${s.sig}.jpg`} alt={t(s.who)} /></figcaption>
+            <figcaption>{s.sig ? <img className="sig" src={`/images/site/${s.sig}.jpg`} alt={t(s.who)} /> : <span className="s-name">{t(s.who)}</span>}</figcaption>
           </figure>
         </div>
       ))}

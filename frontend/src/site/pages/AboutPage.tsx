@@ -34,8 +34,8 @@ function shuffled<T>(items: T[]) {
 const AMBASSADORS = [
   { photo: "/images/site/omer.jpg", name: "עומר אדם", quote: "שים לב מה אתה אומר" },
   { photo: "/images/site/static.jpg", name: "סטטיק", quote: "נוצר לשונו שומר נפשו" },
-  { name: "[שם]", quote: "[ציטוט קצר]" },
-  { name: "[שם]", quote: "[ציטוט קצר]" },
+  { photo: "/images/site/q1.jpg", name: "אתי אפינגר", quote: "מוות וחיים ביד הלשון" },
+  { photo: "/images/site/q2.jpg", name: "לירן דנינו", quote: "שומר פיו ולשונו, שומר מצרות נפשו" },
 ];
 
 /** The team's own phrases to catch the eye. Marking never changes the words. */
@@ -412,11 +412,11 @@ export function AboutPage() {
           {AMBASSADORS.map((a, i) => (
             <figure className="amb" key={i}>
               <div className="amb-m">
-                {a.photo ? <img src={a.photo} alt={t(a.name)} /> : <span className="ph" style={{ position: "absolute", inset: 0 }}>{t("תמונת שגריר/ה")}</span>}
+                {a.photo ? <img src={a.photo} alt={a.name ? t(a.name) : t("שגריר.ית בקפוצ׳ון של לשון הרע לא מדבר אליי")} /> : <span className="ph" style={{ position: "absolute", inset: 0 }}>{t("תמונת שגריר/ה")}</span>}
               </div>
               <figcaption>
                 <span className="amb-q disp">{siteLang() === "en" ? `“${t(a.quote)}”` : `״${a.quote}״`}</span>
-                <span className="amb-n">{t(a.name)}</span>
+                {a.name ? <span className="amb-n">{t(a.name)}</span> : null}
               </figcaption>
             </figure>
           ))}
