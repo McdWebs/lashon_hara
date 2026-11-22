@@ -31,7 +31,7 @@ export const DEFAULT_FLAGS: Flags = {
 };
 
 /** The home page's new-collection block. `source` is "" for the newest products, or the key of a shop collection. */
-export type NewCollectionConfig = { he: string; en: string; source: string };
+export type NewCollectionConfig = { he: string; en: string; source: string; /** Product ids picked by hand (up to 8). When set they replace the automatic choice. */ products?: number[] };
 
 export type SiteConfig = {
   newCollection: NewCollectionConfig;
@@ -40,6 +40,8 @@ export type SiteConfig = {
   calendar: CalendarConfig;
   shop: ShopConfig;
   lectures: LectureConfig[];
+  /** Shop tabs whose default order the team has set by hand. */
+  orderedCollections: string[];
 };
 
 /* ---------- built-in defaults: what the site shows until the team changes it ---------- */
@@ -90,6 +92,7 @@ export const DEFAULTS: SiteConfig = {
   calendar: DEFAULT_CALENDAR,
   shop: DEFAULT_SHOP,
   lectures: DEFAULT_LECTURES,
+  orderedCollections: [],
 };
 
 /* ---------- price ranges ---------- */
@@ -117,7 +120,7 @@ export function priceLabel(p: PriceRange, lang: "he" | "en") {
 
 /* ---------- loading ---------- */
 
-type Stored = Partial<{ flags: Partial<Flags>; counter: number | null; calendar: CalendarConfig; shop: ShopConfig; lectures: LectureConfig[]; newCollection: NewCollectionConfig }>;
+type Stored = Partial<{ flags: Partial<Flags>; counter: number | null; calendar: CalendarConfig; shop: ShopConfig; lectures: LectureConfig[]; newCollection: NewCollectionConfig; orderedCollections: string[] }>;
 
 async function fetchStored(): Promise<Stored> {
   // Ask the server each time whether the answer changed (cheap when it did not), so an admin change is not hidden by the browser's own copy.
@@ -138,6 +141,7 @@ function merge(stored: Stored | undefined): SiteConfig {
     shop: stored.shop ?? DEFAULTS.shop,
     lectures: stored.lectures ?? DEFAULTS.lectures,
     newCollection: stored.newCollection ?? DEFAULTS.newCollection,
+    orderedCollections: stored.orderedCollections ?? [],
   };
 }
 

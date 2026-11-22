@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { t, Link, siteLang } from "../i18n";
-import { fetchProducts } from "../../lib/catalog";
+import { fetchProducts, fetchProductsByIds } from "../../lib/catalog";
 import { copy } from "../copy";
 import { useSiteConfig } from "../../lib/siteConfig";
 import { CardsSkeleton, Icon, QuoteMark, ShopCard, Title, usePageTitle } from "../ui";
@@ -137,9 +137,10 @@ export function HomePage() {
   const nc = config.newCollection;
   const source = config.shop.collections.find((c) => c.key === nc.source && c.categories.length > 0);
   const category = source ? source.categories.join(",") : "";
+  const picked = nc.products ?? [];
   const latest = useQuery({
-    queryKey: ["site-home-latest", category],
-    queryFn: () => fetchProducts(`per_page=8&orderby=date&order=desc${category ? `&category=${category}` : ""}`),
+    queryKey: ["site-home-latest", category, picked.join(",")],
+    queryFn: () => (picked.length ? fetchProductsByIds(picked) : fetchProducts(`per_page=8&orderby=date&order=desc${category ? `&category=${category}` : ""}`)),
     enabled: ready,
   });
 

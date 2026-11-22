@@ -73,6 +73,7 @@ body { margin: 0; background: #FFFFFF; }
 /* reveal */
 .lh-js .rv { opacity: 0; transform: translateY(30px); transition: opacity .8s ease, transform 1s var(--ease); transition-delay: var(--d, 0s); }
 .lh-js .rv.in { opacity: 1; transform: none; }
+.lh-js.no-rv .rv { transition: none; }
 /* forms */
 form[data-form] { display: flex; flex-direction: column; gap: 16px; }
 .fld { display: flex; flex-direction: column; gap: 6px; }

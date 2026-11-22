@@ -7,6 +7,7 @@ import { Media } from "../models/Media.js";
 import { issueToken, loginAllowed, passwordMatches, recordFailedLogin, requireAdmin } from "../services/adminAuth.js";
 import { adminConfigRouter } from "./siteConfig.js";
 import { adminStoriesRouter } from "./stories.js";
+import { adminProductsRouter } from "./adminProducts.js";
 import { deleteObject, publicUrlFor, r2Configured, signUpload } from "../services/r2.js";
 
 const WORLDS = ["idf", "ambassadors"] as const;
@@ -60,6 +61,7 @@ adminRouter.post("/login", (req, res) => {
 adminRouter.use(requireAdmin);
 adminRouter.use(adminConfigRouter);
 adminRouter.use(adminStoriesRouter);
+adminRouter.use(adminProductsRouter);
 
 adminRouter.get("/media/:world", async (req, res) => {
   const world = worldSchema.safeParse(req.params.world);

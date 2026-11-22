@@ -12,6 +12,10 @@ export const ERRORS: Record<string, string> = {
   database_unavailable: "מסד הנתונים לא זמין כרגע.",
   calendar_url_invalid: "הקישור ליומן לא תקין. צריך קישור https ציבורי.",
   calendar_unreachable: "לא הצלחנו לקרוא את היומן. בדקו את הקישור.",
+  store_read_only: "מפתח ה-API של החנות הוא לקריאה בלבד. צריך מפתח עם הרשאת קריאה/כתיבה.",
+  store_unauthorized: "החנות לא אישרה את הבקשה. בדקו את מפתח ה-API.",
+  store_unavailable: "החנות לא זמינה כרגע. נסו שוב עוד רגע.",
+  product_not_found: "המוצר לא נמצא.",
   calendar_too_large: "קובץ היומן גדול מדי.",
 };
 
@@ -39,6 +43,8 @@ export const I = {
   down: () => <Ico><path d="M12 5v14" /><path d="M6 13l6 6 6-6" /></Ico>,
   plus: () => <Ico><path d="M12 5v14" /><path d="M5 12h14" /></Ico>,
   ext: () => <Ico size={18}><path d="M14 5h5v5" /><path d="M19 5l-8 8" /><path d="M18 14v5H5V6h5" /></Ico>,
+  edit: () => <Ico><path d="M4 20h4L19 9l-4-4L4 16v4z" /><path d="M13.5 6.5l4 4" /></Ico>,
+  grip: () => <Ico size={18}><circle cx="9" cy="6" r="1.2" fill="currentColor" /><circle cx="15" cy="6" r="1.2" fill="currentColor" /><circle cx="9" cy="12" r="1.2" fill="currentColor" /><circle cx="15" cy="12" r="1.2" fill="currentColor" /><circle cx="9" cy="18" r="1.2" fill="currentColor" /><circle cx="15" cy="18" r="1.2" fill="currentColor" /></Ico>,
   eye: () => <Ico><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" /><circle cx="12" cy="12" r="2.8" /></Ico>,
   check: () => <Ico size={16}><path d="M5 12.5l4.5 4.5L19 7.5" /></Ico>,
   chevron: () => <Ico size={18}><path d="M6 9l6 6 6-6" /></Ico>,

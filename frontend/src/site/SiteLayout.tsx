@@ -1,6 +1,6 @@
 import { Drawer } from "@mui/material";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Link as RouterLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Link as RouterLink, Outlet, useLocation, useNavigate, useNavigationType } from "react-router-dom";
 import { t, Link, NavLink, setSiteLang, siteLang } from "./i18n";
 import { AccessibilityWidget } from "../components/AccessibilityWidget";
 import { SkipLink } from "../components/SkipLink";
@@ -148,7 +148,7 @@ function Footer() {
 }
 
 /** Rises each `.rv` block into view as it reaches the screen, including blocks that arrive after data loads. */
-function useReveal(root: React.RefObject<HTMLDivElement | null>) {
+function useReveal(root: React.RefObject<HTMLDivElement | null>, instantUntil: React.RefObject<number>) {
   useEffect(() => {
     const el = root.current;
     if (!el) return;
@@ -163,7 +163,8 @@ function useReveal(root: React.RefObject<HTMLDivElement | null>) {
       },
       { rootMargin: "0px 0px -30px 0px" },
     );
-    const watch = () => el.querySelectorAll(".rv:not(.in)").forEach((node) => io.observe(node));
+    // Coming back to a page (back or swipe) shows everything at once, instead of replaying the rise-in for the blocks below the fold.
+    const watch = () => el.querySelectorAll(".rv:not(.in)").forEach((node) => (Date.now() < instantUntil.current ? node.classList.add("in") : io.observe(node)));
     watch();
     const mo = new MutationObserver(watch);
     mo.observe(el, { childList: true, subtree: true });
@@ -171,11 +172,27 @@ function useReveal(root: React.RefObject<HTMLDivElement | null>) {
       io.disconnect();
       mo.disconnect();
     };
-  }, [root]);
+  }, [root, instantUntil]);
+}
+
+/** Where each history entry was scrolled to, so going back lands exactly where the visitor left. */
+const scrollByKey = new Map<string, number>();
+
+/** Scrolls to `y` once the page is tall enough (data and images may still be arriving), giving up after a moment. */
+function restoreScroll(y: number) {
+  const start = performance.now();
+  const step = () => {
+    const room = document.documentElement.scrollHeight - window.innerHeight;
+    const done = room >= y - 2 || performance.now() - start > 1500;
+    window.scrollTo({ top: done ? y : Math.min(y, room), behavior: "instant" } as ScrollToOptions);
+    if (!done) requestAnimationFrame(step);
+  };
+  step();
 }
 
 export function SiteLayout() {
-  const { pathname, hash, search } = useLocation();
+  const { pathname, hash, search, key } = useLocation();
+  const navType = useNavigationType();
   const navigate = useNavigate();
   const lang = langFromPath(pathname);
   setSiteLang(lang);
@@ -184,7 +201,33 @@ export function SiteLayout() {
   const hydrateCart = useCart((s) => s.hydrate);
   const root = useRef<HTMLDivElement>(null);
   const prevPath = useRef(pathname);
-  useReveal(root);
+  const instantUntil = useRef(0);
+  const lastKey = useRef<string | null>(null);
+  const [, settle] = useState(0);
+  if (lastKey.current !== key) {
+    if (lastKey.current !== null && navType === "POP") instantUntil.current = Date.now() + 1500;
+    lastKey.current = key;
+  }
+  const instant = Date.now() < instantUntil.current;
+  useEffect(() => {
+    if (!instant) return;
+    const id = window.setTimeout(() => settle((n) => n + 1), 1600);
+    return () => window.clearTimeout(id);
+  }, [instant, key]);
+  useReveal(root, instantUntil);
+
+  // The browser's own restore runs before our page has its content, so we remember and restore the position ourselves.
+  const keyNow = useRef(key);
+  keyNow.current = key;
+  useEffect(() => {
+    if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
+    const onScroll = () => scrollByKey.set(keyNow.current, window.scrollY);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if ("scrollRestoration" in window.history) window.history.scrollRestoration = "auto";
+    };
+  }, []);
 
   // The contact and donation panels open over whatever page the visitor is on.
   const [contactOpen, setContactOpen] = useState(false);
@@ -221,22 +264,26 @@ export function SiteLayout() {
     };
   }, [lang, dir]);
 
-  useEffect(() => {
-    // Switching worlds keeps the visitor where they are; every other page starts at the top.
+  useLayoutEffect(() => {
+    // Switching worlds keeps the visitor where they are; going back returns to where they were; every other page starts at the top.
     const sameHub = stripLocale(pathname).startsWith("/activity") && stripLocale(prevPath.current).startsWith("/activity");
-    if (pathname !== prevPath.current && !sameHub && !hash) window.scrollTo(0, 0);
+    if (pathname !== prevPath.current && !sameHub && !hash) {
+      const saved = navType === "POP" ? scrollByKey.get(key) : undefined;
+      if (saved !== undefined) restoreScroll(saved);
+      else window.scrollTo(0, 0);
+    }
     prevPath.current = pathname;
     if (hash) {
       const target = document.getElementById(hash.slice(1));
       if (target) setTimeout(() => target.scrollIntoView({ behavior: "smooth" }), 60);
     }
-  }, [pathname, hash]);
+  }, [pathname, hash, key, navType]);
 
   return (
     <LocaleContext.Provider value={locale}>
       <ContactContext.Provider value={contact}>
       <SkipLink />
-      <div className="lh lh-js a11y-zoom-scope" dir={dir} key={lang} ref={root}>
+      <div className={`lh lh-js a11y-zoom-scope${instant ? " no-rv" : ""}`} dir={dir} key={lang} ref={root}>
         <Nav />
         <main id="main-content">
           <Outlet />

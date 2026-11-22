@@ -9,9 +9,10 @@ export type StoredConfig = Partial<{
   shop: ShopConfig;
   lectures: { items: LectureConfig[] };
   newCollection: NewCollectionConfig;
+  productOrder: { orders: Record<string, number[]> };
 }>;
 
-export type Section = "counter" | "calendar" | "shop" | "lectures" | "flags" | "newCollection";
+export type Section = "counter" | "calendar" | "shop" | "lectures" | "flags" | "newCollection" | "productOrder";
 
 export type CalendarTest = { ok: true; events: number; days: string[]; totalDays: number };
 
@@ -20,4 +21,41 @@ export const adminConfig = {
   save: (section: Section, body: unknown) => adminRequest(`/config/${section}`, { method: "PUT", body: JSON.stringify(body) }),
   reset: (section: Section) => adminRequest(`/config/${section}`, { method: "DELETE" }),
   testCalendar: (icsUrl: string) => adminRequest<CalendarTest>("/calendar/test", { method: "POST", body: JSON.stringify({ icsUrl }) }),
+};
+
+/** A store product as the admin sees it. Prices are plain numbers in shekels, as text. */
+export type AdminProduct = {
+  id: number;
+  name: string;
+  status: string;
+  type: string;
+  sku: string;
+  regularPrice: string;
+  salePrice: string;
+  stockStatus: string;
+  shortDescription: string;
+  description: string;
+  categories: Array<{ id: number; name: string }>;
+  images: Array<{ id?: number; src: string; alt: string }>;
+  link: string;
+  onSite: boolean;
+};
+export type ProductInput = Omit<AdminProduct, "id" | "type" | "categories" | "link" | "onSite"> & { categories: number[] };
+export type ProductList = { items: AdminProduct[]; total: number; totalPages: number };
+
+export const adminProducts = {
+  list: (params: { search: string; status: string; page: number }) => {
+    const q = new URLSearchParams({ page: String(params.page), status: params.status });
+    if (params.search) q.set("search", params.search);
+    return adminRequest<ProductList>(`/products?${q}`);
+  },
+  get: (id: number) => adminRequest<AdminProduct>(`/products/${id}`),
+  create: (body: ProductInput) => adminRequest<AdminProduct>("/products", { method: "POST", body: JSON.stringify(body) }),
+  update: (id: number, body: ProductInput) => adminRequest<AdminProduct>(`/products/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  remove: (id: number) => adminRequest(`/products/${id}`, { method: "DELETE" }),
+};
+
+export type ShopOrderItem = { id: number; name: string; image: string; price: number };
+export const adminShopOrder = {
+  get: (collection: string, categories: number[]) => adminRequest<{ custom: boolean; items: ShopOrderItem[] }>(`/shop-order?collection=${encodeURIComponent(collection)}&category=${categories.join(",")}`),
 };

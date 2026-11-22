@@ -102,8 +102,10 @@ export function CollectionPage() {
     typing.current = false;
   }, [q]);
 
+  // A tab whose default order was set by hand in the admin says which tab it is, so the server can apply that order.
+  const handOrdered = !sort.key && !q && config.orderedCollections.includes(active.key);
   const query = useInfiniteQuery({
-    queryKey: ["site-collection", active.key, active.query.category ?? "", sort.key, price.key, q],
+    queryKey: ["site-collection", active.key, active.query.category ?? "", sort.key, price.key, q, handOrdered],
     enabled: ready,
     initialPageParam: 1,
     placeholderData: keepPreviousData,
@@ -113,6 +115,7 @@ export function CollectionPage() {
           ...active.query,
           ...sort.query,
           ...price.query,
+          ...(handOrdered ? { collection: active.key } : {}),
           ...(q ? { search: q } : {}),
           per_page: String(PER_PAGE),
           page: String(pageParam),

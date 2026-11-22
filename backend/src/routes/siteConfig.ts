@@ -4,6 +4,7 @@ import { z } from "zod";
 import { Setting } from "../models/Setting.js";
 import { requireAdmin } from "../services/adminAuth.js";
 import { takenDaysFromFeed } from "../services/calendarFeed.js";
+import { forgetOrders, getOrders } from "../services/productOrder.js";
 
 const SORT_KEYS = ["", "new", "best", "price-asc", "price-desc", "title"] as const;
 const isoDay = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
@@ -62,9 +63,16 @@ const newCollection = z.object({
   he: z.string().trim().min(1).max(60),
   en: z.string().trim().min(1).max(60),
   source: z.string().regex(/^[a-z0-9-]{0,30}$/),
+  /** Products picked by hand, in order. When present they replace the automatic choice. */
+  products: z.array(z.number().int().positive()).max(8).optional(),
 });
 
-const SECTIONS = { counter, calendar, shop, lectures, flags, newCollection } as const;
+/** The shop's hand-set product order: for each tab key, product ids first to last. */
+const productOrder = z.object({
+  orders: z.record(z.string().regex(/^[a-z0-9-]{1,30}$/), z.array(z.number().int().positive()).max(1500)),
+});
+
+const SECTIONS = { counter, calendar, shop, lectures, flags, newCollection, productOrder } as const;
 type Section = keyof typeof SECTIONS;
 const isSection = (name: string): name is Section => name in SECTIONS;
 
@@ -86,6 +94,9 @@ siteConfigRouter.get("/", async (_req, res) => {
   if (all.lectures) out.lectures = (all.lectures as z.infer<typeof lectures>).items;
   if (all.flags) out.flags = all.flags;
   if (all.newCollection) out.newCollection = all.newCollection;
+  // Only which tabs have a hand-set order; the order itself is read on the server when the shop asks for products.
+  const orders = (all.productOrder as z.infer<typeof productOrder> | undefined)?.orders;
+  if (orders) out.orderedCollections = Object.entries(orders).filter(([, ids]) => ids.length > 0).map(([key]) => key);
 
   // Calendar rules are always sent, because the taken days can come from the connected calendar.
   const cal = all.calendar as z.infer<typeof calendar> | undefined;
@@ -134,6 +145,7 @@ adminConfigRouter.put("/config/:section", async (req, res) => {
     return;
   }
   await Setting.updateOne({ key: name }, { value: parsed.data }, { upsert: true });
+  if (name === "productOrder") forgetOrders();
   res.json({ ok: true });
 });
 
@@ -144,6 +156,7 @@ adminConfigRouter.delete("/config/:section", async (req, res) => {
     return;
   }
   await Setting.deleteOne({ key: req.params.section });
+  if (req.params.section === "productOrder") forgetOrders();
   res.json({ ok: true });
 });
 

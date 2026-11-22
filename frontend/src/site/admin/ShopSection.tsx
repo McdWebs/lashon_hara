@@ -10,7 +10,7 @@ const LINKED_FROM_HOME = new Set(["bracelets", "clothing", "sport", "special"]);
 
 const newKey = () => `t${Date.now().toString(36)}${Math.random().toString(36).slice(2, 4)}`;
 
-function CategoryPicker({ selected, onChange, onClose, categories }: { selected: number[]; onChange: (ids: number[]) => void; onClose: () => void; categories: WcCategory[] }) {
+export function CategoryPicker({ selected, onChange, onClose, categories }: { selected: number[]; onChange: (ids: number[]) => void; onClose: () => void; categories: WcCategory[] }) {
   const [search, setSearch] = useState("");
   const shown = useMemo(() => {
     const q = search.trim().toLowerCase();

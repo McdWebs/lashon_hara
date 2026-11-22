@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { env } from "../config/env.js";
-import { clearProductIndex, refreshProductIndex, searchIndex, startProductIndex } from "../services/productIndex.js";
+import { getOrders } from "../services/productOrder.js";
+import { clearProductIndex, orderedPage, refreshProductIndex, searchIndex, startProductIndex } from "../services/productIndex.js";
 import { getProduct, listCategories, listProducts, listProductsByIds } from "../services/woocommerce.js";
 
 export const catalogRouter = Router();
@@ -74,16 +75,26 @@ export function startCatalogWarmup() {
   startProductIndex();
 }
 
+/** Drops every cached answer so a product edit shows up on the site at once. */
+let rewarm: NodeJS.Timeout | undefined;
+export function purgeCatalog() {
+  cache.clear();
+  clearProductIndex();
+  // The refill is about 25 requests to the store: do it once after a burst of edits, not after each one.
+  clearTimeout(rewarm);
+  rewarm = setTimeout(() => {
+    warmCache();
+    void refreshProductIndex();
+  }, 4000);
+}
+
 /** WooCommerce webhook (product created/updated/deleted): drop cached answers so edits show up at once. */
 catalogRouter.post("/purge", (req, res) => {
   if (!env.catalogPurgeSecret || req.query.secret !== env.catalogPurgeSecret) {
     res.status(401).json({ error: "unauthorized" });
     return;
   }
-  cache.clear();
-  clearProductIndex();
-  warmCache();
-  void refreshProductIndex();
+  purgeCatalog();
   res.json({ ok: true });
 });
 
@@ -98,10 +109,23 @@ catalogRouter.get("/products", async (req, res) => {
     for (const [key, value] of Object.entries(req.query)) {
       if (typeof value === "string") params.set(key, value);
     }
+    const collection = params.get("collection");
+    params.delete("collection");
     const include = params.get("include");
     if (include) {
       res.json(await remember(`ids:${include}`, () => listProductsByIds(include.split(","))));
       return;
+    }
+    // The default order of a tab can be set by hand in the admin; the shop says which tab it is asking for.
+    if (collection && !params.has("orderby") && !params.has("search")) {
+      const order = (await getOrders())[collection];
+      if (order?.length) {
+        const page = await orderedPage(params, order);
+        if (page) {
+          res.json(page);
+          return;
+        }
+      }
     }
     // Typed searches are answered from the product list kept in memory, so they do not wait on the live store.
     const found = params.has("search") ? searchIndex(params) : null;

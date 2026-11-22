@@ -7,6 +7,7 @@ import { FlagsSection } from "../admin/FlagsSection";
 import { LecturesSection } from "../admin/LecturesSection";
 import { NewCollectionSection } from "../admin/NewCollectionSection";
 import { MediaSection } from "../admin/MediaSection";
+import { ProductsSection } from "../admin/ProductsSection";
 import { ShopSection } from "../admin/ShopSection";
 import { StoriesSection } from "../admin/StoriesSection";
 import { AdminContext, Brand, ERRORS, I, errorText, type AdminTools } from "../admin/ui";
@@ -16,6 +17,7 @@ const SECTIONS = [
   { key: "media", label: "תמונות וסרטונים", page: "/activity/ambassadors" },
   { key: "lectures", label: "הרצאות", page: "/activity" },
   { key: "calendar", label: "יומן ותאריכים", page: "/activity" },
+  { key: "products", label: "מוצרים", page: "/shop" },
   { key: "shop", label: "חנות", page: "/shop" },
   { key: "newCollection", label: "הקולקציה החדשה", page: "/" },
   { key: "counter", label: "מונה צמידים", page: "/activity" },
@@ -142,6 +144,7 @@ function Manager({ onLogout }: { onLogout: (notice?: string) => void }) {
           {section === "media" ? <MediaSection /> : null}
           {section === "lectures" ? (stored ? <LecturesSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
           {section === "calendar" ? (stored ? <CalendarSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
+          {section === "products" ? (stored ? <ProductsSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
           {section === "shop" ? (stored ? <ShopSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
           {section === "counter" ? (stored ? <CounterSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
           {section === "newCollection" ? (stored ? <NewCollectionSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
