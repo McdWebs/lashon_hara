@@ -59,3 +59,12 @@ export type ShopOrderItem = { id: number; name: string; image: string; price: nu
 export const adminShopOrder = {
   get: (collection: string, categories: number[]) => adminRequest<{ custom: boolean; items: ShopOrderItem[] }>(`/shop-order?collection=${encodeURIComponent(collection)}&category=${categories.join(",")}`),
 };
+
+export type AdminCategory = { id: number; name: string; parent: number; count: number; hiddenOnSite: boolean };
+export type CategoryInput = { name: string; parent: number };
+export const adminCategories = {
+  list: () => adminRequest<{ items: AdminCategory[] }>("/categories"),
+  create: (body: CategoryInput) => adminRequest<AdminCategory>("/categories", { method: "POST", body: JSON.stringify(body) }),
+  update: (id: number, body: CategoryInput) => adminRequest<AdminCategory>(`/categories/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  remove: (id: number) => adminRequest(`/categories/${id}`, { method: "DELETE" }),
+};

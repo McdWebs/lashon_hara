@@ -133,7 +133,7 @@ export function ShopSection({ stored, onSaved }: { stored: StoredConfig | null; 
   const pickingFor = draft.collections.find((c) => c.key === picking);
 
   return (
-    <div className="adm-section">
+    <div className="adm-section adm-shopset">
       <SectionHead
         title="חנות: לשוניות, מיון ומחיר"
         text="מה מופיע בשורת הלשוניות של הקולקציה, איזו אפשרויות מיון יש, ואילו טווחי מחיר."

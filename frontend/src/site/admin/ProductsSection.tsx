@@ -1,11 +1,15 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { adminProducts, type AdminProduct, type ProductInput, type ProductList, type StoredConfig } from "../../lib/adminConfig";
 import { fetchCategories } from "../../lib/catalog";
+import { MAX_PHOTO, uploadProductImage } from "../../lib/media";
 import { decodeHtmlEntities } from "../../lib/html";
 import { CategoryPicker } from "./ShopSection";
 import { ShopOrder } from "./ShopOrder";
-import { Card, ConfirmDialog, I, SectionHead, Switch, errorText, useAdmin } from "./ui";
+import { Card, ConfirmDialog, ERRORS, I, SectionHead, Switch, errorText, useAdmin } from "./ui";
+
+const MAX_IMAGES = 12;
+const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const EMPTY: ProductInput = {
   name: "",
@@ -42,6 +46,9 @@ function ProductForm({ id, onClose, onSaved }: { id: number | "new"; onClose: ()
   const [simple, setSimple] = useState(true);
   const [picking, setPicking] = useState(false);
   const [newImage, setNewImage] = useState("");
+  const [uploading, setUploading] = useState<Array<{ key: string; preview: string; progress: number }>>([]);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInput = useRef<HTMLInputElement>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const categories = useQuery({ queryKey: ["admin-categories"], queryFn: fetchCategories, staleTime: 5 * 60_000 });
@@ -69,6 +76,24 @@ function ProductForm({ id, onClose, onSaved }: { id: number | "new"; onClose: ()
   }
   const set = (patch: Partial<ProductInput>) => setDraft((d) => (d ? { ...d, ...patch } : d));
   const money = (text: string) => text.replace(/[^\d.]/g, "");
+
+  /** Photos from the computer go to the image storage; the store copies them into its library when the product is saved. */
+  function addFiles(files: File[]) {
+    const room = Math.max(0, MAX_IMAGES - draft!.images.length - uploading.length);
+    const picked = files.slice(0, room);
+    setError(files.length > picked.length ? `אפשר עד ${MAX_IMAGES} תמונות למוצר.` : "");
+    for (const file of picked) {
+      if (!IMAGE_TYPES.includes(file.type)) { setError(ERRORS.unsupported_type); continue; }
+      if (file.size > MAX_PHOTO) { setError(ERRORS.too_large); continue; }
+      const key = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+      const preview = URL.createObjectURL(file);
+      setUploading((u) => [...u, { key, preview, progress: 0 }]);
+      uploadProductImage(file, (progress) => setUploading((u) => u.map((x) => (x.key === key ? { ...x, progress } : x))))
+        .then((src) => setDraft((d) => (d ? { ...d, images: [...d.images, { src, alt: d.name }] } : d)))
+        .catch((err) => { fail(err); setError(errorText(err)); })
+        .finally(() => { URL.revokeObjectURL(preview); setUploading((u) => u.filter((x) => x.key !== key)); });
+    }
+  }
 
   function addImage() {
     const url = newImage.trim();
@@ -159,7 +184,7 @@ function ProductForm({ id, onClose, onSaved }: { id: number | "new"; onClose: ()
           <div className="adm-pf-col">
           <section className="adm-pf-g">
             <h3>תמונות</h3>
-            {draft.images.length ? (
+            {draft.images.length || uploading.length ? (
               <ul className="adm-pimgs">
                 {draft.images.map((img, i) => (
                   <li key={`${img.id ?? img.src}-${i}`}>
@@ -168,10 +193,27 @@ function ProductForm({ id, onClose, onSaved }: { id: number | "new"; onClose: ()
                     <button type="button" className="adm-ib danger" onClick={() => set({ images: draft.images.filter((_, j) => j !== i) })} aria-label="הסרת התמונה">{I.close()}</button>
                   </li>
                 ))}
+                {uploading.map((u) => (
+                  <li key={u.key} className="adm-pimg-up" aria-busy="true">
+                    <img src={u.preview} alt="" />
+                    <span className="adm-pimg-bar"><i style={{ width: `${Math.round(u.progress * 100)}%` }} /></span>
+                  </li>
+                ))}
               </ul>
-            ) : <p className="adm-hint">עוד אין תמונות. הדביקו קישור לתמונה.</p>}
+            ) : null}
+            <div
+              className={`adm-drop${dragOver ? " over" : ""}`}
+              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={(e) => { e.preventDefault(); setDragOver(false); addFiles([...e.dataTransfer.files]); }}
+            >
+              <input ref={fileInput} type="file" accept={IMAGE_TYPES.join(",")} multiple hidden onChange={(e) => { addFiles([...(e.target.files ?? [])]); e.target.value = ""; }} />
+              <button type="button" className="adm-btn ghost" onClick={() => fileInput.current?.click()} disabled={draft.images.length + uploading.length >= MAX_IMAGES}>{I.upload(18)}<span>העלאת תמונות</span></button>
+              <small>או גררו קבצים לכאן · JPG, PNG או WebP, עד 10MB</small>
+            </div>
+            <label className="adm-pimg-or" htmlFor="p-img-url">או הדביקו קישור לתמונה</label>
             <div className="adm-pimg-add">
-              <input className="adm-in" dir="ltr" placeholder="https://… קישור לתמונה" value={newImage} onChange={(e) => setNewImage(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addImage(); } }} aria-label="קישור לתמונה" />
+              <input id="p-img-url" className="adm-in" dir="ltr" placeholder="https://…" value={newImage} onChange={(e) => setNewImage(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addImage(); } }} aria-label="קישור לתמונה" />
               <button type="button" className="adm-btn ghost" onClick={addImage} disabled={!newImage.trim()}>הוספה</button>
             </div>
           </section>
@@ -195,7 +237,7 @@ function ProductForm({ id, onClose, onSaved }: { id: number | "new"; onClose: ()
         <footer className="adm-pf-f">
           {error ? <p className="adm-err" role="alert">{error}</p> : null}
           <div className="adm-pf-fb">
-            <button type="button" className="adm-btn primary" onClick={() => void save()} disabled={saving}>{saving ? "שומרים…" : id === "new" ? "הוספת המוצר" : "שמירה"}</button>
+            <button type="button" className="adm-btn primary" onClick={() => void save()} disabled={saving || uploading.length > 0}>{saving ? "שומרים…" : uploading.length ? "מעלים תמונות…" : id === "new" ? "הוספת המוצר" : "שמירה"}</button>
             <button type="button" className="adm-btn ghost" onClick={onClose} disabled={saving}>ביטול</button>
           </div>
         </footer>
@@ -275,7 +317,7 @@ export function ProductsSection({ stored, onSaved }: { stored: StoredConfig; onS
   );
   return (
     <div className="adm-section">
-      <SectionHead title="מוצרים" text="כל המוצרים בחנות: חיפוש, עריכה, הוספה ומחיקה, וגם הסדר שבו הם מופיעים בחנות. שינויים מופיעים באתר תוך שניות." />
+      <SectionHead title="מוצרים" />
       {view === "order" ? <ShopOrder stored={stored} onSaved={onSaved} switcher={switcher} /> : null}
       {view === "list" ? (
       <Card

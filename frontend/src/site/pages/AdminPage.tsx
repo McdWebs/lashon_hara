@@ -7,6 +7,7 @@ import { FlagsSection } from "../admin/FlagsSection";
 import { LecturesSection } from "../admin/LecturesSection";
 import { NewCollectionSection } from "../admin/NewCollectionSection";
 import { MediaSection } from "../admin/MediaSection";
+import { CategoriesSection } from "../admin/CategoriesSection";
 import { ProductsSection } from "../admin/ProductsSection";
 import { ShopSection } from "../admin/ShopSection";
 import { StoriesSection } from "../admin/StoriesSection";
@@ -14,14 +15,15 @@ import { AdminContext, Brand, ERRORS, I, errorText, type AdminTools } from "../a
 import "../admin.css";
 
 const SECTIONS = [
-  { key: "media", label: "תמונות וסרטונים", page: "/activity/ambassadors" },
+  { key: "media", label: "שגרירים", page: "/activity/ambassadors" },
+  { key: "stories", label: "סיפורים", page: "/activity/stories" },
   { key: "lectures", label: "הרצאות", page: "/activity" },
   { key: "calendar", label: "יומן ותאריכים", page: "/activity" },
   { key: "products", label: "מוצרים", page: "/shop" },
+  { key: "categories", label: "קטגוריות", page: "/shop" },
   { key: "shop", label: "חנות", page: "/shop" },
   { key: "newCollection", label: "הקולקציה החדשה", page: "/" },
   { key: "counter", label: "מונה צמידים", page: "/activity" },
-  { key: "stories", label: "סיפורים", page: "/activity/stories" },
   { key: "flags", label: "חסמים", page: "/" },
 ] as const;
 type SectionKey = (typeof SECTIONS)[number]["key"];
@@ -145,6 +147,7 @@ function Manager({ onLogout }: { onLogout: (notice?: string) => void }) {
           {section === "lectures" ? (stored ? <LecturesSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
           {section === "calendar" ? (stored ? <CalendarSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
           {section === "products" ? (stored ? <ProductsSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
+          {section === "categories" ? (stored ? <CategoriesSection stored={stored} /> : loading) : null}
           {section === "shop" ? (stored ? <ShopSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
           {section === "counter" ? (stored ? <CounterSection stored={stored} onSaved={() => void reload()} /> : loading) : null}
           {section === "newCollection" ? (stored ? <NewCollectionSection stored={stored} onSaved={() => void reload()} /> : loading) : null}

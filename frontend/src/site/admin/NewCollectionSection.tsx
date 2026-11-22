@@ -4,6 +4,7 @@ import { adminConfig, type AdminProduct, type StoredConfig } from "../../lib/adm
 import { fetchProductsByIds } from "../../lib/catalog";
 import { decodeHtmlEntities } from "../../lib/html";
 import { DEFAULT_NEW_COLLECTION, DEFAULT_SHOP, type NewCollectionConfig } from "../../lib/siteConfig";
+import { Dropdown } from "../Dropdown";
 import { ProductPicker } from "./ProductPicker";
 import { Card, ConfirmDialog, I, SaveBar, SectionHead, errorText, moveItem, same, useAdmin } from "./ui";
 
@@ -32,6 +33,7 @@ export function NewCollectionSection({ stored, onSaved }: { stored: StoredConfig
   };
 
   const collections = (stored?.shop ?? DEFAULT_SHOP).collections.filter((c) => c.key !== "all");
+  const sourceOptions = [{ value: "", label: "המוצרים החדשים ביותר בחנות" }, ...collections.map((c) => ({ value: c.key, label: c.he }))];
   const dirty = !same(draft, saved);
   const valid = draft.he.trim() !== "" && draft.en.trim() !== "";
 
@@ -103,11 +105,17 @@ export function NewCollectionSection({ stored, onSaved }: { stored: StoredConfig
         </div>
 
         <div className="adm-field">
-          <label htmlFor="nc-src">אוטומטי: לפי קטגוריה</label>
-          <select id="nc-src" className="adm-in" value={draft.source} disabled={ids.length > 0} onChange={(e) => setDraft({ ...draft, source: e.target.value })}>
-            <option value="">המוצרים החדשים ביותר בחנות</option>
-            {collections.map((c) => <option key={c.key} value={c.key}>{c.he}</option>)}
-          </select>
+          <label>אוטומטי: לפי קטגוריה</label>
+          <div className="adm-dd">
+            <Dropdown
+              label="אוטומטי: לפי קטגוריה"
+              text={sourceOptions.find((o) => o.value === draft.source)?.label ?? sourceOptions[0].label}
+              value={draft.source}
+              options={sourceOptions}
+              disabled={ids.length > 0}
+              onChange={(v) => setDraft({ ...draft, source: v })}
+            />
+          </div>
           {ids.length ? <small>כשנבחרו מוצרים, הקטגוריה לא בשימוש. הסירו את כולם כדי לחזור למצב אוטומטי.</small> : <small>שמונה המוצרים החדשים ביותר, מהחדש לישן.</small>}
         </div>
         {error ? <p className="adm-err" role="alert">{error}</p> : null}

@@ -78,7 +78,6 @@ export function ShopOrder({ stored, onSaved, switcher }: { stored: StoredConfig;
       <Card
         title="סדר המוצרים בחנות"
         actions={<div className="adm-hact">{switcher}</div>}
-        hint="הסדר שבו המוצרים מופיעים בחנות כשהמיון הוא ״ברירת מחדל״. גוררים מוצר למקום אחר, או משתמשים בחצים. מוצרים חדשים שמתווספים לחנות מופיעים בראש הרשימה."
       >
         <div className="adm-otabs" role="tablist" aria-label="לשונית בחנות">
           {collections.map((c) => (

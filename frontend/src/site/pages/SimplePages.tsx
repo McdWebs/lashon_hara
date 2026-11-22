@@ -1,7 +1,6 @@
 import { t, Link, siteLang } from "../i18n";
 import { useContact } from "../contact";
 import { TERMS_TITLE, TermsHeContent } from "../../content/termsHe";
-import { SITE, waLink } from "../../lib/site";
 import { Icon, Title, usePageTitle } from "../ui";
 
 export function NotFoundPage() {
@@ -69,12 +68,6 @@ export function AccessibilityPage() {
           <p>
             נתקלתם בקושי, או שיש לכם הצעה לשיפור? נשמח לשמוע ולטפל בהקדם, ובכל מקרה נשיב בתוך זמן סביר. אפשר לפנות אלינו בוואטסאפ או דרך <button type="button" className="textlink" onClick={openContact}>טופס יצירת הקשר</button>. כדי שנוכל לסייע, כדאי לציין את כתובת העמוד, תיאור הקושי, ואת הדפדפן או הטכנולוגיה המסייעת שבה השתמשתם.
           </p>
-          <p>
-            <a className="btn btn-ink" href={waLink("שלום, אני פונה בנושא נגישות באתר")}><span>פנייה בוואטסאפ</span></a>
-          </p>
-          <p>שעות מענה: {SITE.supportHours}.</p>
-
-          <p className="legal-date">הצהרה זו עודכנה לאחרונה ב־1 בנובמבר 2026.</p>
         </div>
       </div>
     </section>

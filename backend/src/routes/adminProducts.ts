@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { z } from "zod";
-import { adminCreateProduct, adminGetProduct, adminListProducts, adminTrashProduct, adminUpdateProduct, WcAdminError } from "../services/wcAdmin.js";
+import { adminCreateCategory, adminCreateProduct, adminDeleteCategory, adminGetProduct, adminListCategories, adminListProducts, adminTrashProduct, adminUpdateCategory, adminUpdateProduct, WcAdminError } from "../services/wcAdmin.js";
 import { getOrders } from "../services/productOrder.js";
 import { orderedItems } from "../services/productIndex.js";
+import crypto from "node:crypto";
+import { publicUrlFor, r2Configured, signUpload } from "../services/r2.js";
 import { purgeCatalog } from "./catalog.js";
 
 /** Product management for the team. Mounted under the admin router, after it checks the login. */
@@ -123,4 +125,83 @@ adminProductsRouter.get("/shop-order", async (req, res) => {
       return { id: p.id as number, name: String(p.name), image: image?.thumbnail || image?.src || "", price: Number(prices.price) / 10 ** (prices.currency_minor_unit ?? 2) };
     }),
   });
+});
+
+const IMAGE_TYPES: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
+const MAX_IMAGE = 10 * 1024 * 1024;
+
+/**
+ * A product photo uploaded from the team's computer goes to the site's image storage first; the store then copies it
+ * into its own library from the returned link when the product is saved.
+ */
+adminProductsRouter.post("/product-images/sign", async (req, res) => {
+  if (!r2Configured()) {
+    res.status(503).json({ error: "storage_not_configured" });
+    return;
+  }
+  const parsed = z.object({ contentType: z.string(), size: z.number().int().positive() }).safeParse(req.body);
+  const ext = parsed.success ? IMAGE_TYPES[parsed.data.contentType] : undefined;
+  if (!parsed.success || !ext) {
+    res.status(400).json({ error: "unsupported_type" });
+    return;
+  }
+  if (parsed.data.size > MAX_IMAGE) {
+    res.status(400).json({ error: "too_large" });
+    return;
+  }
+  const key = `products/${Date.now()}-${crypto.randomBytes(4).toString("hex")}.${ext}`;
+  res.json({ uploadUrl: await signUpload(key, parsed.data.contentType, parsed.data.size), url: publicUrlFor(key) });
+});
+
+/* ---------- categories ---------- */
+
+const categoryBody = z.object({ name: z.string().trim().min(1).max(80), parent: z.number().int().min(0) });
+
+adminProductsRouter.get("/categories", async (_req, res) => {
+  res.set("Cache-Control", "no-store");
+  try {
+    res.json({ items: await adminListCategories() });
+  } catch (err) {
+    fail(res, err);
+  }
+});
+
+adminProductsRouter.post("/categories", async (req, res) => {
+  const parsed = categoryBody.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "invalid_payload" });
+    return;
+  }
+  try {
+    const category = await adminCreateCategory(parsed.data);
+    purgeCatalog();
+    res.json(category);
+  } catch (err) {
+    fail(res, err);
+  }
+});
+
+adminProductsRouter.put("/categories/:id", async (req, res) => {
+  const parsed = categoryBody.safeParse(req.body);
+  if (!parsed.success || String(parsed.data.parent) === req.params.id) {
+    res.status(400).json({ error: "invalid_payload" });
+    return;
+  }
+  try {
+    const category = await adminUpdateCategory(req.params.id, parsed.data);
+    purgeCatalog();
+    res.json(category);
+  } catch (err) {
+    fail(res, err);
+  }
+});
+
+adminProductsRouter.delete("/categories/:id", async (req, res) => {
+  try {
+    await adminDeleteCategory(req.params.id);
+    purgeCatalog();
+    res.json({ ok: true });
+  } catch (err) {
+    fail(res, err);
+  }
 });

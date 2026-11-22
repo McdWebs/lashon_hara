@@ -1,4 +1,5 @@
 import { env } from "../config/env.js";
+import { isHiddenCategory } from "./categoryDedup.js";
 import { isHiddenProduct } from "./woocommerce.js";
 
 /** The store's own (write) API. Needs a WooCommerce key with Read/Write permission. */
@@ -25,7 +26,7 @@ async function wc(path: string, init: RequestInit = {}) {
       throw new WcAdminError(/cannot_(create|edit|delete|batch)|authentication_error/.test(code) ? "store_read_only" : "store_unauthorized", 502);
     }
     if (res.status === 404) throw new WcAdminError("product_not_found", 404);
-    if (res.status === 400) throw new WcAdminError("invalid_payload", 400);
+    if (res.status === 400) throw new WcAdminError(code === "term_exists" ? "category_exists" : "invalid_payload", 400);
     throw new WcAdminError("store_unavailable", 502);
   }
   return { data, headers: res.headers };
@@ -109,4 +110,41 @@ export async function adminUpdateProduct(id: string, input: ProductInput) {
 /** To the store's trash, where it can still be restored. */
 export async function adminTrashProduct(id: string) {
   await wc(`/products/${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+
+/* ---------- categories ---------- */
+
+function adminCategory(c: Raw) {
+  return {
+    id: c.id as number,
+    name: String(c.name ?? ""),
+    parent: Number(c.parent ?? 0),
+    count: Number(c.count ?? 0),
+    /** Kept out of the shop's lists on purpose (old duplicates and seasonal ones). */
+    hiddenOnSite: isHiddenCategory(c.id as number),
+  };
+}
+export type AdminCategory = ReturnType<typeof adminCategory>;
+
+export async function adminListCategories() {
+  const all: AdminCategory[] = [];
+  for (let page = 1; page <= 5; page += 1) {
+    const { data, headers } = await wc(`/products/categories?per_page=100&page=${page}`);
+    all.push(...(data as unknown as Raw[]).map(adminCategory));
+    if (page >= Number(headers.get("x-wp-totalpages") ?? 1)) break;
+  }
+  return all;
+}
+
+export async function adminCreateCategory(input: { name: string; parent: number }) {
+  return adminCategory((await wc("/products/categories", { method: "POST", body: JSON.stringify(input) })).data);
+}
+
+export async function adminUpdateCategory(id: string, input: { name: string; parent: number }) {
+  return adminCategory((await wc(`/products/categories/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(input) })).data);
+}
+
+/** Categories have no trash: this removes it for good. The products in it stay, without it. */
+export async function adminDeleteCategory(id: string) {
+  await wc(`/products/categories/${encodeURIComponent(id)}?force=true`, { method: "DELETE" });
 }

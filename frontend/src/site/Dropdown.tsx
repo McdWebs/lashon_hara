@@ -7,7 +7,7 @@ export type DropdownOption = { value: string; label: string };
  * A menu that opens under its button. Works with the mouse and the keyboard:
  * arrows move, Enter or Space picks, Escape closes, and typing a letter jumps to a match.
  */
-export function Dropdown({ label, text, value, options, onChange, active }: {
+export function Dropdown({ label, text, value, options, onChange, active, disabled }: {
   /** What a screen reader calls it. */
   label: string;
   /** What the button shows. */
@@ -17,6 +17,7 @@ export function Dropdown({ label, text, value, options, onChange, active }: {
   onChange: (value: string) => void;
   /** A non-default choice is in effect. */
   active?: boolean;
+  disabled?: boolean;
 }) {
   const id = useId();
   const root = useRef<HTMLDivElement>(null);
@@ -76,6 +77,7 @@ export function Dropdown({ label, text, value, options, onChange, active }: {
         type="button"
         className={`cdrop-b${active ? " on" : ""}`}
         aria-label={label}
+        disabled={disabled}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={`${id}-list`}

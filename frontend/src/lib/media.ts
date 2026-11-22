@@ -75,3 +75,23 @@ export async function uploadMedia(world: MediaWorld, file: File, onProgress: (fr
 
   await adminRequest("/media", { method: "POST", body: JSON.stringify({ world, key: signed.key, contentType: file.type }) });
 }
+
+/** Uploads one product photo to the image storage and returns its public link. Reports progress from 0 to 1. */
+export async function uploadProductImage(file: File, onProgress: (fraction: number) => void): Promise<string> {
+  const signed = await adminRequest<{ uploadUrl: string; url: string }>("/product-images/sign", {
+    method: "POST",
+    body: JSON.stringify({ contentType: file.type, size: file.size }),
+  });
+  await new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", signed.uploadUrl);
+    xhr.setRequestHeader("Content-Type", file.type);
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) onProgress(e.loaded / e.total);
+    };
+    xhr.onload = () => (xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error("upload_failed")));
+    xhr.onerror = () => reject(new Error("upload_failed"));
+    xhr.send(file);
+  });
+  return signed.url;
+}

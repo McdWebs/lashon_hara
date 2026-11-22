@@ -107,7 +107,12 @@ export function AccessibilityWidget() {
         aria-label={t("a11yMenuLabel")}
         sx={{
           position: "fixed",
-          insetBlockEnd: { xs: atEnd ? 84 : 24, sm: 16 },
+          // Above the cookie banner while it is showing (the banner sets --cookie-h); on a phone also above the footer's bottom bar at the page end.
+          insetBlockEnd: {
+            xs: atEnd ? "max(84px, calc(24px + var(--cookie-h, 0px)))" : "calc(24px + var(--cookie-h, 0px))",
+            sm: "calc(16px + var(--cookie-h, 0px))",
+            md: 16,
+          },
           transition: "inset-block-end .3s ease",
           insetInlineEnd: 16,
           zIndex: 1300,

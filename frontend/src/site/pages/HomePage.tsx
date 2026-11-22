@@ -9,7 +9,7 @@ import { CardsSkeleton, Icon, QuoteMark, ShopCard, Title, usePageTitle } from ".
 type Slide = { photo: string; sig?: string; who: string; lines: string[]; side: "start" | "end"; long?: boolean };
 
 const SLIDES: Slide[] = [
-  { photo: "omer", sig: "omer_sig", who: "עומר אדם", lines: ["שים לב", "מה אתה אומר"], side: "start" },
+  { photo: "omer", sig: "omer_sig", who: "עומר אדם", lines: ["לשון הרע זה כמו המשחק טלפון שבור,", "מישהו אומר מילה אחת ועד שזה מגיע ל־10", "זה הופך להיות מעוות לגמרי"], side: "start", long: true },
   { photo: "static", sig: "static_sig", who: "סטטיק", lines: ["נוצר לשונו", "שומר נפשו"], side: "end" },
   { photo: "q1", sig: "q1_sig", who: "אתי אפינגר", lines: ["מוות וחיים", "ביד הלשון"], side: "start" },
   { photo: "q2", sig: "q2_sig", who: "לירן דנינו", lines: ["שומר פיו ולשונו", "שומר מצרות נפשו"], side: "end" },
@@ -29,7 +29,7 @@ const TILES = [
 const HOLD_MS = 6500;
 
 /** The two-line quotes, line by line. */
-const QUOTE_EN: Record<string, string> = { "שים לב": "Watch", "מה אתה אומר": "what you say", "נוצר לשונו": "Guard your tongue,", "שומר נפשו": "guard your soul",
+const QUOTE_EN: Record<string, string> = { "לשון הרע זה כמו המשחק טלפון שבור,": "Lashon hara is like the game of broken telephone,", "מישהו אומר מילה אחת ועד שזה מגיע ל־10": "someone says one word, and by the time it reaches the tenth person", "זה הופך להיות מעוות לגמרי": "it has become completely distorted", "נוצר לשונו": "Guard your tongue,", "שומר נפשו": "guard your soul",
   "מוות וחיים": "Death and life", "ביד הלשון": "are in the power of the tongue",
   "שומר פיו ולשונו": "Whoever guards their mouth and tongue", "שומר מצרות נפשו": "keeps their soul from trouble",
   "אם אנשים כמונו מצאו את האור בחושך": "If people like us found the light in the dark", "אין לכם חושך בחיים שלכם": "there's no dark in your lives", "פשוט תחיו": "just live",
@@ -40,8 +40,38 @@ function EN_QUOTE(line: string) {
   return siteLang() === "en" ? QUOTE_EN[line] ?? line : line;
 }
 
+const FIRST_KEY = "lh-hero-first";
+
+function pickOrder(): Slide[] {
+  const order = [...SLIDES];
+  for (let i = order.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  let last = "";
+  try {
+    last = localStorage.getItem(FIRST_KEY) ?? "";
+  } catch {
+    /* ignore */
+  }
+  if (order.length > 1 && order[0].photo === last) {
+    const j = 1 + Math.floor(Math.random() * (order.length - 1));
+    [order[0], order[j]] = [order[j], order[0]];
+  }
+  return order;
+}
+
 function Hero() {
   const reduced = useRef(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false);
+  // A new random order on every visit, so a different ambassador opens the site each time (never the same one twice in a row on one device).
+  const [slides] = useState(pickOrder);
+  useEffect(() => {
+    try {
+      localStorage.setItem(FIRST_KEY, slides[0].photo);
+    } catch {
+      /* private mode: the next visit just picks freely */
+    }
+  }, [slides]);
   const [cur, setCur] = useState(0);
   // Every slide that is on its way out keeps its exit until it is done, even when the buttons are pressed in quick succession.
   const [leaving, setLeaving] = useState<number[]>([]);
@@ -59,7 +89,7 @@ function Hero() {
       });
     };
     // Wait for the fonts and the first photo to be decoded, so the entrance never plays on a half-loaded image. The rest load quietly meanwhile.
-    const decoded = SLIDES.map((sl) => {
+    const decoded = slides.map((sl) => {
       const img = new Image();
       img.src = `/images/site/${sl.photo}.jpg`;
       return img.decode().catch(() => undefined);
@@ -67,7 +97,7 @@ function Hero() {
     const fonts = document.fonts?.ready ?? Promise.resolve();
     Promise.race([Promise.all([fonts, decoded[0]]), new Promise((r) => setTimeout(r, 1500))]).then(start);
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [slides]);
 
   const go = useCallback((i: number) => {
     const from = curRef.current;
@@ -80,7 +110,7 @@ function Hero() {
 
   useEffect(() => {
     if (stopped || held || !ready) return;
-    const timer = setTimeout(() => go((cur + 1) % SLIDES.length), HOLD_MS);
+    const timer = setTimeout(() => go((cur + 1) % slides.length), HOLD_MS);
     return () => clearTimeout(timer);
   }, [cur, stopped, held, ready, go]);
 
@@ -94,13 +124,13 @@ function Hero() {
       onFocus={() => setHeld(true)}
       onBlur={() => setHeld(false)}
     >
-      {SLIDES.map((s, i) => (
+      {slides.map((s, i) => (
         <div
           key={s.photo}
           className={`slide side-${s.side}${s.long ? " long" : ""}${ready && i === cur ? " on" : ""}${leaving.includes(i) ? " out" : ""}`}
           role="group"
           aria-roledescription={t("שקופית")}
-          aria-label={s.who ? t("{n} מתוך {total}: {who}", { n: i + 1, total: SLIDES.length, who: t(s.who) }) : t("שקופית {n}", { n: i + 1 })}
+          aria-label={s.who ? t("{n} מתוך {total}: {who}", { n: i + 1, total: slides.length, who: t(s.who) }) : t("שקופית {n}", { n: i + 1 })}
           aria-hidden={i !== cur}
         >
           <div className="s-photo">
@@ -119,7 +149,7 @@ function Hero() {
       ))}
       <div className="hctl">
         <div className="dots">
-          {SLIDES.map((s, i) => (
+          {slides.map((s, i) => (
             <button key={s.photo} className={`dot${i === cur ? " on" : ""}`} aria-label={t("שקופית {n}", { n: i + 1 })} aria-current={i === cur || undefined} onClick={() => go(i)} />
           ))}
         </div>

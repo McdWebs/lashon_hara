@@ -11,7 +11,8 @@ type Upload = { id: number; world: MediaWorld; name: string; preview?: string; i
 
 export function MediaSection() {
   const { toast, fail } = useAdmin();
-  const [world, setWorld] = useState<MediaWorld>("ambassadors");
+  /** Only one section is left (the soldiers' one moved to Stories), so there is nothing to switch between. */
+  const world: MediaWorld = "ambassadors";
   const [lists, setLists] = useState<Record<MediaWorld, AdminList | null>>({ idf: null, ambassadors: null });
   const [uploads, setUploads] = useState<Upload[]>([]);
   const [dragging, setDragging] = useState<string | null>(null);
@@ -177,22 +178,7 @@ export function MediaSection() {
       onDragOver={(e) => { if (e.dataTransfer.types.includes("Files")) e.preventDefault(); }}
       onDrop={onFileDrop}
     >
-      <SectionHead title="תמונות וסרטונים" text="מה שמועלה כאן מופיע בעמוד הפעילות באתר. הסדר כאן הוא הסדר באתר." />
-
-      <div className="adm-row">
-        <div className="adm-tabs" role="tablist" aria-label="חלק באתר">
-          {WORLDS.map((w) => {
-            const count = lists[w.key]?.items.length;
-            return (
-              <button key={w.key} type="button" role="tab" aria-selected={world === w.key} className={`adm-tab${world === w.key ? " on" : ""}`} onClick={() => setWorld(w.key)}>
-                <span>{w.label}</span>
-                <b>{count === undefined ? "–" : count}</b>
-              </button>
-            );
-          })}
-        </div>
-        <a className="adm-link dark" href={active.page} target="_blank" rel="noreferrer"><span>לצפייה בעמוד באתר</span>{I.ext()}</a>
-      </div>
+      <SectionHead title="שגרירים" text="מה שמועלה כאן מופיע בעמוד הפעילות באתר. הסדר כאן הוא הסדר באתר." />
 
       {storage === false ? (
         <p className="adm-note" role="alert"><b>האחסון עדיין לא מחובר.</b> אי אפשר להעלות קבצים עד שמוסיפים את הגדרות האחסון בשרת.</p>

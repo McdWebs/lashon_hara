@@ -6,6 +6,8 @@ const HIDDEN_CATEGORY_IDS = new Set([
   147, 148, 149, 150, 153, 243,
 ]);
 
+export const isHiddenCategory = (id: number) => HIDDEN_CATEGORY_IDS.has(id);
+
 export function dedupeCategories<T extends { id: number }>(categories: T[]): T[] {
   return categories.filter((c) => !HIDDEN_CATEGORY_IDS.has(c.id));
 }

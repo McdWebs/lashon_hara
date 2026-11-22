@@ -15,6 +15,7 @@ export const ERRORS: Record<string, string> = {
   store_read_only: "מפתח ה-API של החנות הוא לקריאה בלבד. צריך מפתח עם הרשאת קריאה/כתיבה.",
   store_unauthorized: "החנות לא אישרה את הבקשה. בדקו את מפתח ה-API.",
   store_unavailable: "החנות לא זמינה כרגע. נסו שוב עוד רגע.",
+  category_exists: "כבר יש קטגוריה בשם הזה.",
   product_not_found: "המוצר לא נמצא.",
   calendar_too_large: "קובץ היומן גדול מדי.",
 };
@@ -45,6 +46,7 @@ export const I = {
   ext: () => <Ico size={18}><path d="M14 5h5v5" /><path d="M19 5l-8 8" /><path d="M18 14v5H5V6h5" /></Ico>,
   edit: () => <Ico><path d="M4 20h4L19 9l-4-4L4 16v4z" /><path d="M13.5 6.5l4 4" /></Ico>,
   grip: () => <Ico size={18}><circle cx="9" cy="6" r="1.2" fill="currentColor" /><circle cx="15" cy="6" r="1.2" fill="currentColor" /><circle cx="9" cy="12" r="1.2" fill="currentColor" /><circle cx="15" cy="12" r="1.2" fill="currentColor" /><circle cx="9" cy="18" r="1.2" fill="currentColor" /><circle cx="15" cy="18" r="1.2" fill="currentColor" /></Ico>,
+  calendar: () => <Ico size={20}><rect x="4" y="5.5" width="16" height="14.5" rx="2.5" /><path d="M4 10h16" /><path d="M8.5 3.5v4" /><path d="M15.5 3.5v4" /></Ico>,
   eye: () => <Ico><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" /><circle cx="12" cy="12" r="2.8" /></Ico>,
   check: () => <Ico size={16}><path d="M5 12.5l4.5 4.5L19 7.5" /></Ico>,
   chevron: () => <Ico size={18}><path d="M6 9l6 6 6-6" /></Ico>,
@@ -98,11 +100,11 @@ export function SaveBar({ dirty, saving, onSave, onDiscard }: { dirty: boolean; 
   );
 }
 
-export function SectionHead({ title, text, onReset, resetText }: { title: string; text: string; onReset?: () => void; resetText?: string }) {
+export function SectionHead({ title, text, onReset, resetText }: { title: string; text?: string; onReset?: () => void; resetText?: string }) {
   return (
     <div className="adm-head">
       <h1>{title}</h1>
-      <p>{text}</p>
+      {text ? <p>{text}</p> : null}
       {onReset ? <button type="button" className="adm-reset" onClick={onReset}>{resetText ?? "חזרה להגדרות המקוריות"}</button> : null}
     </div>
   );

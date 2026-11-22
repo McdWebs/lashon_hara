@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { adminConfig, type CalendarTest, type StoredConfig } from "../../lib/adminConfig";
 import { DEFAULT_CALENDAR, type CalendarSettings } from "../../lib/siteConfig";
+import { Dropdown } from "../Dropdown";
+import { DatePicker } from "./DatePicker";
 import { Card, ConfirmDialog, I, SaveBar, SectionHead, Switch, errorText, same, useAdmin } from "./ui";
 
 const DAYS = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
@@ -177,16 +179,21 @@ export function CalendarSection({ stored, onSaved }: { stored: StoredConfig | nu
 
       <Card title="כמה חודשים קדימה אפשר להזמין">
         <div className="adm-field narrow">
-          <label htmlFor="adm-months" className="sr">מספר חודשים</label>
-          <select id="adm-months" className="adm-in" value={draft.monthsAhead} onChange={(e) => set({ monthsAhead: Number(e.target.value) })}>
-            {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => <option key={n} value={n}>{n === 1 ? "חודש אחד" : `${n} חודשים`}</option>)}
-          </select>
+          <div className="adm-dd">
+            <Dropdown
+              label="מספר חודשים"
+              text={draft.monthsAhead === 1 ? "חודש אחד" : `${draft.monthsAhead} חודשים`}
+              value={String(draft.monthsAhead)}
+              options={Array.from({ length: 12 }, (_, i) => ({ value: String(i + 1), label: i === 0 ? "חודש אחד" : `${i + 1} חודשים` }))}
+              onChange={(v) => set({ monthsAhead: Number(v) })}
+            />
+          </div>
         </div>
       </Card>
 
       <Card title="חסימת תאריכים ידנית" hint="ימים שאין בהם אירוע ביומן, אבל אי אפשר להזמין בהם: חופשה, חג, יום עמוס.">
         <div className="adm-inline">
-          <input type="date" className="adm-in" value={newDay} min={today} onChange={(e) => setNewDay(e.target.value)} aria-label="תאריך לחסימה" />
+          <DatePicker value={newDay} onChange={setNewDay} min={today} marked={new Set(draft.blockedDates)} dim={draft.closedWeekdays} ariaLabel="תאריך לחסימה" />
           <button type="button" className="adm-btn ghost" onClick={addDay} disabled={!newDay}>{I.plus()}<span>חסימה</span></button>
         </div>
         {upcoming.length === 0 ? <p className="adm-hint">אין ימים חסומים.</p> : (
