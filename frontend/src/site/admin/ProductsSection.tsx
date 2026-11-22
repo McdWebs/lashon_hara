@@ -221,6 +221,17 @@ export function ProductsSection({ stored, onSaved }: { stored: StoredConfig; onS
   }, [input]);
 
   const list = useQuery({ queryKey: ["admin-products", search, page], queryFn: () => adminProducts.list({ search, status: "any", page }), placeholderData: (prev) => prev });
+
+  // The next page is fetched quietly while this one is read, so Next is usually instant.
+  const nextPage = list.data && page < list.data.totalPages ? page + 1 : 0;
+  useEffect(() => {
+    if (nextPage) void client.prefetchQuery({ queryKey: ["admin-products", search, nextPage], queryFn: () => adminProducts.list({ search, status: "any", page: nextPage }), staleTime: 60_000 });
+  }, [client, search, nextPage]);
+
+  const goTo = (next: number) => {
+    setPage(next);
+    window.scrollTo({ top: 0, behavior: "instant" } as ScrollToOptions);
+  };
   /* The store takes a second or more to answer, and its own list can lag behind. So the screen changes at once
      and the lists already loaded are edited in place instead of being fetched again. */
   const editLists = (change: (list: ProductList, key: readonly unknown[]) => ProductList) =>
@@ -254,6 +265,8 @@ export function ProductsSection({ stored, onSaved }: { stored: StoredConfig; onS
   }
 
   const data = list.data;
+  /** The next page or a new search is on its way: show placeholders at once instead of leaving the old rows looking frozen. */
+  const waiting = list.isLoading || list.isPlaceholderData;
   const switcher = (
     <div className="adm-vsw" role="tablist" aria-label="תצוגה">
       <button type="button" role="tab" aria-selected={view === "list"} className={view === "list" ? "on" : ""} onClick={() => setView("list")}>כל המוצרים</button>
@@ -273,7 +286,7 @@ export function ProductsSection({ stored, onSaved }: { stored: StoredConfig; onS
           <input className="adm-in" type="search" placeholder="חיפוש מוצר…" value={input} onChange={(e) => setInput(e.target.value)} aria-label="חיפוש מוצר" />
         </div>
         {list.isError ? <p className="adm-err" role="alert">{errorText(list.error)}</p> : null}
-        {list.isLoading ? (
+        {waiting ? (
           <ul className="adm-rows flat adm-plist" aria-busy="true" aria-label="טוענים מוצרים">
             {Array.from({ length: 6 }, (_, i) => (
               <li key={i} className="adm-prow" aria-hidden="true">
@@ -288,7 +301,7 @@ export function ProductsSection({ stored, onSaved }: { stored: StoredConfig; onS
             ))}
           </ul>
         ) : null}
-        <ul className="adm-rows flat adm-plist">
+        <ul className="adm-rows flat adm-plist" hidden={waiting}>
           {data?.items.map((p) => (
             <li key={p.id} className="adm-prow">
               {p.images[0] ? <img src={p.images[0].src} alt="" loading="lazy" /> : <span className="adm-pnoimg" aria-hidden="true">{I.image()}</span>}
@@ -310,9 +323,9 @@ export function ProductsSection({ stored, onSaved }: { stored: StoredConfig; onS
         </ul>
         {data && data.totalPages > 1 ? (
           <div className="adm-pager">
-            <button type="button" className="adm-btn ghost small" disabled={page <= 1} onClick={() => setPage((n) => n - 1)}>הקודם</button>
+            <button type="button" className="adm-btn ghost small" disabled={page <= 1 || waiting} onClick={() => goTo(page - 1)}>הקודם</button>
             <span>עמוד {page} מתוך {data.totalPages}</span>
-            <button type="button" className="adm-btn ghost small" disabled={page >= data.totalPages} onClick={() => setPage((n) => n + 1)}>הבא</button>
+            <button type="button" className="adm-btn ghost small" disabled={page >= data.totalPages || waiting} onClick={() => goTo(page + 1)}>הבא</button>
           </div>
         ) : null}
       </Card>
