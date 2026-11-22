@@ -1241,6 +1241,6 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
 .st-cta { display: flex; justify-content: center; padding-top: 44px; }
 
 /* Product names take two lines on every card, so the prices line up across a row. */
-.pc-n { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; min-height: 2.8em; overflow-wrap: anywhere; }
+.pc-n { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; height: 4.2em; overflow-wrap: anywhere; }
 .pc-p { margin-top: auto; }
 .pc-sl { color: var(--red); font-weight: 700; }
