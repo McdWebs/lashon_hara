@@ -3,7 +3,6 @@ import { ACCEPT, MAX_PHOTO, MAX_VIDEO, adminApi, adminToken, uploadMedia, type A
 import { ERRORS, I, SectionHead, errorText, useAdmin } from "./ui";
 
 const WORLDS: Array<{ key: MediaWorld; label: string; page: string }> = [
-  { key: "idf", label: "צה״ל", page: "/activity/idf" },
   { key: "ambassadors", label: "שגרירים", page: "/activity/ambassadors" },
 ];
 
@@ -12,7 +11,7 @@ type Upload = { id: number; world: MediaWorld; name: string; preview?: string; i
 
 export function MediaSection() {
   const { toast, fail } = useAdmin();
-  const [world, setWorld] = useState<MediaWorld>("idf");
+  const [world, setWorld] = useState<MediaWorld>("ambassadors");
   const [lists, setLists] = useState<Record<MediaWorld, AdminList | null>>({ idf: null, ambassadors: null });
   const [uploads, setUploads] = useState<Upload[]>([]);
   const [dragging, setDragging] = useState<string | null>(null);
@@ -36,7 +35,6 @@ export function MediaSection() {
   );
 
   useEffect(() => {
-    void load("idf");
     void load("ambassadors");
   }, [load]);
 

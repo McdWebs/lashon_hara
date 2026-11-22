@@ -24,18 +24,18 @@
     },
     "/activity": {
       "title": "הפעילות שלנו",
-      "description": "הרצאות לבתי ספר ולמוסדות חינוך, פעילות בצה״ל ושגרירים. בחרו תאריך להרצאה ונחזור אליכם.",
+      "description": "הרצאות לבתי ספר ולמוסדות חינוך, ושגרירים. בחרו תאריך להרצאה ונחזור אליכם.",
       "en": {
         "title": "Our activity",
-        "description": "Talks for schools and educational institutions, work with the IDF, and ambassadors. Choose a date and we'll get back to you."
+        "description": "Talks for schools and educational institutions, and ambassadors. Choose a date and we'll get back to you."
       }
     },
-    "/activity/idf": {
-      "title": "פעילות בצה״ל",
-      "description": "מפגשים והרצאות לחיילים ולמפקדים, על כוחה של מילה ועל שיח מכבד.",
+    "/activity/stories": {
+      "title": "הסיפורים שלכם",
+      "description": "אנשים אמיתיים מספרים איך המסר נגע בהם.",
       "en": {
-        "title": "IDF activity",
-        "description": "Meetings and talks for soldiers and commanders about the power of words and respectful speech."
+        "title": "Your stories",
+        "description": "Real people tell how the message touched them."
       }
     },
     "/activity/ambassadors": {

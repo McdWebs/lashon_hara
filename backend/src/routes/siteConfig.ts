@@ -57,7 +57,14 @@ const lectures = z.object({
 /** Switches the team can turn on and off. A flag that was never saved keeps the default the site ships with. */
 const flags = z.object({ english: z.boolean(), shopMission: z.boolean().optional(), newSearch: z.boolean().optional(), aboutVideo: z.boolean().optional(), stories: z.boolean().optional() });
 
-const SECTIONS = { counter, calendar, shop, lectures, flags } as const;
+/** The home page's "new collection" block: its title, and where its products come from ("" means the newest products, otherwise a shop collection). */
+const newCollection = z.object({
+  he: z.string().trim().min(1).max(60),
+  en: z.string().trim().min(1).max(60),
+  source: z.string().regex(/^[a-z0-9-]{0,30}$/),
+});
+
+const SECTIONS = { counter, calendar, shop, lectures, flags, newCollection } as const;
 type Section = keyof typeof SECTIONS;
 const isSection = (name: string): name is Section => name in SECTIONS;
 
@@ -78,6 +85,7 @@ siteConfigRouter.get("/", async (_req, res) => {
   if (all.shop) out.shop = all.shop;
   if (all.lectures) out.lectures = (all.lectures as z.infer<typeof lectures>).items;
   if (all.flags) out.flags = all.flags;
+  if (all.newCollection) out.newCollection = all.newCollection;
 
   // Calendar rules are always sent, because the taken days can come from the connected calendar.
   const cal = all.calendar as z.infer<typeof calendar> | undefined;

@@ -1,5 +1,5 @@
 import { adminRequest } from "./media";
-import type { CalendarSettings, Flags, LectureConfig, ShopConfig } from "./siteConfig";
+import type { CalendarSettings, Flags, LectureConfig, NewCollectionConfig, ShopConfig } from "./siteConfig";
 
 /** What the admin has saved so far. A section that was never saved is missing, and the built-in default applies. */
 export type StoredConfig = Partial<{
@@ -8,9 +8,10 @@ export type StoredConfig = Partial<{
   calendar: CalendarSettings;
   shop: ShopConfig;
   lectures: { items: LectureConfig[] };
+  newCollection: NewCollectionConfig;
 }>;
 
-export type Section = "counter" | "calendar" | "shop" | "lectures" | "flags";
+export type Section = "counter" | "calendar" | "shop" | "lectures" | "flags" | "newCollection";
 
 export type CalendarTest = { ok: true; events: number; days: string[]; totalDays: number };
 

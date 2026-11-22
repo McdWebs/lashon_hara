@@ -257,7 +257,7 @@ export function JoinPage() {
               ) : (
                 <Link className="btn btn-ink" to={way.to!}><span>{t(way.button)}</span><Icon.arrow /></Link>
               )}
-              {way.panel === "story" && config.flags.stories ? <Link className="link" to="/activity#stories"><span>{t("לקריאת סיפורים של אחרים")}</span><Icon.arrow /></Link> : null}
+              {way.panel === "story" && config.flags.stories ? <Link className="link" to="/activity/stories"><span>{t("לקריאת סיפורים של אחרים")}</span><Icon.arrow /></Link> : null}
             </div>
           </article>
         ))}

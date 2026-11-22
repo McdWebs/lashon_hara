@@ -21,7 +21,7 @@ type WorldConfig = { key: string; name: string; line: string; live: string; imag
 
 const WORLDS: WorldConfig[] = [
   { key: "schools", name: "בתי ספר והרצאות", line: "הרצאות לבתי ספר ולמוסדות חינוך. בחרו תאריך ונחזור אליכם.", live: "", image: "/images/activity/schools.jpg", focus: "50% 38%" },
-  { key: "idf", name: "צה״ל", line: "מפגשים והרצאות לחיילים ולמפקדים, על כוחה של מילה ועל שיח מכבד.", live: "", image: "/images/activity/idf.jpg", reels: [] },
+  { key: "stories", name: "סיפורים", line: "", live: "", image: "/images/site/founder.jpg", focus: "50% 20%" },
   { key: "ambassadors", name: "שגרירים", line: "אמנים, ספורטאים ואנשי ציבור שמצטרפים ואומרים: לשון הרע לא מדבר אליי.", live: "", image: "/images/site/static.jpg", focus: "50% 14%", banner: "/images/store_images/celeb.jpg", reels: [] },
 ];
 
@@ -473,13 +473,13 @@ function RollingNumber({ value }: { value: number }) {
 function StoriesSection() {
   const { config } = useSiteConfig();
   const stories = useStories(config.flags.stories);
-  if (!config.flags.stories || !stories.data?.length) return null;
+  if (!config.flags.stories) return null;
   return (
     <section className="stories-sec" id="stories" aria-label={t("הסיפורים שלכם")}>
       <div className="wrap">
         <Title as="h2" lead={t("אנשים אמיתיים מספרים איך המסר נגע בהם.")}>{t("הסיפורים שלכם")}</Title>
         <div className="stories-grid">
-          {stories.data.map((s, i) => (
+          {(stories.data ?? []).map((s, i) => (
             <figure className="st-card rv" key={s.id} style={{ "--d": `${(i % 3) * 0.07}s` } as React.CSSProperties}>
               <span className="st-mark disp" aria-hidden="true">“</span>
               <blockquote>{s.story}</blockquote>
@@ -528,10 +528,11 @@ export function ActivityPage() {
   const handedOut = config.counter;
   const next = firstFree(today, requested, rules);
 
-  const world = WORLDS.find((w) => w.key === (worldKey ?? "schools"));
+  const worlds = WORLDS.filter((w) => w.key !== "stories" || config.flags.stories);
+  const world = worlds.find((w) => w.key === (worldKey ?? "schools"));
 
   // The team uploads photos and videos in the admin; until they do, the section says more is coming.
-  const mediaWorld: MediaWorld | null = world?.key === "idf" || world?.key === "ambassadors" ? world.key : null;
+  const mediaWorld: MediaWorld | null = world?.key === "ambassadors" ? world.key : null;
   const uploaded = useQuery({
     queryKey: ["site-media", mediaWorld],
     queryFn: () => fetchMedia(mediaWorld!),
@@ -555,7 +556,7 @@ export function ActivityPage() {
       </section>
 
       <div className="wtiles" role="tablist" aria-label={t("העולמות")}>
-        {WORLDS.map((w) => (
+        {worlds.map((w) => (
           <Link key={w.key} className={`wt${w.key === world.key ? " on" : ""}`} to={w.key === "schools" ? "/activity" : `/activity/${w.key}`} role="tab" aria-selected={w.key === world.key} preventScrollReset onClick={scrollToWorldOnPhone}>
             <img src={w.image} alt="" style={w.focus ? { objectPosition: w.focus } : undefined} />
             <span className="wt-in">
@@ -568,7 +569,9 @@ export function ActivityPage() {
 
       <section className="world in" key={world.key} role="tabpanel" aria-label={t(world.name)}>
         <div className="wrap">
-          {world.reels ? (
+          {world.key === "stories" ? (
+            <StoriesSection />
+          ) : world.reels ? (
             <>
               {uploaded.isLoading ? <div className="skel" style={{ height: 420 }} aria-hidden="true" /> : <Reels reels={reels} />}
             </>
@@ -590,8 +593,6 @@ export function ActivityPage() {
           )}
         </div>
       </section>
-
-      <StoriesSection />
 
       <Panel open={panelOpen} onClose={() => setPanelOpen(false)} title={t("בקשה לבית ספר")}>
         {picked && lecture ? (

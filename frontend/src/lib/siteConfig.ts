@@ -30,7 +30,11 @@ export const DEFAULT_FLAGS: Flags = {
   stories: false,
 };
 
+/** The home page's new-collection block. `source` is "" for the newest products, or the key of a shop collection. */
+export type NewCollectionConfig = { he: string; en: string; source: string };
+
 export type SiteConfig = {
+  newCollection: NewCollectionConfig;
   flags: Flags;
   counter: number | null;
   calendar: CalendarConfig;
@@ -75,9 +79,12 @@ export const DEFAULT_CALENDAR: CalendarConfig = {
 
 export const DEFAULT_COUNTER = 2885026;
 
+export const DEFAULT_NEW_COLLECTION: NewCollectionConfig = { he: "הקולקציה החדשה", en: "The new collection", source: "" };
+
 export const DEFAULT_LECTURES: LectureConfig[] = PROGRAMS_HE.map((he, i) => ({ id: `default-${i}`, he, en: PROGRAMS_EN[i] }));
 
 export const DEFAULTS: SiteConfig = {
+  newCollection: DEFAULT_NEW_COLLECTION,
   flags: DEFAULT_FLAGS,
   counter: DEFAULT_COUNTER,
   calendar: DEFAULT_CALENDAR,
@@ -110,7 +117,7 @@ export function priceLabel(p: PriceRange, lang: "he" | "en") {
 
 /* ---------- loading ---------- */
 
-type Stored = Partial<{ flags: Partial<Flags>; counter: number | null; calendar: CalendarConfig; shop: ShopConfig; lectures: LectureConfig[] }>;
+type Stored = Partial<{ flags: Partial<Flags>; counter: number | null; calendar: CalendarConfig; shop: ShopConfig; lectures: LectureConfig[]; newCollection: NewCollectionConfig }>;
 
 async function fetchStored(): Promise<Stored> {
   // Ask the server each time whether the answer changed (cheap when it did not), so an admin change is not hidden by the browser's own copy.
@@ -130,6 +137,7 @@ function merge(stored: Stored | undefined): SiteConfig {
     calendar: stored.calendar ?? DEFAULTS.calendar,
     shop: stored.shop ?? DEFAULTS.shop,
     lectures: stored.lectures ?? DEFAULTS.lectures,
+    newCollection: stored.newCollection ?? DEFAULTS.newCollection,
   };
 }
 

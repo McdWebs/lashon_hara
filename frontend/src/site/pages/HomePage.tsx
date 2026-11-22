@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { t, Link, siteLang } from "../i18n";
 import { fetchProducts } from "../../lib/catalog";
 import { copy } from "../copy";
+import { useSiteConfig } from "../../lib/siteConfig";
 import { CardsSkeleton, Icon, QuoteMark, ShopCard, Title, usePageTitle } from "../ui";
 
 type Slide = { photo: string; sig?: string; who: string; lines: string[]; side: "start" | "end"; long?: boolean };
@@ -12,8 +13,8 @@ const SLIDES: Slide[] = [
   { photo: "static", sig: "static_sig", who: "סטטיק", lines: ["נוצר לשונו", "שומר נפשו"], side: "end" },
   { photo: "q1", sig: "q1_sig", who: "אתי אפינגר", lines: ["מוות וחיים", "ביד הלשון"], side: "start" },
   { photo: "q2", sig: "q2_sig", who: "לירן דנינו", lines: ["שומר פיו ולשונו", "שומר מצרות נפשו"], side: "end" },
-  { photo: "q3", sig: "q3_sig", who: "עדן", lines: ["אם אנשים כמונו מצאו את האור בחושך", "אין לכם חושך בחיים שלכם", "פשוט תחיו"], side: "start", long: true },
-  { photo: "q4", sig: "q4_sig", who: "דה-כהן", lines: ["מילה בונה, מילה הורסת", "הבחירה במילים", "היא הבחירה באדם"], side: "end", long: true },
+  { photo: "q3", sig: "q3_sig", who: "עדן בחרי", lines: ["אם אנשים כמונו מצאו את האור בחושך", "אין לכם חושך בחיים שלכם", "פשוט תחיו"], side: "start", long: true },
+  { photo: "q4", sig: "q4_sig", who: "עידן דה כהן", lines: ["מילה בונה, מילה הורסת", "הבחירה במילים", "היא הבחירה באדם"], side: "end", long: true },
   { photo: "q5", sig: "q5_sig", who: "שחר חיון", lines: ["תרקדו", "תשמחו", "תנצחו"], side: "start" },
 ];
 
@@ -42,7 +43,9 @@ function EN_QUOTE(line: string) {
 function Hero() {
   const reduced = useRef(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false);
   const [cur, setCur] = useState(0);
-  const [prev, setPrev] = useState<number | null>(null);
+  // Every slide that is on its way out keeps its exit until it is done, even when the buttons are pressed in quick succession.
+  const [leaving, setLeaving] = useState<number[]>([]);
+  const curRef = useRef(0);
   const [stopped, setStopped] = useState(reduced.current);
   const [held, setHeld] = useState(false);
   // The first slide starts in its resting-off state and turns on after the first paint (and the fonts), so it plays its entrance on load.
@@ -55,17 +58,24 @@ function Hero() {
         raf = requestAnimationFrame(() => setReady(true));
       });
     };
-    const fonts = document.fonts?.ready;
-    if (!fonts) start();
-    else Promise.race([fonts, new Promise((r) => setTimeout(r, 700))]).then(start);
+    // Wait for the fonts and the first photo to be decoded, so the entrance never plays on a half-loaded image. The rest load quietly meanwhile.
+    const decoded = SLIDES.map((sl) => {
+      const img = new Image();
+      img.src = `/images/site/${sl.photo}.jpg`;
+      return img.decode().catch(() => undefined);
+    });
+    const fonts = document.fonts?.ready ?? Promise.resolve();
+    Promise.race([Promise.all([fonts, decoded[0]]), new Promise((r) => setTimeout(r, 1500))]).then(start);
     return () => cancelAnimationFrame(raf);
   }, []);
 
   const go = useCallback((i: number) => {
-    setCur((c) => {
-      if (c !== i) setPrev(c);
-      return i;
-    });
+    const from = curRef.current;
+    if (from === i) return;
+    curRef.current = i;
+    setCur(i);
+    setLeaving((l) => [...l.filter((x) => x !== i && x !== from), from]);
+    window.setTimeout(() => setLeaving((l) => l.filter((x) => x !== from || curRef.current === from)), 800);
   }, []);
 
   useEffect(() => {
@@ -73,12 +83,6 @@ function Hero() {
     const timer = setTimeout(() => go((cur + 1) % SLIDES.length), HOLD_MS);
     return () => clearTimeout(timer);
   }, [cur, stopped, held, ready, go]);
-
-  useEffect(() => {
-    if (prev === null) return;
-    const timer = setTimeout(() => setPrev(null), 700);
-    return () => clearTimeout(timer);
-  }, [prev]);
 
   return (
     <section
@@ -93,7 +97,7 @@ function Hero() {
       {SLIDES.map((s, i) => (
         <div
           key={s.photo}
-          className={`slide side-${s.side}${s.long ? " long" : ""}${ready && i === cur ? " on" : ""}${i === prev ? " out" : ""}`}
+          className={`slide side-${s.side}${s.long ? " long" : ""}${ready && i === cur ? " on" : ""}${leaving.includes(i) ? " out" : ""}`}
           role="group"
           aria-roledescription={t("שקופית")}
           aria-label={s.who ? t("{n} מתוך {total}: {who}", { n: i + 1, total: SLIDES.length, who: t(s.who) }) : t("שקופית {n}", { n: i + 1 })}
@@ -129,9 +133,14 @@ function Hero() {
 
 export function HomePage() {
   usePageTitle(t("דף הבית"));
+  const { config, ready } = useSiteConfig();
+  const nc = config.newCollection;
+  const source = config.shop.collections.find((c) => c.key === nc.source && c.categories.length > 0);
+  const category = source ? source.categories.join(",") : "";
   const latest = useQuery({
-    queryKey: ["site-home-latest"],
-    queryFn: () => fetchProducts("per_page=8&orderby=date&order=desc"),
+    queryKey: ["site-home-latest", category],
+    queryFn: () => fetchProducts(`per_page=8&orderby=date&order=desc${category ? `&category=${category}` : ""}`),
+    enabled: ready,
   });
 
   return (
@@ -164,7 +173,7 @@ export function HomePage() {
 
       <section className="newc">
         <div className="wrap">
-          <Title as="h2">{t("הקולקציה החדשה")}</Title>
+          <Title as="h2">{siteLang() === "en" ? nc.en : nc.he}</Title>
           <div className="pgrid">
             {latest.isLoading ? <CardsSkeleton /> : null}
             {latest.data?.items.map((p, i) => (

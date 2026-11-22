@@ -118,7 +118,7 @@ export function ProductLinkCard({ product, style }: { product: WcProduct; style?
   return (
     <Link className="pc" to={`/shop/product/${product.id}`} style={style} onPointerEnter={warm} onFocus={warm} onTouchStart={warm}>
       <span className="pc-m"><ProductImage product={product} /></span>
-      <span className="pc-n" dir="auto">{product.name}</span>
+      <span className="pc-n" dir="auto"><ProductName name={product.name} /></span>
       <span className="pc-p">{priceLabel(product)}</span>
     </Link>
   );
@@ -137,6 +137,23 @@ export function useQuickAdd() {
 }
 
 /** Shop card: the product link plus a round add-to-bag button on the photo for products that need no choices. */
+/** A product name with the campaign slogan on a line of its own, so it reads better. Names without the slogan are shown as they are. */
+const SLOGAN_RE = /^(.*?)[\s\-–—:,]*(לשון הרע לא מדבר אלי+!*)\s*(.*)$/;
+export function ProductName({ name }: { name: string }) {
+  const m = SLOGAN_RE.exec(name);
+  if (!m) return <>{name}</>;
+  let before = m[1].trim();
+  if ((before.match(/["“”]/g) ?? []).length === 1) before = before.replace(/["“”]\s*$/, "").trim();
+  const after = /^["“”'׳]*$/.test(m[3]) ? "" : m[3].replace(/^[\s\-–—:,]+/, "");
+  return (
+    <>
+      {before ? <>{before}<br /></> : null}
+      <span className="pc-sl">{m[2]}</span>
+      {after ? <><br />{after}</> : null}
+    </>
+  );
+}
+
 export function ShopCard({ product, priority = false }: { product: WcProduct; priority?: boolean }) {
   const quickAdd = useQuickAdd();
   const prefetch = usePrefetchProduct();
@@ -171,7 +188,7 @@ export function ShopCard({ product, priority = false }: { product: WcProduct; pr
           </button>
         ) : null}
       </div>
-      <Link className="pc-n" to={to} dir="auto" onPointerEnter={warm} onFocus={warm} onTouchStart={warm}>{product.name}</Link>
+      <Link className="pc-n" to={to} dir="auto" onPointerEnter={warm} onFocus={warm} onTouchStart={warm}><ProductName name={product.name} /></Link>
       <span className="pc-p">{priceLabel(product)}</span>
     </article>
   );
