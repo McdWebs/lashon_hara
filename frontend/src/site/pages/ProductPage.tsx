@@ -38,7 +38,8 @@ function useVariation(product: WcProduct) {
 
   const matches = (variation: WcProduct["variations"] extends Array<infer V> | undefined ? V : never, name: string, slug: string) => {
     const value = variation.attributes.find((a) => a.name === name)?.value;
-    return value === slug || value === "" || value === undefined;
+    // A variation that does not fix this attribute (the store sends null, or an empty value) accepts any choice.
+    return value === slug || value === "" || value === undefined || value === null;
   };
 
   const isAvailable = (name: string, slug: string) => variations.length === 0 || variations.some((v) => matches(v, name, slug));

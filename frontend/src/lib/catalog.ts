@@ -24,7 +24,7 @@ export type WcAttribute = {
 
 export type WcVariation = {
   id: number;
-  attributes: Array<{ name: string; value: string }>;
+  attributes: Array<{ name: string; value: string | null }>;
 };
 
 export type WcProduct = {
