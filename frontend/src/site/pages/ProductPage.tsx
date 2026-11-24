@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate as useRouterNavigate, useParams } from "react-router-dom";
 import { t, Link, siteLang, useNavigate } from "../i18n";
 import { track } from "../../lib/analytics";
@@ -88,6 +88,18 @@ function ProductDetail({ product }: { product: WcProduct }) {
     return extra.length ? [...product.images, ...extra] : product.images;
   }, [product]);
 
+  // The strip of small photos follows the chosen one, so it is always in view (only the strip scrolls, never the page).
+  const strip = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const box = strip.current;
+    const on = box?.querySelector<HTMLElement>(".gt.on");
+    if (!box || !on) return;
+    const here = box.getBoundingClientRect();
+    const there = on.getBoundingClientRect();
+    const delta = there.left + there.width / 2 - (here.left + here.width / 2);
+    if (Math.abs(delta) > 1) box.scrollBy({ left: delta, behavior: "smooth" });
+  }, [imageIndex, gallery]);
+
   // Picking a color (or any option with its own photo) shows that photo in the gallery.
   useEffect(() => {
     if (photoId === null) return;
@@ -146,7 +158,7 @@ function ProductDetail({ product }: { product: WcProduct }) {
             ))}
           </div>
           {gallery.length > 1 ? (
-            <div className="gts">
+            <div className="gts" ref={strip}>
               {gallery.map((image, i) => (
                 <button key={image.src} className={`gt${i === imageIndex ? " on" : ""}`} aria-label={t("תמונה {n}", { n: i + 1 })} onClick={() => setImageIndex(i)}>
                   <img src={image.thumbnail || image.src} alt="" />
