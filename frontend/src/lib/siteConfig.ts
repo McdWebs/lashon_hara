@@ -15,7 +15,7 @@ export type LectureConfig = { id: string; he: Program; en?: Program };
 export type CalendarSettings = { icsUrl: string; closedWeekdays: number[]; monthsAhead: number; blockedDates: string[] };
 
 /** Switches the team can turn on and off in the admin. */
-export type Flags = { english: boolean; shopMission: boolean; newSearch: boolean; aboutVideo: boolean; stories: boolean };
+export type Flags = { english: boolean; shopMission: boolean; newSearch: boolean; aboutVideo: boolean; stories: boolean; collectionArt: boolean };
 
 export const DEFAULT_FLAGS: Flags = {
   // The site starts in Hebrew only; English is switched on from the admin when it is ready.
@@ -28,6 +28,8 @@ export const DEFAULT_FLAGS: Flags = {
   aboutVideo: false,
   // The Stories page, where visitors' stories chosen in the admin are shown. Off hides the page and every link to it.
   stories: false,
+  // The three pictures beside the title at the top of the shop page. Off hides them and leaves only the title.
+  collectionArt: true,
 };
 
 /** The home page's new-collection block. `source` is "" for the newest products, or the key of a shop collection. */

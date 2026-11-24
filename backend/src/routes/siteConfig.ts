@@ -58,7 +58,7 @@ const lectures = z.object({
 });
 
 /** Switches the team can turn on and off. A flag that was never saved keeps the default the site ships with. */
-const flags = z.object({ english: z.boolean(), shopMission: z.boolean().optional(), newSearch: z.boolean().optional(), aboutVideo: z.boolean().optional(), stories: z.boolean().optional() });
+const flags = z.object({ english: z.boolean(), shopMission: z.boolean().optional(), newSearch: z.boolean().optional(), aboutVideo: z.boolean().optional(), stories: z.boolean().optional(), collectionArt: z.boolean().optional() });
 
 /** The home page's "new collection" block: its title, and where its products come from ("" means the newest products, otherwise a shop collection). */
 const newCollection = z.object({

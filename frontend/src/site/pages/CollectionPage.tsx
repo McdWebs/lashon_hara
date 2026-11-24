@@ -165,11 +165,13 @@ export function CollectionPage() {
               <span className="cnt" aria-live="polite">{total !== undefined ? t("{n} פריטים", { n: total }) : ""}</span>
             )}
           </div>
+          {config.flags.collectionArt ? (
           <div className="chero-art" aria-hidden="true">
             <span><img src={img("shop-art-1") || undefined} alt="" width="204" height="255" /></span>
             <span><img src={img("shop-art-2") || undefined} alt="" width="204" height="255" /></span>
             <span><img src={img("shop-art-3") || undefined} alt="" width="204" height="255" /></span>
           </div>
+          ) : null}
         </div>
       </section>
 
