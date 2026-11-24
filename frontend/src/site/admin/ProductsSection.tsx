@@ -234,9 +234,10 @@ function ProductForm({ id, onClose, onSaved }: { id: number | "new"; onClose: ()
               onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
               onDragLeave={() => setDragOver(false)}
               onDrop={(e) => { e.preventDefault(); setDragOver(false); addFiles([...e.dataTransfer.files]); }}
+              onClick={() => { if (draft.images.length + uploading.length < MAX_IMAGES) fileInput.current?.click(); }}
             >
               <input ref={fileInput} type="file" accept={IMAGE_TYPES.join(",")} multiple hidden onChange={(e) => { addFiles([...(e.target.files ?? [])]); e.target.value = ""; }} />
-              <button type="button" className="adm-btn ghost" onClick={() => fileInput.current?.click()} disabled={draft.images.length + uploading.length >= MAX_IMAGES}>{I.upload(18)}<span>העלאת תמונות</span></button>
+              <button type="button" className="adm-btn ghost" disabled={draft.images.length + uploading.length >= MAX_IMAGES}>{I.upload(18)}<span>העלאת תמונות</span></button>
               <small>או גררו קבצים לכאן · JPG, PNG או WebP, עד 10MB</small>
             </div>
             <label className="adm-pimg-or" htmlFor="p-img-url">או הדביקו קישור לתמונה</label>
