@@ -134,15 +134,11 @@ function ProductDetail({ product }: { product: WcProduct }) {
 
   return (
     <>
-      <div className="wrap crumbs">
-        <button type="button" className="crumb-back" onClick={goBack}>
-          <Icon.prev />
-          <span>{t("חזרה")}</span>
-        </button>
-      </div>
-
       <section className="wrap prod">
         <div className="gal">
+          <button type="button" className="gal-back" onClick={goBack} aria-label={t("חזרה")} title={t("חזרה")}>
+            <Icon.prev />
+          </button>
           <div className="gmain">
             {gallery.length === 0 ? <span className="ph" style={{ position: "absolute", inset: 0 }}>{t("תמונה בקרוב")}</span> : null}
             {gallery.map((image, i) => (

@@ -397,8 +397,6 @@ form[data-form] { display: flex; flex-direction: column; gap: 16px; }
 /* ===== product ===== */
 .page-product {
 
-.crumbs { display: flex; gap: 10px; padding-top: 26px; font-size: 14px; color: var(--muted); }
-.crumbs a { color: var(--ink); text-underline-offset: 3px; }
 .prod { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 64px; align-items: start; padding-top: 22px; padding-bottom: 80px; }
 .gal { display: flex; flex-direction: column; gap: 12px; }
 .gmain { position: relative; aspect-ratio: 4 / 5; min-height: 240px; max-height: calc(100vh - 292px); max-height: calc(100svh - 292px); background: #F5F5F5; overflow: hidden; }
@@ -1251,8 +1249,8 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
 .pc-m img.fit { position: relative; object-fit: contain; }
 .pc:hover .pc-m img.fit { transform: scale(1.03); }
 
-/* Product page: the back button above the photo */
-.crumb-back { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px 6px 12px; margin-inline-end: 6px; border: 0; border-radius: 999px; background: #F2F2F2; color: var(--ink); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: background .2s ease; }
-.crumb-back:hover { background: #E6E6E6; }
-.crumb-back svg { width: 16px; height: 16px; }
-.crumbs { align-items: center; }
+/* Product page: a small round back button on the corner of the photo, so it takes no row of its own */
+.gal { position: relative; }
+.gal-back { position: absolute; z-index: 3; top: 12px; inset-inline-start: 12px; width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 999px; background: rgba(255,255,255,.94); color: var(--ink); box-shadow: 0 2px 10px rgba(13,13,13,.18); cursor: pointer; transition: background .2s ease, transform .2s ease; }
+.gal-back:hover { background: #FFFFFF; transform: scale(1.06); }
+.gal-back svg { width: 22px; height: 22px; }
