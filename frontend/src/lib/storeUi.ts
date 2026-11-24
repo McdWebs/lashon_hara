@@ -1,7 +1,6 @@
 export const STORE_MAX_WIDTH = 1320;
 
 export const STORE_HERO_IMAGE = "/images/fabric_bracelet/all_bracelet.jpeg";
-export const STORE_FEATURED_IMAGE = "/images/store_images/celeb.jpg";
 
 export type StoreCategoryTileVariant = "overlay" | "hero" | "inset" | "band";
 

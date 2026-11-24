@@ -17,12 +17,12 @@ const WEEKDAYS = ["א", "ב", "ג", "ד", "ה", "ו", "ש"];
 const WEEKDAYS_EN = ["S", "M", "T", "W", "T", "F", "S"];
 
 type Reel = { kind: "video" | "photo"; src?: string; poster?: string; caption?: string };
-type WorldConfig = { key: string; name: string; line: string; live: string; image: string; focus?: string; banner?: string; reels?: Reel[] };
+type WorldConfig = { key: string; name: string; line: string; live: string; image: string; focus?: string; reels?: Reel[] };
 
 const WORLDS: WorldConfig[] = [
   { key: "schools", name: "בתי ספר והרצאות", line: "הרצאות לבתי ספר ולמוסדות חינוך. בחרו תאריך ונחזור אליכם.", live: "", image: "/images/activity/schools.jpg", focus: "50% 38%" },
   { key: "stories", name: "סיפורים", line: "", live: "", image: "/images/site/founder.jpg", focus: "50% 20%" },
-  { key: "ambassadors", name: "שגרירים", line: "אמנים, ספורטאים ואנשי ציבור שמצטרפים ואומרים: לשון הרע לא מדבר אליי.", live: "", image: "/images/site/static.jpg", focus: "50% 14%", banner: "/images/store_images/celeb.jpg", reels: [] },
+  { key: "ambassadors", name: "שגרירים", line: "אמנים, ספורטאים ואנשי ציבור שמצטרפים ואומרים: לשון הרע לא מדבר אליי.", live: "", image: "/images/site/static.jpg", focus: "50% 14%", reels: [] },
 ];
 
 
