@@ -135,9 +135,10 @@ function ProductForm({ id, onClose, onSaved }: { id: number | "new"; onClose: ()
     setError("");
     setSaving(true);
     try {
-      const variationLinks = variations.flatMap((v) => {
+      const variationLinks = variations.flatMap<{ variationId: number; imageIndex: number | null }>((v) => {
+        if (!links[v.id]) return v.imageId ? [{ variationId: v.id, imageIndex: null }] : [];
         const at = d.images.findIndex((img) => keyOf(img) === links[v.id]);
-        return links[v.id] && at >= 0 ? [{ variationId: v.id, imageIndex: at }] : [];
+        return at >= 0 ? [{ variationId: v.id, imageIndex: at }] : [];
       });
       const body: ProductInput = { ...d, name: d.name.trim(), images: d.images.map((i) => (i.id ? { id: i.id, hidden: Boolean(i.hidden) } as ProductInput["images"][number] : { src: i.src, alt: i.alt, hidden: Boolean(i.hidden) })), variationLinks };
       const saved = id === "new" ? await adminProducts.create(body) : await adminProducts.update(id, body);
@@ -246,7 +247,19 @@ function ProductForm({ id, onClose, onSaved }: { id: number | "new"; onClose: ()
                         <span className="adm-pimg-opt">
                           {variations.some((v) => links[v.id] === keyOf(img)) ? (
                             <span className="adm-pimg-chips" aria-label="האפשרויות שמציגות את התמונה הזו">
-                              {variations.filter((v) => links[v.id] === keyOf(img)).map((v) => <em key={v.id}>{v.label}</em>)}
+                              {variations.filter((v) => links[v.id] === keyOf(img)).map((v) => (
+                                <em key={v.id}>
+                                  {v.label}
+                                  <button
+                                    type="button"
+                                    onClick={() => setLinks((l) => { const next = { ...l }; delete next[v.id]; return next; })}
+                                    aria-label={`הסרת החיבור של ${v.label}`}
+                                    title="הסרת החיבור"
+                                  >
+                                    {I.close()}
+                                  </button>
+                                </em>
+                              ))}
                             </span>
                           ) : <small>לא מחוברת לאפשרות</small>}
                           <select

@@ -45,8 +45,8 @@ export type AdminProduct = {
 };
 export type ProductInput = Omit<AdminProduct, "id" | "type" | "categories" | "link" | "onSite" | "variations"> & {
   categories: number[];
-  /** Which photo (by its place in `images`) each option should show. */
-  variationLinks?: Array<{ variationId: number; imageIndex: number }>;
+  /** Which photo (by its place in `images`) each option should show; null leaves the option without one. */
+  variationLinks?: Array<{ variationId: number; imageIndex: number | null }>;
 };
 export type ProductList = { items: AdminProduct[]; total: number; totalPages: number };
 

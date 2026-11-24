@@ -30,8 +30,8 @@ const body = z.object({
   images: z
     .array(z.object({ id: z.number().int().positive().optional(), src: z.string().url().max(1000).optional(), alt: z.string().max(200).optional(), hidden: z.boolean().optional() }).refine((i) => i.id || i.src))
     .max(30),
-  /** Which photo (by its place in `images`) each option of a variable product should show. */
-  variationLinks: z.array(z.object({ variationId: z.number().int().positive(), imageIndex: z.number().int().min(0).max(29) })).max(100).optional(),
+  /** Which photo (by its place in `images`) each option of a variable product should show; null leaves the option without one. */
+  variationLinks: z.array(z.object({ variationId: z.number().int().positive(), imageIndex: z.number().int().min(0).max(29).nullable() })).max(100).optional(),
 });
 
 function fail(res: import("express").Response, err: unknown) {
@@ -71,13 +71,18 @@ async function rememberHidden(saved: { id: number; images: Array<{ id?: number; 
 }
 
 /** Gives each option the photo the team chose for it. Only the ones that changed are sent to the store; the photos are found in the saved product by their place in the list. */
-async function applyVariationLinks(productId: string, saved: { images: Array<{ id?: number }> }, links: Array<{ variationId: number; imageIndex: number }>) {
+async function applyVariationLinks(productId: string, saved: { images: Array<{ id?: number }> }, links: Array<{ variationId: number; imageIndex: number | null }>) {
   if (links.length === 0) return;
   const current = await adminVariations(productId);
   for (const link of links) {
-    const imageId = saved.images[link.imageIndex]?.id;
     const now = current.find((v) => v.id === link.variationId);
-    if (imageId && now && now.imageId !== imageId) await adminSetVariationImage(productId, link.variationId, imageId);
+    if (!now) continue;
+    if (link.imageIndex === null) {
+      if (now.imageId) await adminSetVariationImage(productId, link.variationId, null);
+      continue;
+    }
+    const imageId = saved.images[link.imageIndex]?.id;
+    if (imageId && now.imageId !== imageId) await adminSetVariationImage(productId, link.variationId, imageId);
   }
 }
 

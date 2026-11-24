@@ -539,3 +539,7 @@
 .adm-pimg-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .adm-pimg-chips em { font-style: normal; font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: var(--ink); color: #FFFFFF; }
 .adm-pimg-opt select { height: 42px; font-size: 14px; }
+.adm-pimg-chips em { display: inline-flex; align-items: center; gap: 4px; padding-inline-end: 4px; }
+.adm-pimg-chips em button { width: 22px; height: 22px; padding: 0; border: 0; border-radius: 999px; background: rgba(255,255,255,.2); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.adm-pimg-chips em button:hover { background: var(--red); }
+.adm-pimg-chips em button svg { width: 12px; height: 12px; }

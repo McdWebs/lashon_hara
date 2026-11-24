@@ -118,9 +118,9 @@ export async function adminVariations(productId: string | number): Promise<Admin
   });
 }
 
-/** Gives one option (variation) its photo, which must already be in the store's library. */
-export async function adminSetVariationImage(productId: string | number, variationId: number, imageId: number) {
-  await wc(`/products/${encodeURIComponent(String(productId))}/variations/${variationId}`, { method: "PUT", body: JSON.stringify({ image: { id: imageId } }) });
+/** Gives one option (variation) its photo, which must already be in the store's library. With no photo (null) the option is left without one: the store clears it when it is sent an empty image. */
+export async function adminSetVariationImage(productId: string | number, variationId: number, imageId: number | null) {
+  await wc(`/products/${encodeURIComponent(String(productId))}/variations/${variationId}`, { method: "PUT", body: JSON.stringify({ image: imageId ? { id: imageId } : {} }) });
 }
 
 /** The photo of each variation (for example each color of a cap), by variation id. One request for all of them; empty when the store cannot say. */
