@@ -166,9 +166,9 @@ export function CollectionPage() {
             )}
           </div>
           <div className="chero-art" aria-hidden="true">
-            <span><img src={img("join-story") || undefined} alt="" width="204" height="255" /></span>
-            <span><img src={img("hero-omer") || undefined} alt="" width="204" height="255" /></span>
-            <span><img src={img("hero-static") || undefined} alt="" width="204" height="255" /></span>
+            <span><img src={img("shop-art-1") || undefined} alt="" width="204" height="255" /></span>
+            <span><img src={img("shop-art-2") || undefined} alt="" width="204" height="255" /></span>
+            <span><img src={img("shop-art-3") || undefined} alt="" width="204" height="255" /></span>
           </div>
         </div>
       </section>

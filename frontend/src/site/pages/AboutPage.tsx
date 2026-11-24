@@ -33,10 +33,10 @@ function shuffled<T>(items: T[]) {
 }
 
 const AMBASSADORS = [
-  { photo: "hero-omer", name: "עומר אדם", quote: "שים לב מה אתה אומר" },
-  { photo: "hero-static", name: "סטטיק", quote: "נוצר לשונו שומר נפשו" },
-  { photo: "hero-q1", name: "אתי אפינגר", quote: "מוות וחיים ביד הלשון" },
-  { photo: "hero-q2", name: "לירן דנינו", quote: "שומר פיו ולשונו, שומר מצרות נפשו" },
+  { photo: "about-omer", name: "עומר אדם", quote: "שים לב מה אתה אומר" },
+  { photo: "about-static", name: "סטטיק", quote: "נוצר לשונו שומר נפשו" },
+  { photo: "about-q1", name: "אתי אפינגר", quote: "מוות וחיים ביד הלשון" },
+  { photo: "about-q2", name: "לירן דנינו", quote: "שומר פיו ולשונו, שומר מצרות נפשו" },
 ];
 
 /** The team's own phrases to catch the eye. Marking never changes the words. */
@@ -257,12 +257,12 @@ function FounderVideo() {
 
   const { config } = useSiteConfig();
   const img = useSlotImages();
-  if (!config.flags.aboutVideo) return <div className="w-ph"><img src={img("founder") || undefined} alt={t("דוד הלפרין, מייסד המיזם")} /></div>;
+  if (!config.flags.aboutVideo) return <div className="w-ph"><img src={img("about-founder") || undefined} alt={t("דוד הלפרין, מייסד המיזם")} /></div>;
 
   return (
     <div className="w-ph">
       <button type="button" className="vplay" onClick={() => setOpen(true)} aria-label={t("לנגן את הסרטון")}>
-        <img src={img("founder") || undefined} alt={t("דוד הלפרין, מייסד המיזם")} />
+        <img src={img("about-founder") || undefined} alt={t("דוד הלפרין, מייסד המיזם")} />
         <span className="vplay-b" aria-hidden="true"><Icon.play /></span>
       </button>
       {open ? (

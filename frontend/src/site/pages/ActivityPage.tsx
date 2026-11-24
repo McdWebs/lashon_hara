@@ -22,8 +22,8 @@ type WorldConfig = { key: string; name: string; line: string; live: string; imag
 
 const WORLDS: WorldConfig[] = [
   { key: "schools", name: "בתי ספר והרצאות", line: "הרצאות לבתי ספר ולמוסדות חינוך. בחרו תאריך ונחזור אליכם.", live: "", image: "activity-schools", focus: "50% 38%" },
-  { key: "stories", name: "סיפורים", line: "", live: "", image: "founder", focus: "50% 20%" },
-  { key: "ambassadors", name: "שגרירים", line: "אמנים, ספורטאים ואנשי ציבור שמצטרפים ואומרים: לשון הרע לא מדבר אליי.", live: "", image: "hero-static", focus: "50% 14%", reels: [] },
+  { key: "stories", name: "סיפורים", line: "", live: "", image: "activity-stories", focus: "50% 20%" },
+  { key: "ambassadors", name: "שגרירים", line: "אמנים, ספורטאים ואנשי ציבור שמצטרפים ואומרים: לשון הרע לא מדבר אליי.", live: "", image: "activity-ambassadors", focus: "50% 14%", reels: [] },
 ];
 
 

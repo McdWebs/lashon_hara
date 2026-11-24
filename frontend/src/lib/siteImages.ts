@@ -7,16 +7,19 @@ import { useSiteConfig } from "./siteConfig";
  */
 export type ImageSlot = { key: string; label: string; group: string; fallback: string; width: number; shape: "wide" | "tall" | "square" | "strip"; /** Slots with the same `set` are shown together in the admin (a person's photo and signature), and `part` names each one. */ set?: string; part?: string };
 
-const HERO = "קרוסלת עמוד הבית ושגרירים";
+const HERO = "עמוד הבית · קרוסלת הפתיחה";
 const hero = (key: string, who: string): ImageSlot[] => [
   { key: `hero-${key}`, label: `${who} · תמונה`, group: HERO, fallback: `/images/site/${key}.jpg`, width: 1600, shape: "tall", set: who, part: "תמונה" },
   { key: `hero-${key}-sig`, label: `${who} · חתימה`, group: HERO, fallback: `/images/site/${key}_sig.jpg`, width: 600, shape: "strip", set: who, part: "חתימה" },
 ];
 
-const TILES = "אריחי הקטגוריות בעמוד הבית";
+const TILES = "עמוד הבית · אריחי הקטגוריות";
+const ABOUT = "עמוד אודות";
+const ACTIVITY = "עמוד הפעילות";
 const JOIN = "עמוד ההצטרפות";
-const OTHER = "עמודים נוספים";
+const SHOP = "עמוד החנות · תמונות בראש העמוד";
 
+/** One slot is one place on the site. A picture that appears in two places has two slots, so changing one never changes the other. */
 export const IMAGE_SLOTS: ImageSlot[] = [
   ...hero("omer", "עומר אדם"),
   ...hero("static", "סטטיק"),
@@ -30,13 +33,23 @@ export const IMAGE_SLOTS: ImageSlot[] = [
   { key: "tile-caps", label: "כובעים", group: TILES, fallback: "/images/site/cat_caps.jpg", width: 700, shape: "square" },
   { key: "tile-sport", label: "ספורט", group: TILES, fallback: "/images/site/cat_sport.jpg", width: 700, shape: "square" },
   { key: "tile-mixed", label: "מיוחדים", group: TILES, fallback: "/images/site/cat_mixed.jpg", width: 700, shape: "square" },
-  { key: "tile-mixed-wide", label: "מיוחדים · לטלפון (רחב)", group: TILES, fallback: "/images/site/cat_mixed_wide.jpg", width: 1000, shape: "wide" },
+  { key: "tile-mixed-wide", label: "מיוחדים · גרסה רחבה לטלפון", group: TILES, fallback: "/images/site/cat_mixed_wide.jpg", width: 1000, shape: "wide" },
+  { key: "about-founder", label: "דוד הלפרין, המייסד", group: ABOUT, fallback: "/images/site/founder.jpg", width: 900, shape: "tall" },
+  { key: "about-omer", label: "שגריר: עומר אדם", group: ABOUT, fallback: "/images/site/omer.jpg", width: 900, shape: "tall" },
+  { key: "about-static", label: "שגריר: סטטיק", group: ABOUT, fallback: "/images/site/static.jpg", width: 900, shape: "tall" },
+  { key: "about-q1", label: "שגרירה: אתי אפינגר", group: ABOUT, fallback: "/images/site/q1.jpg", width: 900, shape: "tall" },
+  { key: "about-q2", label: "שגריר: לירן דנינו", group: ABOUT, fallback: "/images/site/q2.jpg", width: 900, shape: "tall" },
+  { key: "activity-schools", label: "בתי ספר והרצאות", group: ACTIVITY, fallback: "/images/activity/schools.jpg", width: 1200, shape: "wide" },
+  { key: "activity-ambassadors", label: "שגרירים", group: ACTIVITY, fallback: "/images/site/static.jpg", width: 1200, shape: "wide" },
+  { key: "activity-stories", label: "סיפורים", group: ACTIVITY, fallback: "/images/site/founder.jpg", width: 1200, shape: "wide" },
+  { key: "join-ambassadors", label: "להצטרף לצוות השגרירים", group: JOIN, fallback: "/images/site/static.jpg", width: 900, shape: "wide" },
   { key: "join-bracelets", label: "לחלק צמידים בעצמכם", group: JOIN, fallback: "/images/fabric_bracelet/black_bracelet.jpeg", width: 900, shape: "wide" },
   { key: "join-school", label: "להביא את זה לבית הספר", group: JOIN, fallback: "/images/store_images/hands_heart_sign.jpg", width: 900, shape: "wide" },
   { key: "join-story", label: "לשתף את הסיפור שלכם", group: JOIN, fallback: "/images/fabric_bracelet/all_bracelet.jpeg", width: 900, shape: "wide" },
   { key: "join-contact", label: "צרו קשר", group: JOIN, fallback: "/images/site/contact.jpg", width: 900, shape: "wide" },
-  { key: "founder", label: "דוד הלפרין, המייסד (אודות וסיפורים)", group: OTHER, fallback: "/images/site/founder.jpg", width: 900, shape: "tall" },
-  { key: "activity-schools", label: "בתי ספר והרצאות (עמוד הפעילות)", group: OTHER, fallback: "/images/activity/schools.jpg", width: 1200, shape: "wide" },
+  { key: "shop-art-1", label: "תמונה ראשונה (צמידים)", group: SHOP, fallback: "/images/fabric_bracelet/all_bracelet.jpeg", width: 700, shape: "tall" },
+  { key: "shop-art-2", label: "תמונה שנייה (עומר אדם)", group: SHOP, fallback: "/images/site/omer.jpg", width: 700, shape: "tall" },
+  { key: "shop-art-3", label: "תמונה שלישית (סטטיק)", group: SHOP, fallback: "/images/site/static.jpg", width: 700, shape: "tall" },
 ];
 
 const BY_KEY = new Map(IMAGE_SLOTS.map((s) => [s.key, s]));
