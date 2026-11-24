@@ -5,7 +5,7 @@ export const EN: Record<string, string> = {
   "מה שאנחנו לובשים הופך לחלק ממה שאנחנו אומרים.": "What we wear becomes part of what we say.",
   "לתרומה": "Donate", "צרו קשר": "Contact us", "מידע משפטי": "Legal", "תקנון ומדיניות פרטיות": "Terms and privacy policy", "הצהרת נגישות": "Accessibility statement",
   "© לשון הרע לא מדבר אליי": "© Lashon Hara Speak No Evil", "לשון הרע לא מדבר אליי": "Lashon Hara Speak No Evil",
-  "אודות": "About", "הפעילות שלנו": "Our activity", "הקולקציה": "The collection", "הצטרפו": "Join us",
+  "אודות": "About", "הפעילות שלנו": "Our activity", "הקולקציה": "The collection", "חזרה": "Back", "הצטרפו": "Join us",
   "סל הקניות, {n} פריטים": "Shopping bag, {n} items",
   "שדה חובה": "Required field", "יש לאשר כדי להמשיך": "Please confirm to continue", "יש לבחור אפשרות": "Please choose an option", "יש להזין כתובת מייל תקינה": "Please enter a valid email address", "יש להזין מספר טלפון תקין": "Please enter a valid phone number", "יש להזין מספר": "Please enter a number",
   "השליחה לא הצליחה. מה שכתבתם נשמר — נסו שוב.": "Sending failed. What you wrote is saved, so please try again.", "משהו השתבש. נסו שוב.": "Something went wrong. Please try again.", "שולחים…": "Sending…",

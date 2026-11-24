@@ -1250,3 +1250,9 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
 .pc-m .pc-bg { position: absolute; inset: -14%; background-size: cover; background-position: center; filter: blur(20px) saturate(1.1); opacity: .9; }
 .pc-m img.fit { position: relative; object-fit: contain; }
 .pc:hover .pc-m img.fit { transform: scale(1.03); }
+
+/* Product page: the back button above the photo */
+.crumb-back { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px 6px 12px; margin-inline-end: 6px; border: 0; border-radius: 999px; background: #F2F2F2; color: var(--ink); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: background .2s ease; }
+.crumb-back:hover { background: #E6E6E6; }
+.crumb-back svg { width: 16px; height: 16px; }
+.crumbs { align-items: center; }

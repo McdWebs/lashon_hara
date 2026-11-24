@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
-import { t, Link, siteLang } from "../i18n";
+import { useLocation, useNavigate as useRouterNavigate, useParams } from "react-router-dom";
+import { t, Link, siteLang, useNavigate } from "../i18n";
 import { track } from "../../lib/analytics";
 import { useCart } from "../../lib/cart";
 import { fetchProduct, fetchRelatedProducts, type WcProduct } from "../../lib/catalog";
@@ -52,6 +52,11 @@ function useVariation(product: WcProduct) {
 }
 
 function ProductDetail({ product }: { product: WcProduct }) {
+  const location = useLocation();
+  const routerNavigate = useRouterNavigate();
+  const navigate = useNavigate();
+  // Back goes to the page the visitor came from (the shop with their filters and place in the list). Opened directly from a link, there is no such page, so it goes to the shop.
+  const goBack = () => (location.key !== "default" ? routerNavigate(-1) : navigate("/shop"));
   const addItem = useCart((s) => s.addItem);
   const rules = getProductOrderRules(product);
   const [imageIndex, setImageIndex] = useState(0);
@@ -101,6 +106,10 @@ function ProductDetail({ product }: { product: WcProduct }) {
   return (
     <>
       <div className="wrap crumbs">
+        <button type="button" className="crumb-back" onClick={goBack}>
+          <Icon.prev />
+          <span>{t("חזרה")}</span>
+        </button>
         <Link to="/shop">{t("הקולקציה")}</Link>
       </div>
 
