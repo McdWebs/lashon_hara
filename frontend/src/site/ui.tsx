@@ -96,11 +96,38 @@ export function moneyLabel(minor: string | number, minorUnit = 2) {
   return `₪${Number.isInteger(n) ? n : n.toFixed(2)}`;
 }
 
+/**
+ * A card photo. Product photos come in many shapes (mostly square, some tall), and the card frame is 4:5. A photo close
+ * to that shape fills the frame; any other is shown whole (nothing cut off) over a soft blurred copy of itself, so the
+ * leftover space looks like part of the photo instead of empty bars.
+ */
 export function ProductImage({ product, priority = false }: { product: WcProduct; priority?: boolean }) {
   const image = product.images[0];
+  const [whole, setWhole] = useState(false);
+  const judge = (el: HTMLImageElement | null) => {
+    if (!el || !el.naturalWidth) return;
+    const ratio = el.naturalWidth / el.naturalHeight;
+    setWhole(ratio < 0.74 || ratio > 0.86);
+  };
   if (!image) return <span className="ph" style={{ position: "absolute", inset: 0 }}>{t("תמונה בקרוב")}</span>;
   // Cards are small, so the browser picks a fitting size from srcset instead of the full-size src.
-  return <img src={image.src} srcSet={image.srcset} sizes="(max-width: 900px) 50vw, 300px" alt={image.alt || product.name} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : undefined} decoding="async" />;
+  return (
+    <>
+      {whole ? <span className="pc-bg" aria-hidden="true" style={{ backgroundImage: `url(${JSON.stringify(image.src)})` }} /> : null}
+      <img
+        ref={judge}
+        className={whole ? "fit" : undefined}
+        onLoad={(e) => judge(e.currentTarget)}
+        src={image.src}
+        srcSet={image.srcset}
+        sizes="(max-width: 900px) 50vw, 300px"
+        alt={image.alt || product.name}
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : undefined}
+        decoding="async"
+      />
+    </>
+  );
 }
 
 /** Starts loading a product as the pointer or finger reaches its link, so the page opens already filled. */
