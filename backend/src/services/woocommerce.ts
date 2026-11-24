@@ -1,6 +1,6 @@
 import { env } from "../config/env.js";
 import { dedupeCategories } from "./categoryDedup.js";
-import { hiddenImages, hiddenSet, withoutHidden } from "./hiddenImages.js";
+import { hiddenImages, hiddenSet, withoutHidden, type Hidden } from "./hiddenImages.js";
 
 async function wcFetch(path: string, search = ""): Promise<Response> {
   const url = `${env.wcOrigin}/wp-json/wc/store/v1${path}${search}`;
@@ -23,7 +23,7 @@ const HIDDEN_PRODUCT_IDS = new Set<number>([
 export const isHiddenProduct = (id: unknown) => HIDDEN_PRODUCT_IDS.has(Number(id));
 
 /** The grid only needs a card's worth of each product; descriptions, attributes and variations stay on the product page. */
-function slimProduct(p: Raw, hidden: Set<number>) {
+function slimProduct(p: Raw, hidden: Hidden) {
   const atc = p.add_to_cart as Raw | undefined;
   return {
     id: p.id,
@@ -33,7 +33,7 @@ function slimProduct(p: Raw, hidden: Set<number>) {
     is_purchasable: p.is_purchasable,
     prices: p.prices,
     categories: p.categories,
-    images: ((p.images as Raw[]) ?? []).filter((i) => !hidden.has(i.id)).slice(0, 1).map((i) => ({ src: i.src, thumbnail: i.thumbnail, srcset: i.srcset, alt: i.alt })),
+    images: ((p.images as Raw[]) ?? []).filter((i) => !hidden.ids.has(i.id)).slice(0, 1).map((i) => ({ src: i.src, thumbnail: i.thumbnail, srcset: i.srcset, alt: i.alt })),
     add_to_cart: atc ? { minimum: atc.minimum, maximum: atc.maximum, multiple_of: atc.multiple_of } : undefined,
   };
 }

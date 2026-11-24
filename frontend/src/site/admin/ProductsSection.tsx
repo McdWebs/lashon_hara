@@ -34,7 +34,7 @@ const fromProduct = (p: AdminProduct): ProductInput => ({
   shortDescription: p.shortDescription,
   description: p.description,
   categories: p.categories.map((c) => c.id),
-  images: p.images.map((i) => ({ id: i.id, src: i.src, alt: i.alt })),
+  images: p.images.map((i) => ({ id: i.id, src: i.src, alt: i.alt, hidden: Boolean(i.hidden) })),
 });
 
 const STATUS_LABEL: Record<string, string> = { publish: "מפורסם", draft: "טיוטה", private: "פרטי", pending: "ממתין", trash: "באשפה" };
@@ -114,7 +114,7 @@ function ProductForm({ id, onClose, onSaved }: { id: number | "new"; onClose: ()
     setError("");
     setSaving(true);
     try {
-      const body: ProductInput = { ...d, name: d.name.trim(), images: d.images.map((i) => (i.id ? { id: i.id } as ProductInput["images"][number] : { src: i.src, alt: i.alt })) };
+      const body: ProductInput = { ...d, name: d.name.trim(), images: d.images.map((i) => (i.id ? { id: i.id, hidden: Boolean(i.hidden) } as ProductInput["images"][number] : { src: i.src, alt: i.alt, hidden: Boolean(i.hidden) })) };
       const saved = id === "new" ? await adminProducts.create(body) : await adminProducts.update(id, body);
       toast(id === "new" ? "המוצר נוסף" : "המוצר נשמר");
       onSaved(saved);

@@ -59,13 +59,13 @@ adminProductsRouter.get("/products", async (req, res) => {
 /** The product as the form shows it: each photo says whether the team hid it from the site. */
 async function withHiddenFlags<T extends { id: number; images: Array<{ id?: number }> }>(product: T) {
   const hidden = hiddenSet(await hiddenImages(), product.id);
-  return { ...product, images: product.images.map((i) => ({ ...i, hidden: i.id !== undefined && hidden.has(i.id) })) };
+  return { ...product, images: product.images.map((i) => ({ ...i, hidden: i.id !== undefined && hidden.ids.has(i.id) })) };
 }
 
 /** After a save: the photos marked hidden, found in the saved product by their place in the list (the store keeps the order sent). */
-async function rememberHidden(saved: { id: number; images: Array<{ id?: number }> }, sent: Array<{ hidden?: boolean }>) {
-  const ids = saved.images.flatMap((img, i) => (sent[i]?.hidden && img.id !== undefined ? [img.id] : []));
-  await saveHiddenImages(saved.id, ids);
+async function rememberHidden(saved: { id: number; images: Array<{ id?: number; src?: string }> }, sent: Array<{ hidden?: boolean }>) {
+  const photos = saved.images.flatMap((img, i) => (sent[i]?.hidden && img.id !== undefined ? [{ id: img.id, src: img.src ?? "" }] : []));
+  await saveHiddenImages(saved.id, photos);
 }
 
 adminProductsRouter.get("/products/:id", async (req, res) => {
