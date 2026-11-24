@@ -110,7 +110,6 @@ function ProductDetail({ product }: { product: WcProduct }) {
           <Icon.prev />
           <span>{t("חזרה")}</span>
         </button>
-        <Link to="/shop">{t("הקולקציה")}</Link>
       </div>
 
       <section className="wrap prod">
