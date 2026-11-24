@@ -107,6 +107,21 @@ export async function adminUpdateProduct(id: string, input: ProductInput) {
   return adminProduct((await wc(`/products/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(toStore(input)) })).data);
 }
 
+/** The photo of each variation (for example each color of a cap), by variation id. One request for all of them; empty when the store cannot say. */
+export async function adminVariationImages(productId: string | number): Promise<Map<number, { id: number; src: string }>> {
+  try {
+    const { data } = await wc(`/products/${encodeURIComponent(String(productId))}/variations?per_page=100`);
+    const found = new Map<number, { id: number; src: string }>();
+    for (const v of data as unknown as Raw[]) {
+      const imageId = Number((v.image as Raw | undefined)?.id ?? 0);
+      if (imageId > 0) found.set(Number(v.id), { id: imageId, src: String((v.image as Raw).src ?? "") });
+    }
+    return found;
+  } catch {
+    return new Map();
+  }
+}
+
 /** To the store's trash, where it can still be restored. */
 export async function adminTrashProduct(id: string) {
   await wc(`/products/${encodeURIComponent(id)}`, { method: "DELETE" });

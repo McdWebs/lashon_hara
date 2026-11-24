@@ -25,6 +25,8 @@ export type WcAttribute = {
 export type WcVariation = {
   id: number;
   attributes: Array<{ name: string; value: string | null }>;
+  /** The variation's own photo (one of the product's photos), when the store has one. */
+  image?: { id: number; src?: string } | null;
 };
 
 export type WcProduct = {
@@ -35,7 +37,7 @@ export type WcProduct = {
   is_in_stock?: boolean;
   is_purchasable?: boolean;
   prices: WcPrices;
-  images: Array<{ src: string; alt: string; thumbnail: string; srcset?: string }>;
+  images: Array<{ id?: number; src: string; alt: string; thumbnail: string; srcset?: string }>;
   categories: Array<{ id: number; name: string; slug: string }>;
   short_description?: string;
   description?: string;

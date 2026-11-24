@@ -49,7 +49,14 @@ function useVariation(product: WcProduct) {
     return variations.find((v) => attributes.every((attr) => matches(v, attr.name, selected[attr.name])))?.id ?? null;
   }, [attributes, variations, selected]);
 
-  return { attributes, selected, setSelected, isAvailable, variationId };
+  // The photo of the variation the visitor is choosing: the first variation that fits what is picked so far and has a photo.
+  const photoId = useMemo(() => {
+    const picked = attributes.filter((attr) => selected[attr.name]);
+    if (picked.length === 0) return null;
+    return variations.find((v) => v.image?.id && picked.every((attr) => matches(v, attr.name, selected[attr.name])))?.image?.id ?? null;
+  }, [attributes, variations, selected]);
+
+  return { attributes, selected, setSelected, isAvailable, variationId, photoId };
 }
 
 function ProductDetail({ product }: { product: WcProduct }) {
@@ -65,7 +72,28 @@ function ProductDetail({ product }: { product: WcProduct }) {
   const [missing, setMissing] = useState(false);
   const [state, setState] = useState<"idle" | "busy" | "done">("idle");
   const [error, setError] = useState<string | null>(null);
-  const { attributes, selected, setSelected, isAvailable, variationId } = useVariation(product);
+  const { attributes, selected, setSelected, isAvailable, variationId, photoId } = useVariation(product);
+
+  // The product's photos, plus any photo that only a variation has (for example a color missing from the gallery), so every choice can show its own.
+  const gallery = useMemo(() => {
+    const known = new Set(product.images.map((i) => i.id));
+    const extra: typeof product.images = [];
+    for (const v of product.variations ?? []) {
+      const photo = v.image;
+      if (photo?.id && photo.src && !known.has(photo.id)) {
+        known.add(photo.id);
+        extra.push({ id: photo.id, src: photo.src, alt: product.name, thumbnail: photo.src });
+      }
+    }
+    return extra.length ? [...product.images, ...extra] : product.images;
+  }, [product]);
+
+  // Picking a color (or any option with its own photo) shows that photo in the gallery.
+  useEffect(() => {
+    if (photoId === null) return;
+    const at = gallery.findIndex((image) => image.id === photoId);
+    if (at >= 0) setImageIndex(at);
+  }, [photoId, gallery]);
   const isVariable = product.type === "variable";
   const soldOut = product.is_in_stock === false;
   const categoryId = product.categories[0]?.id;
@@ -116,14 +144,14 @@ function ProductDetail({ product }: { product: WcProduct }) {
       <section className="wrap prod">
         <div className="gal">
           <div className="gmain">
-            {product.images.length === 0 ? <span className="ph" style={{ position: "absolute", inset: 0 }}>{t("תמונה בקרוב")}</span> : null}
-            {product.images.map((image, i) => (
+            {gallery.length === 0 ? <span className="ph" style={{ position: "absolute", inset: 0 }}>{t("תמונה בקרוב")}</span> : null}
+            {gallery.map((image, i) => (
               <img key={image.src} className={`gm${i === imageIndex ? " on" : ""}`} src={image.src} alt={image.alt || product.name} />
             ))}
           </div>
-          {product.images.length > 1 ? (
+          {gallery.length > 1 ? (
             <div className="gts">
-              {product.images.map((image, i) => (
+              {gallery.map((image, i) => (
                 <button key={image.src} className={`gt${i === imageIndex ? " on" : ""}`} aria-label={t("תמונה {n}", { n: i + 1 })} onClick={() => setImageIndex(i)}>
                   <img src={image.thumbnail || image.src} alt="" />
                 </button>

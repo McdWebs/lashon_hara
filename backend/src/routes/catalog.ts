@@ -3,6 +3,7 @@ import { env } from "../config/env.js";
 import { getOrders } from "../services/productOrder.js";
 import { clearProductIndex, orderedPage, refreshProductIndex, searchIndex, startProductIndex } from "../services/productIndex.js";
 import { getProduct, listCategories, listProducts, listProductsByIds } from "../services/woocommerce.js";
+import { adminVariationImages } from "../services/wcAdmin.js";
 
 export const catalogRouter = Router();
 
@@ -143,7 +144,13 @@ catalogRouter.get("/products", async (req, res) => {
 
 catalogRouter.get("/products/:id", async (req, res) => {
   try {
-    const product = await remember(`product:${req.params.id}`, () => getProduct(req.params.id));
+    const product = await remember(`product:${req.params.id}`, async () => {
+      const found = (await getProduct(req.params.id)) as { type?: string; variations?: Array<{ id: number }> };
+      if (found.type !== "variable" || !found.variations?.length) return found;
+      // Each variation says which photo is its own, so the page can show it when that choice is picked.
+      const photos = await adminVariationImages(req.params.id);
+      return { ...found, variations: found.variations.map((v) => ({ ...v, image: photos.get(v.id) ?? null })) };
+    });
     res.json(product);
   } catch (err) {
     console.error(err);
