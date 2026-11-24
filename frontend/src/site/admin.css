@@ -502,7 +502,7 @@
 .adm-ent-t { font-weight: 800; font-size: 15px; }
 .adm-part { display: flex; align-items: center; gap: 14px; }
 .adm-part + .adm-part { padding-top: 12px; border-top: 1px solid rgba(13,13,13,.08); }
-.adm-part-f { position: relative; flex: none; display: block; width: 88px; height: 88px; border-radius: 10px; overflow: hidden; background: #E8E8E8; }
+.adm-part-f { border: 0; padding: 0; cursor: zoom-in; position: relative; flex: none; display: block; width: 88px; height: 88px; border-radius: 10px; overflow: hidden; background: #E8E8E8; }
 .adm-part-f.tall { width: 72px; height: 90px; }
 .adm-part-f.wide { width: 120px; height: 76px; }
 .adm-part-f.strip { width: 120px; height: 44px; background: #FFFFFF; box-shadow: inset 0 0 0 1px rgba(13,13,13,.1); }
