@@ -521,15 +521,14 @@
 
 /* Product form: photos as rows, with order, main photo, hide and remove */
 .adm-pimgs { flex-direction: column; flex-wrap: nowrap; gap: 8px; }
-.adm-pimgs li { position: relative; width: auto; height: auto; display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 14px; overflow: visible; background: var(--soft); }
+.adm-pimgs li { position: relative; width: auto; height: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 8px; border-radius: 14px; overflow: visible; background: var(--soft); }
 .adm-pimgs li > img { flex: none; width: 68px; height: 68px; border-radius: 10px; object-fit: cover; background: #FFFFFF; }
 .adm-pimgs li.hid > img { opacity: .4; filter: grayscale(1); }
 .adm-pimg-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .adm-pimg-t b { font-size: 14px; }
 .adm-pimgs li.hid .adm-pimg-t b { color: var(--red); }
 .adm-pimgs .adm-pimg-t small { position: static; padding: 0; background: none; color: var(--muted); font-size: 12px; border-radius: 0; }
-.adm-pimg-b { flex: none; display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; max-width: 150px; }
+.adm-pimg-b { flex: 1 0 100%; display: flex; gap: 6px; justify-content: flex-start; }
 .adm-pimgs .adm-pimg-b .adm-ib { position: static; width: 40px; height: 40px; background: #FFFFFF; }
 .adm-pimgs .adm-pimg-b .adm-ib:hover:not(:disabled) { background: var(--ink); }
 .adm-pimgs li.adm-pimg-up { position: relative; }
-@media (max-width: 480px) { .adm-pimgs li { flex-wrap: wrap; } .adm-pimg-b { max-width: none; width: 100%; justify-content: flex-start; } }
