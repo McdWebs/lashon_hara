@@ -10,9 +10,10 @@ export type StoredConfig = Partial<{
   lectures: { items: LectureConfig[] };
   newCollection: NewCollectionConfig;
   productOrder: { orders: Record<string, number[]> };
+  images: { slots: Record<string, string> };
 }>;
 
-export type Section = "counter" | "calendar" | "shop" | "lectures" | "flags" | "newCollection" | "productOrder";
+export type Section = "counter" | "calendar" | "shop" | "lectures" | "flags" | "newCollection" | "productOrder" | "images";
 
 export type CalendarTest = { ok: true; events: number; days: string[]; totalDays: number };
 

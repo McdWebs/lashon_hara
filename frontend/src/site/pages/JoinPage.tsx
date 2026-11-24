@@ -6,6 +6,7 @@ import { Check, Choice, Field, FormShell, Panel, Reveal, Toggle, useSiteForm } f
 import { useContact } from "../contact";
 import { clearSchoolDraft, loadSchoolDraft, saveSchoolDraft } from "../schoolDraft";
 import { useSiteConfig } from "../../lib/siteConfig";
+import { useSlotImages } from "../../lib/siteImages";
 import { Icon, Title, usePageTitle } from "../ui";
 
 function DonateForm() {
@@ -201,16 +202,17 @@ function SchoolForm({ onClose }: { onClose: () => void }) {
 type PanelKey = "ambassadors" | "story" | "school";
 
 const WAYS: Array<{ title: string; line: string; button: string; panel?: PanelKey; contact?: boolean; to?: string; image?: string; focus?: string }> = [
-  { title: "להצטרף לצוות השגרירים", line: "להפיץ את המסר בקהילה, בכיתה או ברשת.", button: "להצטרפות", panel: "ambassadors", image: "/images/site/static.jpg" },
-  { title: "לחלק צמידים בעצמכם", line: "צמידי שגרירים מהחנות, לחלוקה בעצמכם.", button: "לצמידים", to: "/shop?collection=bracelets", image: "/images/fabric_bracelet/black_bracelet.jpeg" },
-  { title: "להביא את זה לבית הספר", line: "הרצאות וחלוקת צמידים לתלמידים.", button: "לבתי ספר", panel: "school", image: "/images/store_images/hands_heart_sign.jpg" },
-  { title: "לשתף את הסיפור שלכם", line: "ספרו לנו איך המסר נגע בכם.", button: "לשיתוף", panel: "story", image: "/images/fabric_bracelet/all_bracelet.jpeg" },
-  { title: "צרו קשר", line: "WhatsApp, מייל או טופס קצר.", button: "ליצירת קשר", contact: true, image: "/images/site/contact.jpg", focus: "50% 55%" },
+  { title: "להצטרף לצוות השגרירים", line: "להפיץ את המסר בקהילה, בכיתה או ברשת.", button: "להצטרפות", panel: "ambassadors", image: "hero-static" },
+  { title: "לחלק צמידים בעצמכם", line: "צמידי שגרירים מהחנות, לחלוקה בעצמכם.", button: "לצמידים", to: "/shop?collection=bracelets", image: "join-bracelets" },
+  { title: "להביא את זה לבית הספר", line: "הרצאות וחלוקת צמידים לתלמידים.", button: "לבתי ספר", panel: "school", image: "join-school" },
+  { title: "לשתף את הסיפור שלכם", line: "ספרו לנו איך המסר נגע בכם.", button: "לשיתוף", panel: "story", image: "join-story" },
+  { title: "צרו קשר", line: "WhatsApp, מייל או טופס קצר.", button: "ליצירת קשר", contact: true, image: "join-contact", focus: "50% 55%" },
 ];
 
 const PANEL_TITLES: Record<PanelKey, string> = { ambassadors: "להצטרף לשגרירים", story: "לשתף סיפור", school: "להביא את זה לבית הספר" };
 
 export function JoinPage() {
+  const img = useSlotImages();
   usePageTitle(t("הצטרפו"));
   const [params, setParams] = useSearchParams();
   const [panel, setPanel] = useState<PanelKey | null>(null);
@@ -246,7 +248,7 @@ export function JoinPage() {
         {WAYS.map((way, i) => (
           <article className="way rv" key={way.title} style={{ "--d": `${(i % 3) * 0.07}s` } as React.CSSProperties}>
             <div className="way-m">
-              {way.image ? <img src={way.image} alt="" loading="lazy" style={way.focus ? { objectPosition: way.focus } : undefined} /> : null}
+              {way.image ? <img src={img(way.image) || undefined} alt="" loading="lazy" style={way.focus ? { objectPosition: way.focus } : undefined} /> : null}
               <span className="way-n disp">0{i + 2}</span>
             </div>
             <div className="way-b">

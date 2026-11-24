@@ -59,9 +59,10 @@
       (function () {
         try {
           var p = location.pathname;
-          if (!/^\/(en\/)?shop\/?$/.test(p) || location.search) return;
           var early = (window.__early = {});
+          // Every page needs the site's settings (they say which pictures the team replaced), so ask at once.
           early.config = fetch("/api/site-config", { cache: "no-cache" });
+          if (!/^\/(en\/)?shop\/?$/.test(p) || location.search) return;
           early.products = { search: "per_page=12&page=1", res: fetch("/api/catalog/products?per_page=12&page=1") };
         } catch (e) {}
       })();

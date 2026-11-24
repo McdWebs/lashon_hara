@@ -4,6 +4,7 @@ import { t, Link, siteLang } from "../i18n";
 import { fetchProducts, fetchProductsByIds } from "../../lib/catalog";
 import { copy } from "../copy";
 import { useSiteConfig } from "../../lib/siteConfig";
+import { slotImage, useSlotImages } from "../../lib/siteImages";
 import { CardsSkeleton, Icon, QuoteMark, ShopCard, Title, usePageTitle } from "../ui";
 
 type Slide = { photo: string; sig?: string; who: string; lines: string[]; side: "start" | "end"; long?: boolean };
@@ -19,11 +20,11 @@ const SLIDES: Slide[] = [
 ];
 
 const TILES = [
-  { img: "cat_bracelets", label: "צמידים", collection: "bracelets" },
-  { img: "cat_shirts", label: "חולצות", collection: "clothing" },
-  { img: "cat_caps", label: "כובעים", collection: "clothing" },
-  { img: "cat_sport", label: "ספורט", collection: "sport" },
-  { img: "cat_mixed", wide: "cat_mixed_wide", label: "מיוחדים", collection: "special" },
+  { img: "tile-bracelets", label: "צמידים", collection: "bracelets" },
+  { img: "tile-shirts", label: "חולצות", collection: "clothing" },
+  { img: "tile-caps", label: "כובעים", collection: "clothing" },
+  { img: "tile-sport", label: "ספורט", collection: "sport" },
+  { img: "tile-mixed", wide: "tile-mixed-wide", label: "מיוחדים", collection: "special" },
 ] as const;
 
 const HOLD_MS = 6500;
@@ -62,6 +63,8 @@ function pickOrder(): Slide[] {
 }
 
 function Hero() {
+  const { config: siteConfig, ready: cfgReady } = useSiteConfig();
+  const img = useSlotImages();
   const reduced = useRef(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false);
   // A new random order on every visit, so a different ambassador opens the site each time (never the same one twice in a row on one device).
   const [slides] = useState(pickOrder);
@@ -89,15 +92,17 @@ function Hero() {
       });
     };
     // Wait for the fonts and the first photo to be decoded, so the entrance never plays on a half-loaded image. The rest load quietly meanwhile.
+    // (And for the site's settings, which say whether the team replaced a picture.)
+    if (!cfgReady) return;
     const decoded = slides.map((sl) => {
-      const img = new Image();
-      img.src = `/images/site/${sl.photo}.jpg`;
-      return img.decode().catch(() => undefined);
+      const pic = new Image();
+      pic.src = slotImage(siteConfig.images, `hero-${sl.photo}`);
+      return pic.decode().catch(() => undefined);
     });
     const fonts = document.fonts?.ready ?? Promise.resolve();
     Promise.race([Promise.all([fonts, decoded[0]]), new Promise((r) => setTimeout(r, 1500))]).then(start);
     return () => cancelAnimationFrame(raf);
-  }, [slides]);
+  }, [slides, cfgReady, siteConfig.images]);
 
   const go = useCallback((i: number) => {
     const from = curRef.current;
@@ -134,7 +139,7 @@ function Hero() {
           aria-hidden={i !== cur}
         >
           <div className="s-photo">
-            <img src={`/images/site/${s.photo}.jpg`} alt={s.who ? t("{who} בקפוצ׳ון של לשון הרע לא מדבר אליי", { who: t(s.who) }) : t("שגריר.ית בקפוצ׳ון של לשון הרע לא מדבר אליי")} />
+            <img src={img(`hero-${s.photo}`) || undefined} alt={s.who ? t("{who} בקפוצ׳ון של לשון הרע לא מדבר אליי", { who: t(s.who) }) : t("שגריר.ית בקפוצ׳ון של לשון הרע לא מדבר אליי")} />
           </div>
           <figure className="s-quote">
             <QuoteMark />
@@ -143,7 +148,7 @@ function Hero() {
                 <span key={line} className={`ql ql${k + 1}`}><span>{EN_QUOTE(line)}</span></span>
               ))}
             </blockquote>
-            <figcaption>{s.sig ? <img className="sig" src={`/images/site/${s.sig}.jpg`} alt={t(s.who)} /> : <span className="s-name">{t(s.who)}</span>}</figcaption>
+            <figcaption>{s.sig ? <img className="sig" src={img(`hero-${s.photo}-sig`) || undefined} alt={t(s.who)} /> : <span className="s-name">{t(s.who)}</span>}</figcaption>
           </figure>
         </div>
       ))}
@@ -162,6 +167,7 @@ function Hero() {
 }
 
 export function HomePage() {
+  const img = useSlotImages();
   usePageTitle(t("דף הבית"));
   const { config, ready } = useSiteConfig();
   const nc = config.newCollection;
@@ -182,8 +188,8 @@ export function HomePage() {
         {TILES.map((tile) => (
           <Link key={tile.img} className="cat" to={`/shop?collection=${tile.collection}`}>
             <picture>
-              {"wide" in tile ? <source media="(max-width: 900px)" srcSet={`/images/site/${tile.wide}.jpg`} /> : null}
-              <img src={`/images/site/${tile.img}.jpg`} alt="" />
+              {"wide" in tile ? <source media="(max-width: 900px)" srcSet={img(tile.wide) || undefined} /> : null}
+              <img src={img(tile.img) || undefined} alt="" />
             </picture>
             <span className="sr">{t(tile.label)}</span>
           </Link>

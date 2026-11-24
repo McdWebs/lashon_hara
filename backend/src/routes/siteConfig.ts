@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { Router } from "express";
 import mongoose from "mongoose";
 import { z } from "zod";
@@ -5,6 +6,7 @@ import { Setting } from "../models/Setting.js";
 import { requireAdmin } from "../services/adminAuth.js";
 import { takenDaysFromFeed } from "../services/calendarFeed.js";
 import { forgetOrders, getOrders } from "../services/productOrder.js";
+import { publicUrlFor, r2Configured, signUpload } from "../services/r2.js";
 
 const SORT_KEYS = ["", "new", "best", "price-asc", "price-desc", "title"] as const;
 const isoDay = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
@@ -72,7 +74,12 @@ const productOrder = z.object({
   orders: z.record(z.string().regex(/^[a-z0-9-]{1,30}$/), z.array(z.number().int().positive()).max(1500)),
 });
 
-const SECTIONS = { counter, calendar, shop, lectures, flags, newCollection, productOrder } as const;
+/** Pictures the team replaced from the admin: slot name (set in the site's code) to the uploaded file's link. A slot that is missing shows the picture the site shipped with. */
+const images = z.object({
+  slots: z.record(z.string().regex(/^[a-z0-9-]{1,40}$/), z.string().url().max(500).refine((u) => u.startsWith("https://"), "not_https")),
+});
+
+const SECTIONS = { counter, calendar, shop, lectures, flags, newCollection, productOrder, images } as const;
 type Section = keyof typeof SECTIONS;
 const isSection = (name: string): name is Section => name in SECTIONS;
 
@@ -94,6 +101,7 @@ siteConfigRouter.get("/", async (_req, res) => {
   if (all.lectures) out.lectures = (all.lectures as z.infer<typeof lectures>).items;
   if (all.flags) out.flags = all.flags;
   if (all.newCollection) out.newCollection = all.newCollection;
+  if (all.images) out.images = (all.images as z.infer<typeof images>).slots;
   // Only which tabs have a hand-set order; the order itself is read on the server when the shop asks for products.
   const orders = (all.productOrder as z.infer<typeof productOrder> | undefined)?.orders;
   if (orders) out.orderedCollections = Object.entries(orders).filter(([, ids]) => ids.length > 0).map(([key]) => key);
@@ -158,6 +166,29 @@ adminConfigRouter.delete("/config/:section", async (req, res) => {
   await Setting.deleteOne({ key: req.params.section });
   if (req.params.section === "productOrder") forgetOrders();
   res.json({ ok: true });
+});
+
+const SITE_IMAGE_TYPES: Record<string, string> = { "image/webp": "webp", "image/jpeg": "jpg", "image/png": "png" };
+const MAX_SITE_IMAGE = 5 * 1024 * 1024;
+
+/** A short-lived address to upload one site picture to. The admin shrinks the picture first, so the limit is small. */
+adminConfigRouter.post("/site-images/sign", async (req, res) => {
+  if (!r2Configured()) {
+    res.status(503).json({ error: "storage_not_configured" });
+    return;
+  }
+  const parsed = z.object({ contentType: z.string(), size: z.number().int().positive() }).safeParse(req.body);
+  const ext = parsed.success ? SITE_IMAGE_TYPES[parsed.data.contentType] : undefined;
+  if (!parsed.success || !ext) {
+    res.status(400).json({ error: "unsupported_type" });
+    return;
+  }
+  if (parsed.data.size > MAX_SITE_IMAGE) {
+    res.status(400).json({ error: "too_large" });
+    return;
+  }
+  const key = `site/${Date.now()}-${crypto.randomBytes(4).toString("hex")}.${ext}`;
+  res.json({ uploadUrl: await signUpload(key, parsed.data.contentType, parsed.data.size), url: publicUrlFor(key) });
 });
 
 adminConfigRouter.post("/calendar/test", async (req, res) => {

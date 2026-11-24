@@ -4,6 +4,7 @@ import { HelplinesList } from "../../content/helplinesHe";
 import type { FounderBlock } from "../about";
 import { copy } from "../copy";
 import { useSiteConfig } from "../../lib/siteConfig";
+import { useSlotImages } from "../../lib/siteImages";
 import { Icon, usePageTitle } from "../ui";
 
 const SECTIONS = [
@@ -32,10 +33,10 @@ function shuffled<T>(items: T[]) {
 }
 
 const AMBASSADORS = [
-  { photo: "/images/site/omer.jpg", name: "עומר אדם", quote: "שים לב מה אתה אומר" },
-  { photo: "/images/site/static.jpg", name: "סטטיק", quote: "נוצר לשונו שומר נפשו" },
-  { photo: "/images/site/q1.jpg", name: "אתי אפינגר", quote: "מוות וחיים ביד הלשון" },
-  { photo: "/images/site/q2.jpg", name: "לירן דנינו", quote: "שומר פיו ולשונו, שומר מצרות נפשו" },
+  { photo: "hero-omer", name: "עומר אדם", quote: "שים לב מה אתה אומר" },
+  { photo: "hero-static", name: "סטטיק", quote: "נוצר לשונו שומר נפשו" },
+  { photo: "hero-q1", name: "אתי אפינגר", quote: "מוות וחיים ביד הלשון" },
+  { photo: "hero-q2", name: "לירן דנינו", quote: "שומר פיו ולשונו, שומר מצרות נפשו" },
 ];
 
 /** The team's own phrases to catch the eye. Marking never changes the words. */
@@ -255,12 +256,13 @@ function FounderVideo() {
   }, [open]);
 
   const { config } = useSiteConfig();
-  if (!config.flags.aboutVideo) return <div className="w-ph"><img src="/images/site/founder.jpg" alt={t("דוד הלפרין, מייסד המיזם")} /></div>;
+  const img = useSlotImages();
+  if (!config.flags.aboutVideo) return <div className="w-ph"><img src={img("founder") || undefined} alt={t("דוד הלפרין, מייסד המיזם")} /></div>;
 
   return (
     <div className="w-ph">
       <button type="button" className="vplay" onClick={() => setOpen(true)} aria-label={t("לנגן את הסרטון")}>
-        <img src="/images/site/founder.jpg" alt={t("דוד הלפרין, מייסד המיזם")} />
+        <img src={img("founder") || undefined} alt={t("דוד הלפרין, מייסד המיזם")} />
         <span className="vplay-b" aria-hidden="true"><Icon.play /></span>
       </button>
       {open ? (
@@ -290,6 +292,7 @@ function Section({ id, n, title, grey, focus, children }: { id: string; n: numbe
 }
 
 export function AboutPage() {
+  const img = useSlotImages();
   usePageTitle(t("אודות"));
   const [current, setCurrent] = useState<string>("who");
   const lockUntil = useRef(0);
@@ -412,7 +415,7 @@ export function AboutPage() {
           {AMBASSADORS.map((a, i) => (
             <figure className="amb" key={i}>
               <div className="amb-m">
-                {a.photo ? <img src={a.photo} alt={a.name ? t(a.name) : t("שגריר.ית בקפוצ׳ון של לשון הרע לא מדבר אליי")} /> : <span className="ph" style={{ position: "absolute", inset: 0 }}>{t("תמונת שגריר/ה")}</span>}
+                {a.photo ? <img src={img(a.photo) || undefined} alt={a.name ? t(a.name) : t("שגריר.ית בקפוצ׳ון של לשון הרע לא מדבר אליי")} /> : <span className="ph" style={{ position: "absolute", inset: 0 }}>{t("תמונת שגריר/ה")}</span>}
               </div>
               <figcaption>
                 <span className="amb-q disp">{siteLang() === "en" ? `“${t(a.quote)}”` : `״${a.quote}״`}</span>

@@ -95,3 +95,33 @@ export async function uploadProductImage(file: File, onProgress: (fraction: numb
   });
   return signed.url;
 }
+
+/** Shrinks a picture to at most `maxWidth` pixels wide and saves it as WebP (JPEG where the browser cannot), so a big camera photo does not slow the site down. */
+export async function shrinkImage(file: File, maxWidth: number): Promise<Blob> {
+  const bitmap = await createImageBitmap(file).catch(() => null);
+  if (!bitmap) throw new Error("unsupported_type");
+  const scale = Math.min(1, maxWidth / bitmap.width);
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+  canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("unsupported_type");
+  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/webp", 0.82));
+  if (blob && blob.type === "image/webp") return blob;
+  const jpeg = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.85));
+  if (!jpeg) throw new Error("unsupported_type");
+  return jpeg;
+}
+
+/** Uploads one site picture (already shrunk) to the image storage and returns its public link. */
+export async function uploadSiteImage(blob: Blob): Promise<string> {
+  const signed = await adminRequest<{ uploadUrl: string; url: string }>("/site-images/sign", {
+    method: "POST",
+    body: JSON.stringify({ contentType: blob.type, size: blob.size }),
+  });
+  const res = await fetch(signed.uploadUrl, { method: "PUT", headers: { "Content-Type": blob.type }, body: blob });
+  if (!res.ok) throw new Error("upload_failed");
+  return signed.url;
+}

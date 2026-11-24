@@ -9,6 +9,7 @@ import { copy } from "../copy";
 import { Dropdown } from "../Dropdown";
 import { ExpandingSearch, SearchIcon } from "../ExpandingSearch";
 import { CardsSkeleton, Icon, ShopCard, usePageTitle } from "../ui";
+import { useSlotImages } from "../../lib/siteImages";
 
 const PER_PAGE = 12;
 
@@ -35,6 +36,7 @@ function FilterIcon() {
 }
 
 export function CollectionPage() {
+  const img = useSlotImages();
   usePageTitle(t("הקולקציה"));
   const { SHIPPING_NOTE, SHOP_INTRO } = copy();
   const introWhy = SHOP_INTRO.split("\n")[2];
@@ -164,9 +166,9 @@ export function CollectionPage() {
             )}
           </div>
           <div className="chero-art" aria-hidden="true">
-            <span><img src="/images/fabric_bracelet/all_bracelet.jpeg" alt="" width="204" height="255" /></span>
-            <span><img src="/images/site/omer.jpg" alt="" width="204" height="255" /></span>
-            <span><img src="/images/site/static.jpg" alt="" width="204" height="255" /></span>
+            <span><img src={img("join-story") || undefined} alt="" width="204" height="255" /></span>
+            <span><img src={img("hero-omer") || undefined} alt="" width="204" height="255" /></span>
+            <span><img src={img("hero-static") || undefined} alt="" width="204" height="255" /></span>
           </div>
         </div>
       </section>

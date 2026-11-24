@@ -42,6 +42,8 @@ export type SiteConfig = {
   lectures: LectureConfig[];
   /** Shop tabs whose default order the team has set by hand. */
   orderedCollections: string[];
+  /** Pictures the team replaced in the admin, by slot name (see siteImages.ts). */
+  images: Record<string, string>;
 };
 
 /* ---------- built-in defaults: what the site shows until the team changes it ---------- */
@@ -93,6 +95,7 @@ export const DEFAULTS: SiteConfig = {
   shop: DEFAULT_SHOP,
   lectures: DEFAULT_LECTURES,
   orderedCollections: [],
+  images: {},
 };
 
 /* ---------- price ranges ---------- */
@@ -120,7 +123,7 @@ export function priceLabel(p: PriceRange, lang: "he" | "en") {
 
 /* ---------- loading ---------- */
 
-type Stored = Partial<{ flags: Partial<Flags>; counter: number | null; calendar: CalendarConfig; shop: ShopConfig; lectures: LectureConfig[]; newCollection: NewCollectionConfig; orderedCollections: string[] }>;
+type Stored = Partial<{ flags: Partial<Flags>; counter: number | null; calendar: CalendarConfig; shop: ShopConfig; lectures: LectureConfig[]; newCollection: NewCollectionConfig; orderedCollections: string[]; images: Record<string, string> }>;
 
 async function fetchStored(): Promise<Stored> {
   // Ask the server each time whether the answer changed (cheap when it did not), so an admin change is not hidden by the browser's own copy.
@@ -142,6 +145,7 @@ function merge(stored: Stored | undefined): SiteConfig {
     lectures: stored.lectures ?? DEFAULTS.lectures,
     newCollection: stored.newCollection ?? DEFAULTS.newCollection,
     orderedCollections: stored.orderedCollections ?? [],
+    images: stored.images ?? {},
   };
 }
 

@@ -7,6 +7,7 @@ import { Field, FormShell, Panel, Reveal, Toggle, useSiteForm } from "../forms";
 import type { Program } from "../about";
 import { fetchMedia, type MediaWorld } from "../../lib/media";
 import { useSiteConfig } from "../../lib/siteConfig";
+import { useSlotImages } from "../../lib/siteImages";
 import { useStories } from "../../lib/stories";
 import { Icon, Title, usePageTitle } from "../ui";
 import { clearSchoolDraft, loadSchoolDraft } from "../schoolDraft";
@@ -20,9 +21,9 @@ type Reel = { kind: "video" | "photo"; src?: string; poster?: string; caption?: 
 type WorldConfig = { key: string; name: string; line: string; live: string; image: string; focus?: string; reels?: Reel[] };
 
 const WORLDS: WorldConfig[] = [
-  { key: "schools", name: "בתי ספר והרצאות", line: "הרצאות לבתי ספר ולמוסדות חינוך. בחרו תאריך ונחזור אליכם.", live: "", image: "/images/activity/schools.jpg", focus: "50% 38%" },
-  { key: "stories", name: "סיפורים", line: "", live: "", image: "/images/site/founder.jpg", focus: "50% 20%" },
-  { key: "ambassadors", name: "שגרירים", line: "אמנים, ספורטאים ואנשי ציבור שמצטרפים ואומרים: לשון הרע לא מדבר אליי.", live: "", image: "/images/site/static.jpg", focus: "50% 14%", reels: [] },
+  { key: "schools", name: "בתי ספר והרצאות", line: "הרצאות לבתי ספר ולמוסדות חינוך. בחרו תאריך ונחזור אליכם.", live: "", image: "activity-schools", focus: "50% 38%" },
+  { key: "stories", name: "סיפורים", line: "", live: "", image: "founder", focus: "50% 20%" },
+  { key: "ambassadors", name: "שגרירים", line: "אמנים, ספורטאים ואנשי ציבור שמצטרפים ואומרים: לשון הרע לא מדבר אליי.", live: "", image: "hero-static", focus: "50% 14%", reels: [] },
 ];
 
 
@@ -496,6 +497,7 @@ function StoriesSection() {
 }
 
 export function ActivityPage() {
+  const img = useSlotImages();
   usePageTitle(t("הפעילות שלנו"));
   const { world: worldKey } = useParams();
   const queryClient = useQueryClient();
@@ -558,7 +560,7 @@ export function ActivityPage() {
       <div className="wtiles" role="tablist" aria-label={t("העולמות")}>
         {worlds.map((w) => (
           <Link key={w.key} className={`wt${w.key === world.key ? " on" : ""}`} to={w.key === "schools" ? "/activity" : `/activity/${w.key}`} role="tab" aria-selected={w.key === world.key} preventScrollReset onClick={scrollToWorldOnPhone}>
-            <img src={w.image} alt="" style={w.focus ? { objectPosition: w.focus } : undefined} />
+            <img src={img(w.image) || undefined} alt="" style={w.focus ? { objectPosition: w.focus } : undefined} />
             <span className="wt-in">
               <span className="wt-n">{t(w.name)}</span>
               <span className="wt-l">{w.key === "schools" && next ? t("המועד הפנוי הבא: {date}", { date: next.toLocaleDateString(dateLocale(), { day: "numeric", month: "long" }) }) : w.live ? t(w.live) : ""}</span>
