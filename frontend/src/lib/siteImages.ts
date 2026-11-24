@@ -5,12 +5,12 @@ import { useSiteConfig } from "./siteConfig";
  * `fallback` is the picture the site shipped with; it shows until a replacement is uploaded.
  * `width` is the widest the picture is ever shown (in pixels, doubled for sharp phone screens), so uploads are shrunk to it.
  */
-export type ImageSlot = { key: string; label: string; group: string; fallback: string; width: number; shape: "wide" | "tall" | "square" | "strip" };
+export type ImageSlot = { key: string; label: string; group: string; fallback: string; width: number; shape: "wide" | "tall" | "square" | "strip"; /** Slots with the same `set` are shown together in the admin (a person's photo and signature), and `part` names each one. */ set?: string; part?: string };
 
 const HERO = "קרוסלת עמוד הבית ושגרירים";
 const hero = (key: string, who: string): ImageSlot[] => [
-  { key: `hero-${key}`, label: `${who} · תמונה`, group: HERO, fallback: `/images/site/${key}.jpg`, width: 1600, shape: "tall" },
-  { key: `hero-${key}-sig`, label: `${who} · חתימה`, group: HERO, fallback: `/images/site/${key}_sig.jpg`, width: 600, shape: "strip" },
+  { key: `hero-${key}`, label: `${who} · תמונה`, group: HERO, fallback: `/images/site/${key}.jpg`, width: 1600, shape: "tall", set: who, part: "תמונה" },
+  { key: `hero-${key}-sig`, label: `${who} · חתימה`, group: HERO, fallback: `/images/site/${key}_sig.jpg`, width: 600, shape: "strip", set: who, part: "חתימה" },
 ];
 
 const TILES = "אריחי הקטגוריות בעמוד הבית";
