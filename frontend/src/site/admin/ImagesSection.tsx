@@ -60,10 +60,7 @@ export function ImagesSection({ stored, onSaved }: { stored: StoredConfig; onSav
 
   return (
     <>
-      <SectionHead
-        title="תמונות האתר"
-        text="להחלפת תמונה בוחרים קובץ מהמחשב. התמונה מוקטנת ומומרת אוטומטית לפורמט קל, כך שגם תמונה גדולה מהמצלמה לא תאט את האתר. השינוי מופיע באתר תוך כדקה."
-      />
+      <SectionHead title="תמונות האתר" />
       <input ref={pick} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={(e) => { void onFile(e.target.files?.[0]); e.target.value = ""; }} />
       <nav className="adm-imgs-nav" aria-label="קבוצות תמונות">
         {GROUPS.map((group) => (
