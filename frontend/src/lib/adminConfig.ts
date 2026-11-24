@@ -37,7 +37,7 @@ export type AdminProduct = {
   shortDescription: string;
   description: string;
   categories: Array<{ id: number; name: string }>;
-  images: Array<{ id?: number; src: string; alt: string }>;
+  images: Array<{ id?: number; src: string; alt: string; /** Kept in the product but not shown on the site. */ hidden?: boolean }>;
   link: string;
   onSite: boolean;
 };

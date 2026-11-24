@@ -6,6 +6,7 @@ import { orderedItems } from "../services/productIndex.js";
 import crypto from "node:crypto";
 import { publicUrlFor, r2Configured, signUpload } from "../services/r2.js";
 import { purgeCatalog } from "./catalog.js";
+import { hiddenImages, hiddenSet, saveHiddenImages } from "../services/hiddenImages.js";
 
 /** Product management for the team. Mounted under the admin router, after it checks the login. */
 export const adminProductsRouter = Router();
@@ -27,7 +28,7 @@ const body = z.object({
   description: z.string().max(20000),
   categories: z.array(z.number().int().positive()).max(30),
   images: z
-    .array(z.object({ id: z.number().int().positive().optional(), src: z.string().url().max(1000).optional(), alt: z.string().max(200).optional() }).refine((i) => i.id || i.src))
+    .array(z.object({ id: z.number().int().positive().optional(), src: z.string().url().max(1000).optional(), alt: z.string().max(200).optional(), hidden: z.boolean().optional() }).refine((i) => i.id || i.src))
     .max(12),
 });
 
@@ -55,9 +56,21 @@ adminProductsRouter.get("/products", async (req, res) => {
   }
 });
 
+/** The product as the form shows it: each photo says whether the team hid it from the site. */
+async function withHiddenFlags<T extends { id: number; images: Array<{ id?: number }> }>(product: T) {
+  const hidden = hiddenSet(await hiddenImages(), product.id);
+  return { ...product, images: product.images.map((i) => ({ ...i, hidden: i.id !== undefined && hidden.has(i.id) })) };
+}
+
+/** After a save: the photos marked hidden, found in the saved product by their place in the list (the store keeps the order sent). */
+async function rememberHidden(saved: { id: number; images: Array<{ id?: number }> }, sent: Array<{ hidden?: boolean }>) {
+  const ids = saved.images.flatMap((img, i) => (sent[i]?.hidden && img.id !== undefined ? [img.id] : []));
+  await saveHiddenImages(saved.id, ids);
+}
+
 adminProductsRouter.get("/products/:id", async (req, res) => {
   try {
-    res.json(await adminGetProduct(req.params.id));
+    res.json(await withHiddenFlags(await adminGetProduct(req.params.id)));
   } catch (err) {
     fail(res, err);
   }
@@ -71,8 +84,9 @@ adminProductsRouter.post("/products", async (req, res) => {
   }
   try {
     const product = await adminCreateProduct(parsed.data);
+    await rememberHidden(product, parsed.data.images);
     purgeCatalog();
-    res.json(product);
+    res.json(await withHiddenFlags(product));
   } catch (err) {
     fail(res, err);
   }
@@ -86,8 +100,9 @@ adminProductsRouter.put("/products/:id", async (req, res) => {
   }
   try {
     const product = await adminUpdateProduct(req.params.id, parsed.data);
+    await rememberHidden(product, parsed.data.images);
     purgeCatalog();
-    res.json(product);
+    res.json(await withHiddenFlags(product));
   } catch (err) {
     fail(res, err);
   }

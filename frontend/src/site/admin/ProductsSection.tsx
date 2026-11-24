@@ -186,16 +186,44 @@ function ProductForm({ id, onClose, onSaved }: { id: number | "new"; onClose: ()
             <h3>תמונות</h3>
             {draft.images.length || uploading.length ? (
               <ul className="adm-pimgs">
-                {draft.images.map((img, i) => (
-                  <li key={`${img.id ?? img.src}-${i}`}>
-                    <img src={img.src} alt="" loading="lazy" />
-                    {i === 0 ? <small>ראשית</small> : null}
-                    <button type="button" className="adm-ib danger" onClick={() => set({ images: draft.images.filter((_, j) => j !== i) })} aria-label="הסרת התמונה">{I.close()}</button>
-                  </li>
-                ))}
+                {draft.images.map((img, i) => {
+                  const main = i === draft.images.findIndex((x) => !x.hidden);
+                  const move = (to: number) => {
+                    const next = [...draft.images];
+                    const [one] = next.splice(i, 1);
+                    next.splice(to, 0, one);
+                    set({ images: next });
+                  };
+                  return (
+                    <li key={`${img.id ?? img.src}-${i}`} className={img.hidden ? "hid" : undefined}>
+                      <img src={img.src} alt="" loading="lazy" />
+                      <span className="adm-pimg-t">
+                        <b>{img.hidden ? "מוסתרת" : main ? "תמונה ראשית" : `תמונה ${i + 1}`}</b>
+                        <small>{img.hidden ? "לא מוצגת באתר" : main ? "מוצגת בכרטיס ובראש עמוד המוצר" : "בגלריית המוצר"}</small>
+                      </span>
+                      <span className="adm-pimg-b">
+                        <button type="button" className="adm-ib" onClick={() => move(0)} disabled={i === 0 || Boolean(img.hidden)} aria-label="הפיכה לתמונה הראשית" title="הפיכה לתמונה הראשית">{I.star()}</button>
+                        <button type="button" className="adm-ib" onClick={() => move(i - 1)} disabled={i === 0} aria-label="הזזה למעלה" title="הזזה למעלה">{I.up()}</button>
+                        <button type="button" className="adm-ib" onClick={() => move(i + 1)} disabled={i === draft.images.length - 1} aria-label="הזזה למטה" title="הזזה למטה">{I.down()}</button>
+                        <button
+                          type="button"
+                          className="adm-ib"
+                          onClick={() => set({ images: draft.images.map((x, j) => (j === i ? { ...x, hidden: !x.hidden } : x)) })}
+                          disabled={img.id === undefined}
+                          aria-label={img.hidden ? "הצגה באתר" : "הסתרה מהאתר"}
+                          title={img.id === undefined ? "אפשר להסתיר אחרי השמירה" : img.hidden ? "הצגה באתר" : "הסתרה מהאתר"}
+                        >
+                          {img.hidden ? I.eye() : I.eyeOff()}
+                        </button>
+                        <button type="button" className="adm-ib danger" onClick={() => set({ images: draft.images.filter((_, j) => j !== i) })} aria-label="מחיקת התמונה מהמוצר" title="מחיקת התמונה מהמוצר">{I.close()}</button>
+                      </span>
+                    </li>
+                  );
+                })}
                 {uploading.map((u) => (
                   <li key={u.key} className="adm-pimg-up" aria-busy="true">
                     <img src={u.preview} alt="" />
+                    <span className="adm-pimg-t"><b>מעלים…</b></span>
                     <span className="adm-pimg-bar"><i style={{ width: `${Math.round(u.progress * 100)}%` }} /></span>
                   </li>
                 ))}

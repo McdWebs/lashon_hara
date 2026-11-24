@@ -47,6 +47,8 @@ export const I = {
   edit: () => <Ico><path d="M4 20h4L19 9l-4-4L4 16v4z" /><path d="M13.5 6.5l4 4" /></Ico>,
   grip: () => <Ico size={18}><circle cx="9" cy="6" r="1.2" fill="currentColor" /><circle cx="15" cy="6" r="1.2" fill="currentColor" /><circle cx="9" cy="12" r="1.2" fill="currentColor" /><circle cx="15" cy="12" r="1.2" fill="currentColor" /><circle cx="9" cy="18" r="1.2" fill="currentColor" /><circle cx="15" cy="18" r="1.2" fill="currentColor" /></Ico>,
   calendar: () => <Ico size={20}><rect x="4" y="5.5" width="16" height="14.5" rx="2.5" /><path d="M4 10h16" /><path d="M8.5 3.5v4" /><path d="M15.5 3.5v4" /></Ico>,
+  star: () => <Ico size={18}><path d="M12 4.5l2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5-3.6-3.5 5-.7L12 4.5z" /></Ico>,
+  eyeOff: () => <Ico><path d="M3 3l18 18" /><path d="M10.6 6a8.6 8.6 0 0 1 1.4-.1c6 0 9.5 6.1 9.5 6.1a15 15 0 0 1-3 3.6" /><path d="M6.3 7.3A15 15 0 0 0 2.5 12S6 18.1 12 18.1a8.7 8.7 0 0 0 3.5-.8" /><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" /></Ico>,
   eye: () => <Ico><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" /><circle cx="12" cy="12" r="2.8" /></Ico>,
   check: () => <Ico size={16}><path d="M5 12.5l4.5 4.5L19 7.5" /></Ico>,
   chevron: () => <Ico size={18}><path d="M6 9l6 6 6-6" /></Ico>,
