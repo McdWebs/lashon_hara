@@ -67,7 +67,7 @@ export function ConfirmationPage() {
             cleared.current = true;
             sessionStorage.removeItem("lh-last-order");
             clearCart();
-            track("checkout_completed", { orderId: order.id });
+            track("checkout_completed", { orderId: order.id, value: Number(order.total) || 0, currency: order.currency || "ILS" });
           }
           return;
         }
