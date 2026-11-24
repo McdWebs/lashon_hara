@@ -97,9 +97,8 @@ export function moneyLabel(minor: string | number, minorUnit = 2) {
 }
 
 /**
- * A card photo. Product photos come in many shapes (mostly square, some tall), and the card frame is 4:5. A photo close
- * to that shape fills the frame; any other is shown whole (nothing cut off) over a soft blurred copy of itself, so the
- * leftover space looks like part of the photo instead of empty bars.
+ * A card photo. Product photos come in many shapes (mostly square, some tall), and the card slot is 4:5. A photo close
+ * to that shape fills the slot; any other is shown whole and centered in it (nothing cut off, no backdrop behind it).
  */
 export function ProductImage({ product, priority = false }: { product: WcProduct; priority?: boolean }) {
   const image = product.images[0];
@@ -113,7 +112,6 @@ export function ProductImage({ product, priority = false }: { product: WcProduct
   // Cards are small, so the browser picks a fitting size from srcset instead of the full-size src.
   return (
     <>
-      {whole ? <span className="pc-bg" aria-hidden="true" style={{ backgroundImage: `url(${JSON.stringify(image.src)})` }} /> : null}
       <img
         ref={judge}
         className={whole ? "fit" : undefined}

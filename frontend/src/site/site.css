@@ -1246,7 +1246,7 @@ form > fieldset > legend { padding: 0 0 14px; font-size: 22px; font-weight: 800;
 .pc-p { margin-top: auto; }
 .pc-sl { color: var(--red); font-weight: 700; }
 
-/* Product cards: a photo that is not close to 4:5 is shown whole over a blurred copy of itself */
-.pc-m .pc-bg { position: absolute; inset: -14%; background-size: cover; background-position: center; filter: blur(20px) saturate(1.1); opacity: .9; }
-.pc-m img.fit { position: relative; object-fit: contain; }
+/* Product cards: a photo that is not close to 4:5 is shown whole and centered in the slot, with no backdrop behind it */
+.pc-m:has(img.fit) { background: transparent; display: flex; align-items: center; }
+.pc-m img.fit { height: auto; max-height: 100%; object-fit: contain; }
 .pc:hover .pc-m img.fit { transform: scale(1.03); }
