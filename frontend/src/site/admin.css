@@ -532,3 +532,10 @@
 .adm-pimgs .adm-pimg-b .adm-ib { position: static; width: 40px; height: 40px; background: #FFFFFF; }
 .adm-pimgs .adm-pimg-b .adm-ib:hover:not(:disabled) { background: var(--ink); }
 .adm-pimgs li.adm-pimg-up { position: relative; }
+
+/* Product form: connecting a photo to an option (a color or size) */
+.adm-pimg-opt { flex: 1 0 100%; display: flex; flex-direction: column; gap: 8px; padding-top: 6px; border-top: 1px solid rgba(13,13,13,.08); }
+.adm-pimg-opt small { color: var(--muted); font-size: 12.5px; }
+.adm-pimg-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.adm-pimg-chips em { font-style: normal; font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: var(--ink); color: #FFFFFF; }
+.adm-pimg-opt select { height: 42px; font-size: 14px; }

@@ -8,7 +8,10 @@ import { CategoryPicker } from "./ShopSection";
 import { ShopOrder } from "./ShopOrder";
 import { Card, ConfirmDialog, ERRORS, I, SectionHead, Switch, errorText, useAdmin } from "./ui";
 
-const MAX_IMAGES = 12;
+const MAX_IMAGES = 30;
+
+/** How a photo is told apart in the form: by its store id, or by its link while it has none yet. */
+const keyOf = (img: { id?: number; src: string }) => (img.id ? `id:${img.id}` : `src:${img.src}`);
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const EMPTY: ProductInput = {
@@ -51,12 +54,30 @@ function ProductForm({ id, onClose, onSaved }: { id: number | "new"; onClose: ()
   const fileInput = useRef<HTMLInputElement>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  /** The product's options (colors, sizes), and which photo each one shows: option id to the photo's key. */
+  const [variations, setVariations] = useState<NonNullable<AdminProduct["variations"]>>([]);
+  const [links, setLinks] = useState<Record<number, string>>({});
   const categories = useQuery({ queryKey: ["admin-categories"], queryFn: fetchCategories, staleTime: 5 * 60_000 });
   const names = new Map((categories.data ?? []).map((c) => [c.id, c.name]));
 
   useEffect(() => {
     if (id === "new") return;
-    adminProducts.get(id).then((p) => { setSimple(p.type === "simple"); setDraft(fromProduct(p)); }).catch((err) => { fail(err); onClose(); });
+    adminProducts.get(id).then((p) => {
+      setSimple(p.type === "simple");
+      const next = fromProduct(p);
+      const options = p.variations ?? [];
+      // An option can have a photo that is not in the product's own list; it is shown too, so it can be seen and moved.
+      const known = new Set(next.images.map((i) => i.id));
+      for (const v of options) {
+        if (v.imageId && v.imageSrc && !known.has(v.imageId)) {
+          known.add(v.imageId);
+          next.images.push({ id: v.imageId, src: v.imageSrc, alt: "", hidden: false });
+        }
+      }
+      setVariations(options);
+      setLinks(Object.fromEntries(options.filter((v) => v.imageId).map((v) => [v.id, `id:${v.imageId}`])));
+      setDraft(next);
+    }).catch((err) => { fail(err); onClose(); });
   }, [id, fail, onClose]);
 
   if (!draft) {
@@ -114,7 +135,11 @@ function ProductForm({ id, onClose, onSaved }: { id: number | "new"; onClose: ()
     setError("");
     setSaving(true);
     try {
-      const body: ProductInput = { ...d, name: d.name.trim(), images: d.images.map((i) => (i.id ? { id: i.id, hidden: Boolean(i.hidden) } as ProductInput["images"][number] : { src: i.src, alt: i.alt, hidden: Boolean(i.hidden) })) };
+      const variationLinks = variations.flatMap((v) => {
+        const at = d.images.findIndex((img) => keyOf(img) === links[v.id]);
+        return links[v.id] && at >= 0 ? [{ variationId: v.id, imageIndex: at }] : [];
+      });
+      const body: ProductInput = { ...d, name: d.name.trim(), images: d.images.map((i) => (i.id ? { id: i.id, hidden: Boolean(i.hidden) } as ProductInput["images"][number] : { src: i.src, alt: i.alt, hidden: Boolean(i.hidden) })), variationLinks };
       const saved = id === "new" ? await adminProducts.create(body) : await adminProducts.update(id, body);
       toast(id === "new" ? "המוצר נוסף" : "המוצר נשמר");
       onSaved(saved);
@@ -217,6 +242,26 @@ function ProductForm({ id, onClose, onSaved }: { id: number | "new"; onClose: ()
                         </button>
                         <button type="button" className="adm-ib danger" onClick={() => set({ images: draft.images.filter((_, j) => j !== i) })} aria-label="מחיקת התמונה מהמוצר" title="מחיקת התמונה מהמוצר">{I.close()}</button>
                       </span>
+                      {variations.length > 0 ? (
+                        <span className="adm-pimg-opt">
+                          {variations.some((v) => links[v.id] === keyOf(img)) ? (
+                            <span className="adm-pimg-chips" aria-label="האפשרויות שמציגות את התמונה הזו">
+                              {variations.filter((v) => links[v.id] === keyOf(img)).map((v) => <em key={v.id}>{v.label}</em>)}
+                            </span>
+                          ) : <small>לא מחוברת לאפשרות</small>}
+                          <select
+                            className="adm-in"
+                            value=""
+                            aria-label="חיבור התמונה לאפשרות"
+                            onChange={(e) => { const vid = Number(e.target.value); if (vid) setLinks((l) => ({ ...l, [vid]: keyOf(img) })); }}
+                          >
+                            <option value="">חיבור לאפשרות…</option>
+                            {variations.filter((v) => links[v.id] !== keyOf(img)).map((v) => (
+                              <option key={v.id} value={v.id}>{v.label}{links[v.id] ? " (כעת בתמונה אחרת)" : ""}</option>
+                            ))}
+                          </select>
+                        </span>
+                      ) : null}
                     </li>
                   );
                 })}

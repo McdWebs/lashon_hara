@@ -40,8 +40,14 @@ export type AdminProduct = {
   images: Array<{ id?: number; src: string; alt: string; /** Kept in the product but not shown on the site. */ hidden?: boolean }>;
   link: string;
   onSite: boolean;
+  /** For a product with options (colors, sizes): each option and the photo it shows now. */
+  variations?: Array<{ id: number; label: string; imageId: number; imageSrc: string }>;
 };
-export type ProductInput = Omit<AdminProduct, "id" | "type" | "categories" | "link" | "onSite"> & { categories: number[] };
+export type ProductInput = Omit<AdminProduct, "id" | "type" | "categories" | "link" | "onSite" | "variations"> & {
+  categories: number[];
+  /** Which photo (by its place in `images`) each option should show. */
+  variationLinks?: Array<{ variationId: number; imageIndex: number }>;
+};
 export type ProductList = { items: AdminProduct[]; total: number; totalPages: number };
 
 export const adminProducts = {

@@ -107,6 +107,22 @@ export async function adminUpdateProduct(id: string, input: ProductInput) {
   return adminProduct((await wc(`/products/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(toStore(input)) })).data);
 }
 
+export type AdminVariation = { id: number; label: string; imageId: number; imageSrc: string };
+
+/** The options of a variable product (each color or size) with the photo each one has now. The label names only the attributes the variation fixes. */
+export async function adminVariations(productId: string | number): Promise<AdminVariation[]> {
+  const { data } = await wc(`/products/${encodeURIComponent(String(productId))}/variations?per_page=100`);
+  return (data as unknown as Raw[]).map((v) => {
+    const label = ((v.attributes as Raw[]) ?? []).map((a) => String(a.option ?? "")).filter(Boolean).join(" / ");
+    return { id: Number(v.id), label: label || `#${v.id}`, imageId: Number((v.image as Raw | undefined)?.id ?? 0), imageSrc: String((v.image as Raw | undefined)?.src ?? "") };
+  });
+}
+
+/** Gives one option (variation) its photo, which must already be in the store's library. */
+export async function adminSetVariationImage(productId: string | number, variationId: number, imageId: number) {
+  await wc(`/products/${encodeURIComponent(String(productId))}/variations/${variationId}`, { method: "PUT", body: JSON.stringify({ image: { id: imageId } }) });
+}
+
 /** The photo of each variation (for example each color of a cap), by variation id. One request for all of them; empty when the store cannot say. */
 export async function adminVariationImages(productId: string | number): Promise<Map<number, { id: number; src: string }>> {
   try {

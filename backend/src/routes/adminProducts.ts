@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
-import { adminCreateCategory, adminCreateProduct, adminDeleteCategory, adminGetProduct, adminListCategories, adminListProducts, adminTrashProduct, adminUpdateCategory, adminUpdateProduct, WcAdminError } from "../services/wcAdmin.js";
+import { adminCreateCategory, adminCreateProduct, adminDeleteCategory, adminGetProduct, adminListCategories, adminSetVariationImage, adminVariations, adminListProducts, adminTrashProduct, adminUpdateCategory, adminUpdateProduct, WcAdminError } from "../services/wcAdmin.js";
 import { getOrders } from "../services/productOrder.js";
 import { orderedItems } from "../services/productIndex.js";
 import crypto from "node:crypto";
@@ -29,7 +29,9 @@ const body = z.object({
   categories: z.array(z.number().int().positive()).max(30),
   images: z
     .array(z.object({ id: z.number().int().positive().optional(), src: z.string().url().max(1000).optional(), alt: z.string().max(200).optional(), hidden: z.boolean().optional() }).refine((i) => i.id || i.src))
-    .max(12),
+    .max(30),
+  /** Which photo (by its place in `images`) each option of a variable product should show. */
+  variationLinks: z.array(z.object({ variationId: z.number().int().positive(), imageIndex: z.number().int().min(0).max(29) })).max(100).optional(),
 });
 
 function fail(res: import("express").Response, err: unknown) {
@@ -68,9 +70,23 @@ async function rememberHidden(saved: { id: number; images: Array<{ id?: number; 
   await saveHiddenImages(saved.id, photos);
 }
 
+/** Gives each option the photo the team chose for it. Only the ones that changed are sent to the store; the photos are found in the saved product by their place in the list. */
+async function applyVariationLinks(productId: string, saved: { images: Array<{ id?: number }> }, links: Array<{ variationId: number; imageIndex: number }>) {
+  if (links.length === 0) return;
+  const current = await adminVariations(productId);
+  for (const link of links) {
+    const imageId = saved.images[link.imageIndex]?.id;
+    const now = current.find((v) => v.id === link.variationId);
+    if (imageId && now && now.imageId !== imageId) await adminSetVariationImage(productId, link.variationId, imageId);
+  }
+}
+
 adminProductsRouter.get("/products/:id", async (req, res) => {
   try {
-    res.json(await withHiddenFlags(await adminGetProduct(req.params.id)));
+    const product = await withHiddenFlags(await adminGetProduct(req.params.id));
+    // Options with their photos, for the form that connects a photo to an option.
+    const variations = product.type === "variable" ? await adminVariations(req.params.id).catch(() => []) : [];
+    res.json({ ...product, variations });
   } catch (err) {
     fail(res, err);
   }
@@ -101,6 +117,7 @@ adminProductsRouter.put("/products/:id", async (req, res) => {
   try {
     const product = await adminUpdateProduct(req.params.id, parsed.data);
     await rememberHidden(product, parsed.data.images);
+    await applyVariationLinks(req.params.id, product, parsed.data.variationLinks ?? []);
     purgeCatalog();
     res.json(await withHiddenFlags(product));
   } catch (err) {
